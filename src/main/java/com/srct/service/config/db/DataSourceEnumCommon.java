@@ -6,7 +6,6 @@
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
  *  
 */
-
 package com.srct.service.config.db;
 
 /**
@@ -21,6 +20,7 @@ package com.srct.service.config.db;
  * @see
  */
 public class DataSourceEnumCommon {
+
     private DataSourceEnumCommon() {
     }
 

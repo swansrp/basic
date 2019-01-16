@@ -7,15 +7,14 @@
  */
 package com.srct.service.exception;
 
- /** 
- * @ClassName: UserNotLoginException 
- * @Description: TODO 
+/**
+ * @ClassName: UserNotLoginException
+ * @Description: TODO
  */
-public class UserNotLoginException extends ServiceException{
+public class UserNotLoginException extends ServiceException {
 
     /**
      * 
      */
     private static final long serialVersionUID = -3583798352532641711L;
-
 }

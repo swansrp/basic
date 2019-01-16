@@ -6,7 +6,6 @@
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
  *  
 */
-
 package com.srct.service.config.redis;
 
 import java.lang.reflect.Method;
@@ -56,15 +55,11 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
         RedisTemplate<String, byte[]> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
-
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
-
         redisTemplate.afterPropertiesSet();
-
         return redisTemplate;
     }
 
@@ -80,15 +75,11 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory);
         redisTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
-
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
-
         redisTemplate.afterPropertiesSet();
-
         return redisTemplate;
     }
 
@@ -102,9 +93,11 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
         // Init RedisCacheWriter
         RedisCacheWriter redisCacheWriter = RedisCacheWriter.nonLockingRedisCacheWriter(connectionFactory);
         // Set CacheManager Value serialize as JdkSerializationRedisSerializer,
-        // But,Actually RedisCacheConfiguration use StringRedisSerializer to serialize
+        // But,Actually RedisCacheConfiguration use StringRedisSerializer to
+        // serialize
         // key、
-        // JdkSerializationRedisSerializer serialize value as default, So following
+        // JdkSerializationRedisSerializer serialize value as default, So
+        // following
         // commented code is default implementation
         // ClassLoader loader = this.getClass().getClassLoader();
         // JdkSerializationRedisSerializer jdkSerializer = new
@@ -113,7 +106,6 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
         // RedisSerializationContext.SerializationPair.fromSerializer(jdkSerializer);
         // RedisCacheConfiguration
         // defaultCacheConfig=RedisCacheConfiguration.defaultCacheConfig().serializeValuesWith(pair);
-
         // Set Default TTL as 10 mins, serialize factory is
         // GenericJackson2JsonRedisSerializer
         GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
@@ -121,10 +113,8 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
                 .fromSerializer(serializer);
         RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeValuesWith(pair).entryTtl(Duration.ofSeconds(600));
-
         // Init RedisCacheManager
         RedisCacheManager cacheManager = new MyRedisCacheManager(redisCacheWriter, defaultCacheConfig);
-
         return cacheManager;
     }
 
@@ -137,6 +127,7 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
     @Override
     public KeyGenerator keyGenerator() {
         return new KeyGenerator() {
+
             @Override
             public String generate(Object target, Method method, Object... params) {
                 StringBuilder key = new StringBuilder();
@@ -164,7 +155,6 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
                 }
                 return res;
             }
-
         };
     }
 

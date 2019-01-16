@@ -12,9 +12,10 @@ package com.srct.service.utils.email;
  * @ClassName: EmailAttachment
  * @Description: TODO
  */
-
 public class EmailAttachment {
+
     private Object data;
+
     private String name;
 
     public Object getData() {

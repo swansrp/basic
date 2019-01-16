@@ -17,12 +17,11 @@ import lombok.Data;
 @Data
 public class BaseData {
 
-	private String tableName;
+    private String tableName;
 
-	private String columnComment;
+    private String columnComment;
 
-	private String columnType;
+    private String columnType;
 
-	private String columnName;
-
+    private String columnName;
 }

@@ -6,7 +6,6 @@ import org.slf4j.LoggerFactory;
 public class DataSourceContextHolder {
 
     private DataSourceContextHolder() {
-
     }
 
     public static final Logger log = LoggerFactory.getLogger(DataSourceContextHolder.class);

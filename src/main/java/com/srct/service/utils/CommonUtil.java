@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 public class CommonUtil {
 
     private CommonUtil() {
-
     }
 
     public static boolean checkEmail(String email) {
@@ -72,7 +71,8 @@ public class CommonUtil {
     }
 
     public static boolean isTodayTimeRange(Date time) {
-        // DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        // DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd
+        // HH:mm:ss");
         // LocalDateTime localTime = LocalDateTime.parse(time, dtf);
         ZoneId zoneId = ZoneId.systemDefault();
         LocalDateTime localTime = LocalDateTime.ofInstant(time.toInstant(), zoneId);
@@ -110,7 +110,6 @@ public class CommonUtil {
         Map<String, List<Date>> monthMap = new HashMap<>();
         Calendar min = Calendar.getInstance();
         Calendar max = Calendar.getInstance();
-
         min.setTime(minDate);
         switch (durationType) {
         case CommonEnum.CommonTimeEnum.DURATION_TYPE_MONTH:
@@ -135,12 +134,10 @@ public class CommonUtil {
         if (durationType == CommonEnum.CommonTimeEnum.DURATION_TYPE_MONTH) {
             min.set(min.get(Calendar.YEAR), min.get(Calendar.MONTH), 1);
         }
-
         max.setTime(maxDate);
         if (durationType == CommonEnum.CommonTimeEnum.DURATION_TYPE_MONTH) {
             max.set(max.get(Calendar.YEAR), max.get(Calendar.MONTH), 2);
         }
-
         Calendar curr = min;
         while (curr.before(max)) {
             resultmin.add(curr.getTime());
@@ -160,7 +157,6 @@ public class CommonUtil {
             default:
                 throw new RuntimeException();
             }
-
             curr.add(Calendar.MILLISECOND, -1);
             resultmax.add(curr.getTime());
             curr.add(Calendar.MILLISECOND, 1);
@@ -174,7 +170,7 @@ public class CommonUtil {
      * <ul>
      * <li>SysUtils.isEmpty(null) = true</li>
      * <li>SysUtils.isEmpty("") = true</li>
-     * <li>SysUtils.isEmpty("   ") = true</li>
+     * <li>SysUtils.isEmpty(" ") = true</li>
      * <li>SysUtils.isEmpty("abc") = false</li>
      * </ul>
      * 
@@ -193,7 +189,7 @@ public class CommonUtil {
         }
         return true;
     }
-    
+
     /**
      */
     public static boolean areNotEmpty(String... values) {

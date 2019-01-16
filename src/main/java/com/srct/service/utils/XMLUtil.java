@@ -6,7 +6,6 @@
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
  *  
 */
-
 package com.srct.service.utils;
 
 import java.io.IOException;
@@ -47,7 +46,6 @@ public class XMLUtil {
     private static final XmlMapper xmlMapper = new XmlMapper();
 
     private XMLUtil() {
-
     }
 
     /**
@@ -123,7 +121,6 @@ public class XMLUtil {
     }
 
     // dom Get Element Functions
-
     /**
      * xml string to org.w3c.dom.Document.
      * 
@@ -140,11 +137,8 @@ public class XMLUtil {
             builder = factory.newDocumentBuilder();
             return builder.parse(new InputSource(new StringReader(xml)));
         } catch (ParserConfigurationException e) {
-
         } catch (SAXException e) {
-
         } catch (IOException e) {
-
         }
         return null;
     }

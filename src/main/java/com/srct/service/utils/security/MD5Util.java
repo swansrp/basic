@@ -6,7 +6,6 @@
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
  *  
 */
-
 package com.srct.service.utils.security;
 
 import java.security.MessageDigest;
@@ -26,15 +25,13 @@ import org.apache.commons.codec.binary.Hex;
  * @since JDK 1.8
  * @see
  */
-
 public class MD5Util {
 
     private MD5Util() {
-
     }
 
     /**
-     * coomon MD5
+     * common MD5
      * 
      * @author daniel Date: Apr 28, 2018 5:38:54 PM
      * @author ruopeng.sha
@@ -52,7 +49,6 @@ public class MD5Util {
         }
         char[] charArray = input.toCharArray();
         byte[] byteArray = new byte[charArray.length];
-
         for (int i = 0; i < charArray.length; i++)
             byteArray[i] = (byte) charArray[i];
         byte[] md5Bytes = md5.digest(byteArray);
@@ -64,7 +60,6 @@ public class MD5Util {
             hexValue.append(Integer.toHexString(val));
         }
         return hexValue.toString();
-
     }
 
     /**
@@ -143,5 +138,4 @@ public class MD5Util {
             return null;
         }
     }
-
 }

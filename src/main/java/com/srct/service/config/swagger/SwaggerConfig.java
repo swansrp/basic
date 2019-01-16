@@ -19,36 +19,28 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-/** 
- * @ClassName: SwaggerConfig 
- * @Description: TODO 
+/**
+ * @ClassName: SwaggerConfig
+ * @Description: TODO
  */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
-	
-	@Value("${my.swagger.config.rootpackagename}")
-	private String rootPackageName;
-	
-	@Bean
+
+    @Value("${my.swagger.config.rootpackagename}")
+    private String rootPackageName;
+
+    @Bean
     public Docket createRestApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-                .apiInfo(apiInfo())
-                .select()
-                //Chooes controller path
-                .apis(RequestHandlerSelectors.basePackage(rootPackageName))
-                .paths(PathSelectors.any())
-                .build();
+        return new Docket(DocumentationType.SWAGGER_2).apiInfo(apiInfo()).select()
+                // Chooes controller path
+                .apis(RequestHandlerSelectors.basePackage(rootPackageName)).paths(PathSelectors.any()).build();
     }
-	
-	private ApiInfo apiInfo() {
+
+    private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                //Customer Information
-                .title("Samsung China Rewards")
-                .description("Just for development")
-                .termsOfServiceUrl("http://poas.org.cn")
-                .contact("SRC-TJ Service TG")
-                .version("1.0")
-                .build();
+                // Customer Information
+                .title("Samsung China Rewards").description("Just for development")
+                .termsOfServiceUrl("http://poas.org.cn").contact("SRC-TJ Service TG").version("1.0").build();
     }
 }

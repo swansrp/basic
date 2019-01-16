@@ -10,25 +10,22 @@ import org.springframework.core.io.Resource;
 
 import com.srct.service.utils.log.Log;
 
-/** 
+/**
  * 
  * @author srct
  * @TODO My dream is check log through the web browser
  */
-
-//@Component 
-
+// @Component
 @WebEndpoint(id = "mylogfile")
 public class MyLogFile {
-	
-	@ReadOperation
-	public Resource logFile(@Selector String name) {
-		Log.i("============logFile============");
-		Resource logFileResource = new FileSystemResource(new File(name));
-		if (logFileResource == null || !logFileResource.isReadable()) {
-			return null;
-		}
-		return logFileResource;
-	}
 
+    @ReadOperation
+    public Resource logFile(@Selector String name) {
+        Log.i("============logFile============");
+        Resource logFileResource = new FileSystemResource(new File(name));
+        if (logFileResource == null || !logFileResource.isReadable()) {
+            return null;
+        }
+        return logFileResource;
+    }
 }

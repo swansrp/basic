@@ -6,39 +6,36 @@ import org.springframework.data.redis.cache.RedisCacheWriter;
 
 public class MyRedisCache extends RedisCache {
 
-	private final String name;
-	private final RedisCacheWriter cacheWriter;
+    private final String name;
 
-	protected MyRedisCache(String name, RedisCacheWriter cacheWriter, RedisCacheConfiguration cacheConfig) {
-		super(name, cacheWriter, cacheConfig);
-		this.cacheWriter = cacheWriter;
-		this.name = name;
-		// TODO Auto-generated constructor stub
-	}
+    private final RedisCacheWriter cacheWriter;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.springframework.cache.support.AbstractValueAdaptingCache#lookup(java.lang
-	 * .Object)
-	 */
-	@Override
-	protected Object lookup(Object key) {
+    protected MyRedisCache(String name, RedisCacheWriter cacheWriter, RedisCacheConfiguration cacheConfig) {
+        super(name, cacheWriter, cacheConfig);
+        this.cacheWriter = cacheWriter;
+        this.name = name;
+        // TODO Auto-generated constructor stub
+    }
 
-		byte[] value = cacheWriter.get(name, createAndConvertCacheKey(key));
+    /*
+     * (non-Javadoc)
+     * 
+     * @see
+     * org.springframework.cache.support.AbstractValueAdaptingCache#lookup(java.
+     * lang .Object)
+     */
+    @Override
+    protected Object lookup(Object key) {
+        byte[] value = cacheWriter.get(name, createAndConvertCacheKey(key));
+        Object res = null;
+        if (value != null) {
+            res = deserializeCacheValue(value);
+            put(key, res);
+        }
+        return res;
+    }
 
-		Object res = null;
-
-		if (value != null) {
-			res = deserializeCacheValue(value);
-			put(key, res);
-		}
-
-		return res;
-	}
-
-	private byte[] createAndConvertCacheKey(Object key) {
-		return serializeCacheKey(createCacheKey(key));
-	}
+    private byte[] createAndConvertCacheKey(Object key) {
+        return serializeCacheKey(createCacheKey(key));
+    }
 }

@@ -11,17 +11,19 @@ package com.srct.service.utils.log;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-/** 
- * @ClassName: ThreadLogInfo 
- * @Description: TODO 
+/**
+ * @ClassName: ThreadLogInfo
+ * @Description: TODO
  */
 @Data
 @AllArgsConstructor
 public class ThreadLogInfo {
 
     private String methodName;
+
     private String paramNames;
+
     private Long startTime;
+
     private Long endTime;
-    
 }

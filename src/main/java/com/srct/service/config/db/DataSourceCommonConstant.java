@@ -8,15 +8,16 @@
  */
 package com.srct.service.config.db;
 
- /** 
- * @ClassName: DataSourceCommonConstant 
- * @Description: TODO 
+/**
+ * @ClassName: DataSourceCommonConstant
+ * @Description: TODO
  */
-
 public class DataSourceCommonConstant {
 
     // Common
     public static final Integer DATABASE_COMMON_INVALID = 0;
+
     public static final Integer DATABASE_COMMON_VALID = 1;
+
     public static final Integer DATABASE_COMMON_IGORE_VALID = -1;
 }

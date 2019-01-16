@@ -58,7 +58,6 @@ public class CacheKeyByParam implements KeyGenerator {
                             }
                         }
                     }
-
                 }
             }
         }

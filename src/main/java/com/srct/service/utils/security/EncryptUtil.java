@@ -37,13 +37,17 @@ import com.srct.service.utils.log.Log;
  * @Description: TODO
  */
 public class EncryptUtil {
+
     private static final String AES_CBC_PCK_ALG = "AES/CBC/PKCS5Padding";
+
     private static final byte[] AES_IV = initIv(AES_CBC_PCK_ALG);
+
     /** */
     /**
      * RSA最大加密明文大小
      */
     private static final int MAX_ENCRYPT_BLOCK = 245;
+
     /** */
     /**
      * RSA最大解密密文大小
@@ -66,20 +70,13 @@ public class EncryptUtil {
      *             String
      */
     public static String encryptContent(String content, String encryptType, String encryptKey, String charset) {
-
         if (CommonEnum.SecurityEnum.AES_ALG.equals(encryptType)) {
-
             return aesEncrypt(content, encryptKey, charset);
-
         } else if (CommonEnum.SecurityEnum.RSA_ALG.equals(encryptType)) {
-
             return rsaEncrypt(content, encryptKey, charset);
-
         } else {
-
             throw new ServiceException("Not Support encryptType ：encrypeType=" + encryptType);
         }
-
     }
 
     /**
@@ -96,18 +93,13 @@ public class EncryptUtil {
      */
     public static String decryptContent(String content, String encryptType, String encryptKey, String charset)
             throws ServiceException {
-
         if (CommonEnum.SecurityEnum.AES_ALG.equals(encryptType)) {
-
             return aesDecrypt(content, encryptKey, charset);
-
         } else if (CommonEnum.SecurityEnum.RSA_ALG.equals(encryptType)) {
             return rsaDecrypt(content, encryptKey, charset);
         } else {
-
             throw new ServiceException("Not Support encryptType ：encrypeType=" + encryptType);
         }
-
     }
 
     /**
@@ -122,20 +114,16 @@ public class EncryptUtil {
      *             String
      */
     private static String aesEncrypt(String content, String aesKey, String charset) throws ServiceException {
-
         try {
             Cipher cipher = Cipher.getInstance(AES_CBC_PCK_ALG);
-
             IvParameterSpec iv = new IvParameterSpec(AES_IV);
             cipher.init(Cipher.ENCRYPT_MODE,
                     new SecretKeySpec(Base64.decodeBase64(aesKey.getBytes()), CommonEnum.SecurityEnum.AES_ALG), iv);
-
             byte[] encryptBytes = cipher.doFinal(content.getBytes(charset));
             return new String(Base64.encodeBase64(encryptBytes));
         } catch (Exception e) {
             throw new ServiceException("AES entrypt failed：Aescontent = " + content + "; charset = " + charset, e);
         }
-
     }
 
     /**
@@ -155,7 +143,6 @@ public class EncryptUtil {
             IvParameterSpec iv = new IvParameterSpec(initIv(AES_CBC_PCK_ALG));
             cipher.init(Cipher.DECRYPT_MODE,
                     new SecretKeySpec(Base64.decodeBase64(key.getBytes()), CommonEnum.SecurityEnum.AES_ALG), iv);
-
             byte[] cleanBytes = cipher.doFinal(Base64.decodeBase64(content.getBytes()));
             return new String(cleanBytes, charset);
         } catch (Exception e) {
@@ -199,7 +186,8 @@ public class EncryptUtil {
             }
             byte[] encryptedData = out.toByteArray();
             out.close();
-            // Note : Must use Base64 to encode encryted data, Dont use new String() method
+            // Note : Must use Base64 to encode encryted data, Dont use new
+            // String() method
             return java.util.Base64.getEncoder().encodeToString(encryptedData);
         } catch (Exception e) {
             e.printStackTrace();
@@ -224,7 +212,6 @@ public class EncryptUtil {
             PrivateKey priKey = getPrivateKeyFromPKCS8(CommonEnum.SecurityEnum.RSA_ALG,
                     new ByteArrayInputStream(privateKey.getBytes()));
             cipher.init(Cipher.DECRYPT_MODE, priKey);
-
             byte[] data = java.util.Base64.getDecoder().decode(content);
             int inputLen = data.length;
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -251,14 +238,10 @@ public class EncryptUtil {
 
     private static PublicKey getPublicKeyFromX509(String algorithm, InputStream ins) throws Exception {
         KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
-
         StringWriter writer = new StringWriter();
         StreamUtil.io(new InputStreamReader(ins), writer);
-
         byte[] encodedKey = writer.toString().getBytes();
-
         encodedKey = Base64.decodeBase64(encodedKey);
-
         return keyFactory.generatePublic(new X509EncodedKeySpec(encodedKey));
     }
 
@@ -266,13 +249,9 @@ public class EncryptUtil {
         if (ins == null || CommonUtil.isEmpty(algorithm)) {
             return null;
         }
-
         KeyFactory keyFactory = KeyFactory.getInstance(algorithm);
-
         byte[] encodedKey = StreamUtil.readText(ins).getBytes();
-
         encodedKey = Base64.decodeBase64(encodedKey);
-
         return keyFactory.generatePrivate(new PKCS8EncodedKeySpec(encodedKey));
     }
 
@@ -284,7 +263,6 @@ public class EncryptUtil {
      * @throws GeneralSecurityException
      */
     private static byte[] initIv(String fullAlg) {
-
         try {
             Cipher cipher = Cipher.getInstance(fullAlg);
             int blockSize = cipher.getBlockSize();
@@ -294,7 +272,6 @@ public class EncryptUtil {
             }
             return iv;
         } catch (Exception e) {
-
             int blockSize = 16;
             byte[] iv = new byte[blockSize];
             for (int i = 0; i < blockSize; ++i) {
@@ -342,5 +319,4 @@ public class EncryptUtil {
         }
         return sb.toString();
     }
-
 }

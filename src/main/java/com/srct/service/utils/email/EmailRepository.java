@@ -17,15 +17,21 @@ import javax.validation.constraints.NotNull;
  * @ClassName: EmailRepository
  * @Description: TODO
  */
-
 public class EmailRepository {
+
     private String topic;
+
     private Object body;
+
     @NotNull(message = "Must Specific primary recipients")
     private List<String> recipients;
+
     private List<String> cc;
+
     private List<String> bcc;
+
     private List<String> attachmentPath;
+
     private List<EmailAttachment> attachment;
 
     public String getTopic() {
@@ -123,5 +129,4 @@ public class EmailRepository {
     public void setAttachment(EmailAttachment attachment) {
         this.attachment = Arrays.asList(new EmailAttachment[] { attachment });
     }
-
 }

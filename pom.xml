@@ -143,6 +143,14 @@
 			<artifactId>lombok</artifactId>
 		</dependency>
 
+		<!-- https://mvnrepository.com/artifact/cn.hutool/hutool-all -->
+		<dependency>
+			<groupId>cn.hutool</groupId>
+			<artifactId>hutool-all</artifactId>
+			<version>4.4.0</version>
+		</dependency>
+
+
 
 		<!-- javassist 切面获取函数信息 -->
 		<dependency>

@@ -33,18 +33,27 @@ public class ApiPointLogAspect {
     private static final Logger mLogger = LoggerFactory.getLogger(ApiPointLogAspect.class);
 
     private static final String LogFormat_SND = "[SND]|%s|%s|%s|%s|%s";
+
     private static final String LogFormat_RCV = "[RCV]|%s|%s|%s|%s|%s";
+
     private static final String LogFormat_EX = "[EXP]|%s|%s|%s|%s|%s";
+
     private static final String LogFormat_TIME = "[TIME]|%s|%s|%s|%s|%s";
 
     public static ThreadLocal<ThreadLogInfo> threadLocal = new ThreadLocal<ThreadLogInfo>();
 
     private String url = "-";
+
     private String ipAddress = "0.0.0.0";
+
     private String partnerId = "-";
+
     private String methodName = "-";
+
     private String paramNames = "-";
+
     private Long startTime = 0L;
+
     private Long endTime = 0L;
 
     @Pointcut("execution(public * com.srct.service..*.*Controller.*(..))")
@@ -54,7 +63,6 @@ public class ApiPointLogAspect {
 
     @Pointcut("@annotation(com.srct.service.utils.log.MySlf4j)" + "||" + "@within(com.srct.service.utils.log.MySlf4j)")
     public void myslf4j() {
-
     }
 
     @Before("apiLog()")
@@ -65,7 +73,6 @@ public class ApiPointLogAspect {
     @Around("apiLog()")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         Object res = null;
-
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpServletRequest req = attr.getRequest();
         url = req.getMethod() + " " + req.getRequestURI();
@@ -88,7 +95,6 @@ public class ApiPointLogAspect {
             threadLocal.get().setEndTime(endTime);
             throw e;
         }
-
         return res;
     }
 
@@ -106,7 +112,6 @@ public class ApiPointLogAspect {
         } else {
             threadLocal.get().setStartTime(System.currentTimeMillis());
         }
-
         try {
             res = pjp.proceed();
             endTime = System.currentTimeMillis();
@@ -119,7 +124,6 @@ public class ApiPointLogAspect {
             throw e;
         }
         return res;
-
     }
 
     @After("myslf4j()")
@@ -143,7 +147,6 @@ public class ApiPointLogAspect {
 
     @AfterReturning("apiLog()")
     public void afterReturning() {
-
     }
 
     private String getParams(JoinPoint point) {
@@ -174,6 +177,5 @@ public class ApiPointLogAspect {
             }
         }
         return res;
-
     }
 }

@@ -14,5 +14,4 @@ import com.srct.service.dao.po.AccountInfo;
  * @Description: TODO
  */
 public class RegistRequestInfoBO extends AccountInfo {
-
 }

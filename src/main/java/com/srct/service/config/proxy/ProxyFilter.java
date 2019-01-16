@@ -6,7 +6,6 @@
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
  *  
 */
-
 package com.srct.service.config.proxy;
 
 import java.io.IOException;
@@ -49,7 +48,6 @@ public class ProxyFilter implements Filter {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-
         // TODO Auto-generated method stub
         HttpServletRequest req = (HttpServletRequest) request;
         HttpServletResponse resp = (HttpServletResponse) response;
@@ -68,12 +66,10 @@ public class ProxyFilter implements Filter {
             return;
         }
         chain.doFilter(req, resp);
-
     }
 
     @Override
     public void destroy() {
         Log.d("...ProxyFilter destroy...");
     }
-
 }

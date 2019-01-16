@@ -6,7 +6,6 @@
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
  *  
 */
-
 package com.srct.service.utils;
 
 import java.lang.reflect.Field;
@@ -36,7 +35,6 @@ import org.springframework.util.LinkedMultiValueMap;
 public class ReflectionUtil {
 
     private ReflectionUtil() {
-
     }
 
     public static <T> T getFieldValue(@NotNull Object object, @NotNull String fullName) throws IllegalAccessException,
@@ -54,10 +52,8 @@ public class ReflectionUtil {
             field = searchField(object.getClass(), targetField, traceable, false);
             if (field == null)
                 return null;
-
             object = getValue(object, field);
         }
-
         return (T) object;
     }
 
@@ -77,7 +73,6 @@ public class ReflectionUtil {
             c = c.getSuperclass();
             traceable = traceable && c != Object.class;
         } while (traceable);
-
         return null;
     }
 
@@ -97,7 +92,6 @@ public class ReflectionUtil {
                     return null;
                 }
             }
-
         }
         return (T) field.get(target);
     }
@@ -133,7 +127,6 @@ public class ReflectionUtil {
             setFieldMethod.invoke(target, value);
             return true;
         }
-
         field.set(target, value);
         return true;
     }
@@ -162,7 +155,8 @@ public class ReflectionUtil {
                 if (value != null) {
                     res.put(name, value);
                 }
-                // Log.e(getClass().getSimpleName(), "属性名称：" + fn + " field.get(obj)= " +
+                // Log.e(getClass().getSimpleName(), "属性名称：" + fn + "
+                // field.get(obj)= " +
                 // field.get(obj));
             } catch (IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException
                     | InvocationTargetException e) {
@@ -185,7 +179,8 @@ public class ReflectionUtil {
                 if (value != null) {
                     res.add(name, value);
                 }
-                // Log.e(getClass().getSimpleName(), "属性名称：" + fn + " field.get(obj)= " +
+                // Log.e(getClass().getSimpleName(), "属性名称：" + fn + "
+                // field.get(obj)= " +
                 // field.get(obj));
             } catch (IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException
                     | InvocationTargetException e) {
@@ -212,7 +207,8 @@ public class ReflectionUtil {
                 if (value != null) {
                     res.put(name, value);
                 }
-                // Log.e(getClass().getSimpleName(), "属性名称：" + fn + " field.get(obj)= " +
+                // Log.e(getClass().getSimpleName(), "属性名称：" + fn + "
+                // field.get(obj)= " +
                 // field.get(obj));
             } catch (IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException
                     | InvocationTargetException e) {

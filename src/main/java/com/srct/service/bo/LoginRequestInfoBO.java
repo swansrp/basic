@@ -9,10 +9,9 @@ package com.srct.service.bo;
 
 import com.srct.service.dao.po.AccountInfo;
 
-/** 
- * @ClassName: LoginRequestInfoBO 
- * @Description: TODO 
+/**
+ * @ClassName: LoginRequestInfoBO
+ * @Description: TODO
  */
-public class LoginRequestInfoBO extends AccountInfo{
-
+public class LoginRequestInfoBO extends AccountInfo {
 }

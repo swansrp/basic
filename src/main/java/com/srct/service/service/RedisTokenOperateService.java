@@ -12,6 +12,7 @@ package com.srct.service.service;
  * @Description: TODO
  */
 public interface RedisTokenOperateService {
+
     void setAccessToken(Integer uid, String accessToken);
 
     String getAccessToken(Integer uid);

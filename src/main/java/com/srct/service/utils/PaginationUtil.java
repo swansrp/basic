@@ -15,7 +15,6 @@ import java.util.List;
  * @ClassName: PaginationUtil
  * @Description: TODO
  */
-
 public class PaginationUtil<T> {
 
     private List<T> data;
@@ -42,20 +41,17 @@ public class PaginationUtil<T> {
         if (data == null || data.isEmpty()) {
             throw new IllegalArgumentException("data must be not empty!");
         }
-
         this.data = data;
         this.pageSize = pageSize;
         /*
          * this.totalPage = data.size()/pageSize; if(data.size()%pageSize!=0){
          * this.totalPage++; }
          */
-
         this.nowPage = nowPage;
         this.totalCount = data.size();
         this.totalPage = (totalCount + pageSize - 1) / pageSize;
         this.lastPage = nowPage - 1 > 1 ? nowPage - 1 : 1;
         this.nextPage = nowPage >= totalPage ? totalPage : nowPage + 1;
-
     }
 
     /**
@@ -107,5 +103,4 @@ public class PaginationUtil<T> {
     public int getTotalCount() {
         return totalCount;
     }
-
 }

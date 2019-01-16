@@ -28,7 +28,6 @@ import com.srct.service.utils.log.Log;
  * @ClassName: EmailUtil
  * @Description: TODO
  */
-
 public class EmailUtil {
 
     private static String buildCmd(List<String> optionList, String optionType) {
@@ -65,17 +64,14 @@ public class EmailUtil {
     public static void sendEmail(@Valid EmailRepository repo) {
         List<File> fileList = new ArrayList<>();
         List<String> defaultBbc = Arrays.asList(BeanUtil.getProperty("my.mail.address").split(","));// 默认收件人
-
         String recipientsCmd = buildCmd(repo.getRecipients(), "");
         String attachPathCmd = buildCmd(repo.getAttachmentPath(), "-a");
         String defaultBccCmd = buildCmd(defaultBbc, "-b");
         String bccCmd = buildCmd(repo.getBcc(), "-b");
         String ccCmd = buildCmd(repo.getCc(), "-c");
         String titleCmd = buildCmd(Arrays.asList(repo.getTopic()), "-s");
-
         String attachmentCmd = buildAttachmentObjCmd(repo.getAttachment(), fileList);
         String bodyCmd = "echo " + JSONUtil.toJSONString(repo.getBody());
-
         String cmd = bodyCmd + "　| mail " + titleCmd + ccCmd + defaultBccCmd + bccCmd + attachPathCmd + attachmentCmd
                 + recipientsCmd;
         Log.d(cmd);

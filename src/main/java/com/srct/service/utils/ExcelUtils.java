@@ -35,12 +35,12 @@ import com.srct.service.utils.log.Log;
 public class ExcelUtils {
 
     private ExcelUtils() {
-
     }
 
     // private static final String FIX_CLASS_CHINESE_TITLE_FILED_NAME =
     // "sColumnTitle";
     private static List<Field> sContentClassVariablesField;
+
     private static List<String> sColumnTitle;
 
     /**
@@ -67,13 +67,9 @@ public class ExcelUtils {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = createSheetWithName(wb, "result");
         HSSFCellStyle cellStyle = setContentCellStyle(wb);
-
         ArrayList<Object> list = (ArrayList<Object>) object;
-
         for (int line = 0; line < list.size(); line++) {
-
             HSSFRow row = sheet.createRow(line + 1);
-
             for (int columnIndex = 0; columnIndex < sContentClassVariablesField.size(); columnIndex++) {
                 HSSFCell cell = row.createCell(columnIndex);
                 cell.setCellStyle(cellStyle);
@@ -120,23 +116,18 @@ public class ExcelUtils {
     }
 
     private static HSSFCellStyle setContentCellStyle(HSSFWorkbook wb) {
-
         HSSFCellStyle cellStyle = wb.createCellStyle();
-
         cellStyle.setShrinkToFit(true);
         cellStyle.setWrapText(true);
         cellStyle.setBorderBottom(BorderStyle.THIN);
         cellStyle.setBorderLeft(BorderStyle.THIN);
         cellStyle.setBorderRight(BorderStyle.THIN);
         cellStyle.setBorderTop(BorderStyle.THIN);
-
         return cellStyle;
     }
 
     private static HSSFCellStyle setTitleCellStyle(HSSFWorkbook wb) {
-
         HSSFCellStyle cellStyle = wb.createCellStyle();
-
         cellStyle.setShrinkToFit(true);
         cellStyle.setWrapText(true);
         cellStyle.setBorderBottom(BorderStyle.THIN);
@@ -145,7 +136,6 @@ public class ExcelUtils {
         cellStyle.setBorderTop(BorderStyle.THIN);
         cellStyle.setFillForegroundColor(HSSFColorPredefined.PALE_BLUE.getIndex());
         cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-
         return cellStyle;
     }
 
@@ -198,7 +188,6 @@ public class ExcelUtils {
             int columnWidth = sheet.getColumnWidth(columnNum) / 256;
             for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
                 HSSFRow currentRow;
-
                 if (sheet.getRow(rowNum) == null) {
                     currentRow = sheet.createRow(rowNum);
                 } else {
@@ -207,7 +196,6 @@ public class ExcelUtils {
                 if (currentRow.getCell(columnNum) != null) {
                     HSSFCell currentCell = currentRow.getCell(columnNum);
                     if (currentCell.getCellTypeEnum() == CellType.STRING) {
-
                         int length = currentCell.getStringCellValue().getBytes().length;
                         if (columnWidth < length) {
                             columnWidth = length;
@@ -216,7 +204,8 @@ public class ExcelUtils {
                 }
             }
             sheet.setColumnWidth(columnNum, columnWidth * 256 + 184);
-            // Refer to https://blog.csdn.net/duqian42707/article/details/51491312
+            // Refer to
+            // https://blog.csdn.net/duqian42707/article/details/51491312
         }
     }
 

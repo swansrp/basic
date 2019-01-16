@@ -29,6 +29,7 @@ public class RedisServiceImpl implements RedisService {
 
     @Autowired
     private RedisTemplate<String, Object> ObjectRedisTemplate;
+
     private ZSetOperations<String, Object> opsForZSet;
 
     /**
@@ -50,7 +51,6 @@ public class RedisServiceImpl implements RedisService {
         if (null == keys || keys.isEmpty()) {
             return;
         }
-
         for (String key : keys) {
             delete(key);
         }
@@ -65,7 +65,6 @@ public class RedisServiceImpl implements RedisService {
             Log.e(" setExpireTime key is null");
             return;
         }
-
         Log.d(" setExpireTime key[{}], date[{}]", key, expireDate);
         redisTemplate.execute((RedisCallback<String>) connection -> {
             connection.expire(key.getBytes(), expireDate.getTime() - System.currentTimeMillis());
@@ -93,7 +92,6 @@ public class RedisServiceImpl implements RedisService {
             Log.e(" subscribe topic is null");
             return;
         }
-
         Log.d(" subscribe topic[{}]", topic);
         redisTemplate.execute((RedisCallback<String>) connection -> {
             connection.subscribe(listener, topic.getBytes());
@@ -130,7 +128,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public boolean setex(final String key, final int seconds, final String value) {
-
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
             Log.e(" setex key[{}]value[{}] is null", key, value);
             return false;
@@ -164,7 +161,6 @@ public class RedisServiceImpl implements RedisService {
             return false;
         }
         Log.d(" setnx key[{}], value[{}], seconds[{}]", key, value, seconds);
-
         boolean result = redisTemplate.execute((RedisCallback<Boolean>) connection -> {
             boolean ret = connection.setNX(key.getBytes(), value.getBytes());
             if (ret) {
@@ -184,7 +180,6 @@ public class RedisServiceImpl implements RedisService {
             Log.e(" get key is null error");
             return null;
         }
-
         String result = redisTemplate.execute((RedisCallback<String>) connection -> {
             byte[] value = connection.get(key.getBytes());
             if (null == value || value.length <= 0) {
@@ -198,13 +193,11 @@ public class RedisServiceImpl implements RedisService {
     }
 
     public <T> T get(String key, Class<T> clz) {
-
         String value = get(key);
         if (StringUtils.isEmpty(value)) {
             Log.e(" get key[{}], value[{}]", key, value);
             return null;
         }
-
         try {
             return JSON.parseObject(value, clz);
         } catch (Exception e) {
@@ -215,7 +208,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public int getInt(String key) {
-
         String value = get(key);
         if (StringUtils.isEmpty(value)) {
             Log.e(" getInt key[{}], value[{}] is null error", key, value);
@@ -236,7 +228,6 @@ public class RedisServiceImpl implements RedisService {
             Log.e(" incr key[" + key + "] is null error");
             return null;
         }
-
         Long result = redisTemplate.execute((RedisCallback<Long>) connection -> connection.incr(key.getBytes()));
         Log.d(" incr key[" + key + "] result [" + result + "]");
         return result;
@@ -248,7 +239,6 @@ public class RedisServiceImpl implements RedisService {
             Log.e(" decr key[" + key + "] is null error");
             return null;
         }
-
         Long result = redisTemplate.execute((RedisCallback<Long>) connection -> connection.decr(key.getBytes()));
         Log.d(" incr key[" + key + "] result [" + result + "]");
         return result;
@@ -259,7 +249,6 @@ public class RedisServiceImpl implements RedisService {
      * @return
      */
     public Set<byte[]> getKeys(final String pattern) {
-
         if (StringUtils.isEmpty(pattern)) {
             Log.e(" getKeys pattern is null error");
             return null;
@@ -283,12 +272,10 @@ public class RedisServiceImpl implements RedisService {
         Log.d(" sMembers key[" + key + "]");
         Set<byte[]> members = redisTemplate
                 .execute((RedisCallback<Set<byte[]>>) connection -> connection.sMembers(key.getBytes()));
-
         if (null == members || members.isEmpty()) {
             Log.e(" sMembers key[" + key + "] members is empty error");
             return null;
         }
-
         List<String> list = new ArrayList<String>();
         String member = null;
         for (byte[] tmp : members) {
@@ -301,12 +288,10 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public Long sAdd(final String key, final String value) {
-
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
             Log.e(" sAdd key[" + key + "]  value[" + value + "] is null error");
             return null;
         }
-
         Long result = redisTemplate
                 .execute((RedisCallback<Long>) connection -> connection.sAdd(key.getBytes(), value.getBytes()));
         Log.d(" sAdd key[" + key + "]  value[" + value + "] result[" + result + "]");
@@ -315,7 +300,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public Long lpush(String key, String... value) {
-
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
             Log.e(" lpush key[" + key + "]  value[" + value + "] is null error");
             return null;
@@ -333,15 +317,12 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public Long sRem(final String key, final String value) {
-
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
             Log.e(" sRem key[" + key + "]  value[" + value + "] is null error");
             return null;
         }
-
         Long result = redisTemplate
                 .execute((RedisCallback<Long>) connection -> connection.sRem(key.getBytes(), value.getBytes()));
-
         Log.d(" sRem key[" + key + "]  value[" + value + "] result[" + result + "]");
         return result;
     }
@@ -360,7 +341,6 @@ public class RedisServiceImpl implements RedisService {
             }
             return new String(mem);
         });
-
         Log.d(" sRandmember key[" + key + "] result[" + result + "]");
         return result;
     }
@@ -371,16 +351,13 @@ public class RedisServiceImpl implements RedisService {
             Log.e(" hset key[" + key + "] field[" + field + "] value[" + value + "]  is null error");
             return false;
         }
-
         boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
 
             @Override
             public Boolean doInRedis(RedisConnection connection) throws DataAccessException {
                 return connection.hSet(key.getBytes(), field.getBytes(), value.getBytes());
             }
-
         });
-
         Log.d(" hset key[" + key + "] field[" + field + "] value[" + value + "] result[" + result + "]");
         return result;
     }
@@ -391,7 +368,6 @@ public class RedisServiceImpl implements RedisService {
             Log.e(" hdel key[" + key + "] field[" + field + "]  is null error");
             return null;
         }
-
         Long result = redisTemplate.execute(new RedisCallback<Long>() {
 
             @Override
@@ -409,7 +385,6 @@ public class RedisServiceImpl implements RedisService {
             Log.e(" hget key[" + key + "] field[" + field + "]  is null error");
             return null;
         }
-
         String result = redisTemplate.execute(new RedisCallback<String>() {
 
             @Override
@@ -437,7 +412,6 @@ public class RedisServiceImpl implements RedisService {
         try {
             return Integer.valueOf(value);
         } catch (Exception e) {
-
             Log.e(" hGetInt Exception : " + e.toString());
             return 0;
         }
@@ -457,7 +431,6 @@ public class RedisServiceImpl implements RedisService {
 
     @Override
     public List<Object> closePipeline() {
-
         return redisTemplate.execute(new RedisCallback<List<Object>>() {
 
             @Override
@@ -480,11 +453,9 @@ public class RedisServiceImpl implements RedisService {
                 return connection.expire(key.getBytes(), timeout);
             }
         });
-
         Log.e(" expire key[" + key + "] result[" + result + "]");
         return result;
     }
-
     // /**
     // * 设置有超时时间的KV
     // */
@@ -523,7 +494,8 @@ public class RedisServiceImpl implements RedisService {
     // if (connection.exists(key)) {
     // byte[] value = connection.get(key);
     // //从redis中取出的需要反序列化--- deserialize
-    // String redisValue = redisTemplate.getStringSerializer().deserialize(value);
+    // String redisValue =
+    // redisTemplate.getStringSerializer().deserialize(value);
     // RedisKeyDto re = new RedisKeyDto();
     // re.setKeys(redisKeyDto.getKeys());
     // re.setValues(redisValue);

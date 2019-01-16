@@ -7,17 +7,17 @@
  */
 package com.srct.service.exception;
 
-/** 
- * @ClassName: RewardsAccountOrPasswordIncorrectException 
- * @Description: TODO 
+/**
+ * @ClassName: RewardsAccountOrPasswordIncorrectException
+ * @Description: TODO
  */
-public class AccountOrPasswordIncorrectException extends ServiceException{
+public class AccountOrPasswordIncorrectException extends ServiceException {
+
     /**
      * 
      */
     private static final long serialVersionUID = 4823553235869531769L;
 
     public AccountOrPasswordIncorrectException() {
-        
     }
 }

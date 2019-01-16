@@ -25,39 +25,48 @@ import com.srct.service.utils.log.Log;
  * @ClassName: TomcatConfig
  * @Description: TODO
  */
-//@Configuration
+// @Configuration
 public class TomcatConfig {
 
     @Value("${spring.server.port}")
     private String port;
+
     @Value("${spring.server.acceptorThreadCount}")
     private String acceptorThreadCount;
+
     @Value("${spring.server.minSpareThreads}")
     private String minSpareThreads;
+
     @Value("${spring.server.maxSpareThreads}")
     private String maxSpareThreads;
+
     @Value("${spring.server.maxThreads}")
     private String maxThreads;
+
     @Value("${spring.server.maxConnections}")
     private String maxConnections;
+
     @Value("${spring.server.protocol}")
     private String protocol;
+
     @Value("${spring.server.redirectPort}")
     private String redirectPort;
+
     @Value("${spring.server.compression}")
     private String compression;
+
     @Value("${spring.server.connectionTimeout}")
     private String connectionTimeout;
 
     @Value("${spring.server.MaxFileSize}")
     private String MaxFileSize;
+
     @Value("${spring.server.MaxRequestSize}")
     private String MaxRequestSize;
 
     @Bean
     public ServletWebServerFactory servletContainer() {
         TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
-
         tomcat.addConnectorCustomizers(new GwsTomcatConnectionCustomizer());
         return tomcat;
     }
@@ -99,11 +108,11 @@ public class TomcatConfig {
             // connector.setAttribute("redirectPort", "redirectPort");
             connector.setAttribute("compression", "compression");
             connector.setAttribute("prestartminSpareThreads", true);
-            Http11NioProtocol protocol = (Http11NioProtocol) connector.getProtocolHandler(); 
-            //设置最大连接数 
-            protocol.setMaxConnections(4000); 
-            //设置最大线程数 
-            protocol.setMaxThreads(4000); 
+            Http11NioProtocol protocol = (Http11NioProtocol) connector.getProtocolHandler();
+            // 设置最大连接数
+            protocol.setMaxConnections(4000);
+            // 设置最大线程数
+            protocol.setMaxThreads(4000);
             protocol.setConnectionTimeout(3000);
             protocol.setMinSpareThreads(4000);
         }

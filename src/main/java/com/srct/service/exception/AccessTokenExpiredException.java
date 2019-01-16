@@ -7,15 +7,14 @@
  */
 package com.srct.service.exception;
 
- /** 
- * @ClassName: AccessTokenExpiredException 
- * @Description: TODO 
+/**
+ * @ClassName: AccessTokenExpiredException
+ * @Description: TODO
  */
-public class AccessTokenExpiredException extends ServiceException{
+public class AccessTokenExpiredException extends ServiceException {
 
     /**
      * 
      */
     private static final long serialVersionUID = 8185006320114840646L;
-    
 }

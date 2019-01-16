@@ -23,11 +23,15 @@ import com.srct.service.utils.CommonUtil;
 public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
 
     private static final String REDIS_ACCESSTOKEN_SUFFIX = "accessToken";
+
     private static final String REDIS_REFRESHTOKEN_SUFFIX = "refreshToken";
+
     private static final String REDIS_ROLE_SUFFIX = "role";
 
     private static final int ACCESSTOKEN_EXPIRATIONTIME = 2 * 60 * 60;
+
     private static final int REFRESHTOKEN_EXPIRATIONTIME = 30 * 24 * 60 * 60;
+
     @Autowired
     RedisService redisService;
 
@@ -35,8 +39,8 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
      * (non-Javadoc)
      * 
      * @see
-     * com.srct.service.service.RedisTokenOperateService#setAccessToken(java.lang.
-     * String)
+     * com.srct.service.service.RedisTokenOperateService#setAccessToken(java.
+     * lang. String)
      */
     @Override
     public void setAccessToken(Integer uid, String accessToken) {
@@ -58,21 +62,20 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
      * (non-Javadoc)
      * 
      * @see
-     * com.srct.service.service.RedisTokenOperateService#setRefreshToken(java.lang.
-     * String)
+     * com.srct.service.service.RedisTokenOperateService#setRefreshToken(java.
+     * lang. String)
      */
     @Override
     public void setRefreshToken(Integer uid, String refreshToken) {
         redisService.setex(uid + REDIS_REFRESHTOKEN_SUFFIX, REFRESHTOKEN_EXPIRATIONTIME, refreshToken);
-
     }
 
     /*
      * (non-Javadoc)
      * 
      * @see
-     * com.srct.service.service.RedisTokenOperateService#getRefreshToken(java.lang.
-     * Integer)
+     * com.srct.service.service.RedisTokenOperateService#getRefreshToken(java.
+     * lang. Integer)
      */
     @Override
     public String getRefreshToken(Integer uid) {
@@ -82,7 +85,8 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
     /*
      * (non-Javadoc)
      * 
-     * @see com.srct.service.service.RedisTokenOperateService#setUserRole(java.lang.
+     * @see
+     * com.srct.service.service.RedisTokenOperateService#setUserRole(java.lang.
      * Integer, com.srct.service.utils.CommonEnum.AccountRoleEnum)
      */
     @Override
@@ -93,7 +97,8 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
     /*
      * (non-Javadoc)
      * 
-     * @see com.srct.service.service.RedisTokenOperateService#getUserRole(java.lang.
+     * @see
+     * com.srct.service.service.RedisTokenOperateService#getUserRole(java.lang.
      * Integer)
      */
     @Override
@@ -101,8 +106,11 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
         return redisService.get(uid + REDIS_ROLE_SUFFIX);
     }
 
-    /* (non-Javadoc)
-     * @see com.srct.service.service.RedisTokenOperateService#getUid(java.lang.String)
+    /*
+     * (non-Javadoc)
+     * 
+     * @see com.srct.service.service.RedisTokenOperateService#getUid(java.lang.
+     * String)
      */
     @Override
     public String getUid(String accessToken) {

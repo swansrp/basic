@@ -55,7 +55,6 @@ public interface RedisService {
     void openPipeline();
 
     List<Object> closePipeline();
-
     // void addData(RedisKeyDto redisKeyDto);
     //
     // void delete(RedisKeyDto redisKeyDto);

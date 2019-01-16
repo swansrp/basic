@@ -42,9 +42,7 @@ public class LogAspect {
         String methodName = pjp.getSignature().getName();
         String paramNames = getParams(pjp);
         Log.d("Enter " + methodName + "(" + paramNames + ")");
-
         res = pjp.proceed();
-
         Log.d("Exit " + methodName + "(" + paramNames + ")");
         return res;
     }
@@ -79,6 +77,5 @@ public class LogAspect {
             }
         }
         return res;
-
     }
 }

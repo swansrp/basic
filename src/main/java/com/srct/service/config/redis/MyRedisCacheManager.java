@@ -26,89 +26,91 @@ import com.srct.service.utils.log.Log;
 
 public class MyRedisCacheManager extends RedisCacheManager implements ApplicationContextAware, InitializingBean {
 
-	private final RedisCacheWriter cacheWriter;
-	private final RedisCacheConfiguration defaultCacheConfig;
+    private final RedisCacheWriter cacheWriter;
 
-	private ApplicationContext applicationContext;
-	private Map<String, RedisCacheConfiguration> initialCacheConfiguration = new LinkedHashMap<>();
+    private final RedisCacheConfiguration defaultCacheConfig;
 
-	public MyRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration) {
-		super(cacheWriter, defaultCacheConfiguration);
-		this.cacheWriter = cacheWriter;
-		this.defaultCacheConfig = defaultCacheConfiguration;
-		// TODO Auto-generated constructor stub
-	}
+    private ApplicationContext applicationContext;
 
-	@Override
-	public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-		// TODO Auto-generated method stub
-		this.applicationContext = applicationContext;
-	}
+    private Map<String, RedisCacheConfiguration> initialCacheConfiguration = new LinkedHashMap<>();
 
-	@Override
-	public void afterPropertiesSet() {
-		String[] beanNames = applicationContext.getBeanNamesForType(Object.class);
-		for (String beanName : beanNames) {
-			final Class clazz = applicationContext.getType(beanName);
-			add(clazz);
-		}
-		super.afterPropertiesSet();
-	}
+    public MyRedisCacheManager(RedisCacheWriter cacheWriter, RedisCacheConfiguration defaultCacheConfiguration) {
+        super(cacheWriter, defaultCacheConfiguration);
+        this.cacheWriter = cacheWriter;
+        this.defaultCacheConfig = defaultCacheConfiguration;
+        // TODO Auto-generated constructor stub
+    }
 
-	/**
-	 * Configuration hook for creating {@link RedisCache} with given name and
-	 * {@code cacheConfig}.
-	 *
-	 * @param name
-	 *            must not be {@literal null}.
-	 * @param cacheConfig
-	 *            can be {@literal null}.
-	 * @return never {@literal null}.
-	 */
-	protected RedisCache createRedisCache(String name, @Nullable RedisCacheConfiguration cacheConfig) {
-		return new MyRedisCache(name, cacheWriter, cacheConfig != null ? cacheConfig : defaultCacheConfig);
-	}
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        // TODO Auto-generated method stub
+        this.applicationContext = applicationContext;
+    }
 
-	@Override
-	protected Collection<RedisCache> loadCaches() {
-		List<RedisCache> caches = new LinkedList<>();
-		Log.e("loadCaches");
-		for (Map.Entry<String, RedisCacheConfiguration> entry : initialCacheConfiguration.entrySet()) {
-			Log.e(entry.getKey());
-			caches.add(createRedisCache(entry.getKey(), entry.getValue()));
-		}
-		return caches;
-	}
+    @Override
+    public void afterPropertiesSet() {
+        String[] beanNames = applicationContext.getBeanNamesForType(Object.class);
+        for (String beanName : beanNames) {
+            final Class clazz = applicationContext.getType(beanName);
+            add(clazz);
+        }
+        super.afterPropertiesSet();
+    }
 
-	private void add(final Class clazz) {
-		ReflectionUtils.doWithMethods(clazz, method -> {
-			ReflectionUtils.makeAccessible(method);
-			CacheExpire cacheExpire = AnnotationUtils.findAnnotation(method, CacheExpire.class);
-			if (cacheExpire == null) {
-				return;
-			}
-			Cacheable cacheable = AnnotationUtils.findAnnotation(method, Cacheable.class);
-			if (cacheable != null) {
-				add(cacheable.cacheNames(), cacheExpire);
-				return;
-			}
-		}, method -> null != AnnotationUtils.findAnnotation(method, CacheExpire.class));
-	}
+    /**
+     * Configuration hook for creating {@link RedisCache} with given name and
+     * {@code cacheConfig}.
+     *
+     * @param name
+     *            must not be {@literal null}.
+     * @param cacheConfig
+     *            can be {@literal null}.
+     * @return never {@literal null}.
+     */
+    protected RedisCache createRedisCache(String name, @Nullable RedisCacheConfiguration cacheConfig) {
+        return new MyRedisCache(name, cacheWriter, cacheConfig != null ? cacheConfig : defaultCacheConfig);
+    }
 
-	private void add(String[] cacheNames, CacheExpire cacheExpire) {
-		GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
-		RedisSerializationContext.SerializationPair<Object> pair = RedisSerializationContext.SerializationPair
-				.fromSerializer(serializer);
-		for (String cacheName : cacheNames) {
-			if (cacheName == null || "".equals(cacheName.trim())) {
-				continue;
-			}
-			long expire = cacheExpire.expire();
-			if (expire >= 0) {
-				RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-						.entryTtl(Duration.ofSeconds(expire)).serializeValuesWith(pair);
-				initialCacheConfiguration.put(cacheName, config);
-			}
-		}
-	}
+    @Override
+    protected Collection<RedisCache> loadCaches() {
+        List<RedisCache> caches = new LinkedList<>();
+        Log.e("loadCaches");
+        for (Map.Entry<String, RedisCacheConfiguration> entry : initialCacheConfiguration.entrySet()) {
+            Log.e(entry.getKey());
+            caches.add(createRedisCache(entry.getKey(), entry.getValue()));
+        }
+        return caches;
+    }
+
+    private void add(final Class clazz) {
+        ReflectionUtils.doWithMethods(clazz, method -> {
+            ReflectionUtils.makeAccessible(method);
+            CacheExpire cacheExpire = AnnotationUtils.findAnnotation(method, CacheExpire.class);
+            if (cacheExpire == null) {
+                return;
+            }
+            Cacheable cacheable = AnnotationUtils.findAnnotation(method, Cacheable.class);
+            if (cacheable != null) {
+                add(cacheable.cacheNames(), cacheExpire);
+                return;
+            }
+        }, method -> null != AnnotationUtils.findAnnotation(method, CacheExpire.class));
+    }
+
+    private void add(String[] cacheNames, CacheExpire cacheExpire) {
+        GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
+        RedisSerializationContext.SerializationPair<Object> pair = RedisSerializationContext.SerializationPair
+                .fromSerializer(serializer);
+        for (String cacheName : cacheNames) {
+            if (cacheName == null || "".equals(cacheName.trim())) {
+                continue;
+            }
+            long expire = cacheExpire.expire();
+            if (expire >= 0) {
+                RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
+                        .entryTtl(Duration.ofSeconds(expire)).serializeValuesWith(pair);
+                initialCacheConfiguration.put(cacheName, config);
+            }
+        }
+    }
 }

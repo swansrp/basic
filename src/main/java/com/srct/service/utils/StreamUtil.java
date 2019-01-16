@@ -16,6 +16,7 @@ import java.io.Writer;
  * 
  */
 public class StreamUtil {
+
     private StreamUtil() {
     }
 
@@ -29,10 +30,8 @@ public class StreamUtil {
         if (bufferSize == -1) {
             bufferSize = DEFAULT_BUFFER_SIZE;
         }
-
         byte[] buffer = new byte[bufferSize];
         int amount;
-
         while ((amount = in.read(buffer)) >= 0) {
             out.write(buffer, 0, amount);
         }
@@ -46,10 +45,8 @@ public class StreamUtil {
         if (bufferSize == -1) {
             bufferSize = DEFAULT_BUFFER_SIZE >> 1;
         }
-
         char[] buffer = new char[bufferSize];
         int amount;
-
         while ((amount = in.read(buffer)) >= 0) {
             out.write(buffer, 0, amount);
         }
@@ -73,7 +70,6 @@ public class StreamUtil {
 
     public static String readText(InputStream in, String encoding, int bufferSize) throws IOException {
         Reader reader = (encoding == null) ? new InputStreamReader(in) : new InputStreamReader(in, encoding);
-
         return readText(reader, bufferSize);
     }
 
@@ -83,13 +79,14 @@ public class StreamUtil {
 
     public static String readText(Reader reader, int bufferSize) throws IOException {
         StringWriter writer = new StringWriter();
-
         io(reader, writer, bufferSize);
         return writer.toString();
     }
 
     private static class SynchronizedOutputStream extends OutputStream {
+
         private OutputStream out;
+
         private Object lock;
 
         SynchronizedOutputStream(OutputStream out) {

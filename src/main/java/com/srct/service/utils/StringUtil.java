@@ -10,13 +10,12 @@ package com.srct.service.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
-/** 
- * @ClassName: StringUtil 
- * @Description: TODO 
+/**
+ * @ClassName: StringUtil
+ * @Description: TODO
  */
-
 public class StringUtil {
-    
+
     public static String firstLowerCamelCase(String str) {
         if (StringUtils.isNotBlank(str)) {
             String[] strs = str.split("_");
@@ -32,8 +31,7 @@ public class StringUtil {
         }
         return str;
     }
-    
-    
+
     public static String firstUpperCamelCase(String str) {
         if (StringUtils.isNotBlank(str)) {
             String[] strs = str.split("_");
@@ -58,18 +56,17 @@ public class StringUtil {
         return str;
     }
 
-
-	public static String UppserForShort(String str) {
-		String res = "";
-		if (StringUtils.isNotBlank(str)) {
-			String[] ss = str.split("(?<!^)(?=[A-Z])");
-			for(String s:ss) {
-				res += s;
-			}
-		}
-		if(res.length()<3) {
-			res = str.substring(0, 3).toUpperCase();
-		}
-		return res;
-	}
+    public static String UppserForShort(String str) {
+        String res = "";
+        if (StringUtils.isNotBlank(str)) {
+            String[] ss = str.split("(?<!^)(?=[A-Z])");
+            for (String s : ss) {
+                res += s;
+            }
+        }
+        if (res.length() < 3) {
+            res = str.substring(0, 3).toUpperCase();
+        }
+        return res;
+    }
 }

@@ -6,7 +6,6 @@
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
  *  
 */
-
 package com.srct.service.utils.security;
 
 import java.io.UnsupportedEncodingException;
@@ -26,12 +25,14 @@ import java.util.Base64;
 public class Base64Util {
 
     private Base64Util() {
-
     }
 
     static final Base64.Decoder urlDecoder = Base64.getUrlDecoder();
+
     static final Base64.Encoder urlEncoder = Base64.getUrlEncoder();
+
     static final Base64.Decoder decoder = Base64.getDecoder();
+
     static final Base64.Encoder encoder = Base64.getEncoder();
 
     public static String encode(String src, boolean urlSafe) throws UnsupportedEncodingException {

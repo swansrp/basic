@@ -28,16 +28,19 @@ import com.srct.service.utils.log.Log;
  * @ClassName: DatabaseUtil
  * @Description: TODO
  */
-
 public class DatabaseUtil {
 
     public static final String DRIVER = "com.mysql.jdbc.Driver";
-    public static final String BASEURL = "jdbc:mysql://109.130.241.38:3306/";
-    public static final String PROFILE = "?characterEncoding=utf8&autoReconnect=true&useSSL=false";
-    public static final String USERNAME = "root";
-    public static final String PASSWORD = "admin";
-    private static final String SQL = "SELECT * FROM ";
 
+    public static final String BASEURL = "jdbc:mysql://localhost:3306/";
+
+    public static final String PROFILE = "?characterEncoding=utf8&autoReconnect=true&useSSL=false";
+
+    public static final String USERNAME = "root";
+
+    public static final String PASSWORD = "";
+
+    private static final String SQL = "SELECT * FROM ";
     static {
         try {
             Class.forName(DRIVER);
@@ -212,9 +215,7 @@ public class DatabaseUtil {
             pStemt = conn.prepareStatement(tableSql);
             ResultSet rs = pStemt.executeQuery(tableSql);
             while (rs.next()) {
-
             }
-
         } catch (SQLException e) {
             Log.e("getColumnNames failure", e);
         } finally {
@@ -238,7 +239,6 @@ public class DatabaseUtil {
             // mysql convertDatabaseCharsetType null
             ResultSet rs = dbMetData.getTables(null, convertDatabaseCharsetType("root", "mysql"), null,
                     new String[] { "TABLE", "VIEW" });
-
             while (rs.next()) {
                 if (rs.getString(4) != null
                         && (rs.getString(4).equalsIgnoreCase("TABLE") || rs.getString(4).equalsIgnoreCase("VIEW"))) {
@@ -262,7 +262,6 @@ public class DatabaseUtil {
             // mysql convertDatabaseCharsetType null
             ResultSet rs = dbMetData.getTables(null, convertDatabaseCharsetType("root", "mysql"), null,
                     new String[] { "TABLE", "VIEW" });
-
             while (rs.next()) {
                 if (rs.getString(4) != null
                         && (rs.getString(4).equalsIgnoreCase("TABLE") || rs.getString(4).equalsIgnoreCase("VIEW"))) {
@@ -271,17 +270,16 @@ public class DatabaseUtil {
                     // 根据表名提前表里面信息：
                     ResultSet colRet = dbMetData.getColumns(null, "%", tableName, "%");
                     while (colRet.next()) {
-
                         String columnName = colRet.getString("COLUMN_NAME");
                         String columnType = colRet.getString("TYPE_NAME");
                         int datasize = colRet.getInt("COLUMN_SIZE");
                         int digits = colRet.getInt("DECIMAL_DIGITS");
                         int nullable = colRet.getInt("NULLABLE");
                         String comment = colRet.getString("REMARKS");
-                        // System.out.println(columnName + " " + columnType + " " + datasize + " " +
+                        // System.out.println(columnName + " " + columnType + "
+                        // " + datasize + " " +
                         // digits + " "
                         // + nullable + " " + comment);
-
                         BaseData baseData = new BaseData();
                         baseData.setTableName(StringUtil.firstUpperCamelCase(tableName));
                         baseData.setColumnComment(comment);
@@ -289,7 +287,6 @@ public class DatabaseUtil {
                         baseData.setColumnType(getJavaType(columnType));
                         list.add(baseData);
                     }
-
                 }
             }
         } catch (SQLException e) {
@@ -298,9 +295,9 @@ public class DatabaseUtil {
             closeConnection(conn);
         }
         return list;
-
         // resultSet数据下标从1开始 ResultSet tableRet =
-        // conn.getMetaData().getTables(null, null, "%", new String[] { "TABLE" });
+        // conn.getMetaData().getTables(null, null, "%", new String[] { "TABLE"
+        // });
         // while (tableRet.next()) {
         // System.out.print(tableRet.getString(3) + "\t");
         // }
@@ -370,6 +367,8 @@ public class DatabaseUtil {
             javaType = "BigDecimal";
             break;
         case "INT UNSIGNED":
+        case "SMALLINT UNSIGNED":
+        case "TINYINT UNSIGNED":
         case "SMALLINT":
         case "TINYINT":
         case "INT":
@@ -377,8 +376,8 @@ public class DatabaseUtil {
             break;
         case "BIGINT":
         case "BIGINT UNSIGNED":
-        	javaType = "Long";
-        	break;
+            javaType = "Long";
+            break;
         default:
             javaType = "未知类型";
             System.out.println("存在不支持类型！请手写:" + sqlType);
@@ -386,5 +385,4 @@ public class DatabaseUtil {
         }
         return javaType;
     }
-
 }

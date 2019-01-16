@@ -15,7 +15,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 public class JSONUtil {
 
     private JSONUtil() {
-
     }
 
     /**
@@ -37,37 +36,53 @@ public class JSONUtil {
         String result = null;
         ObjectMapper objectMapper = new ObjectMapper();
         // set config of JSON
-        objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);// can use single quote
-        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);// allow unquoted field names
-        objectMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, needOrder); // ASCII order
+        objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);// can
+                                                                             // use
+                                                                             // single
+                                                                             // quote
+        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);// allow
+                                                                                    // unquoted
+                                                                                    // field
+                                                                                    // names
+        objectMapper.configure(MapperFeature.SORT_PROPERTIES_ALPHABETICALLY, needOrder); // ASCII
+                                                                                         // order
         if (ignoreEmpty) {
             objectMapper.setSerializationInclusion(Include.NON_EMPTY);
         }
         if (!ignoreIndent) {
             objectMapper.configure(SerializationFeature.INDENT_OUTPUT, Boolean.TRUE);
         }
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));// set date format
-
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));// set
+                                                                                // date
+                                                                                // format
         try {
             result = objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            //Log.e("Generate JSON String error! %s", e.getMessage());
+            // Log.e("Generate JSON String error! %s", e.getMessage());
         }
         return result;
     }
-    
+
     public static String makeJSONMap(Object object) {
         String result = null;
         ObjectMapper objectMapper = new ObjectMapper();
         // set config of JSON
-        objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);// can use single quote
-        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);// allow unquoted field names
+        objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);// can
+                                                                             // use
+                                                                             // single
+                                                                             // quote
+        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);// allow
+                                                                                    // unquoted
+                                                                                    // field
+                                                                                    // names
         objectMapper.configure(JsonParser.Feature.ALLOW_MISSING_VALUES, true);
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));// set date format
+        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));// set
+                                                                                // date
+                                                                                // format
         try {
             result = objectMapper.writeValueAsString(object);
         } catch (JsonProcessingException e) {
-            //Log.e("Generate JSON String error! %s", e.getMessage());
+            // Log.e("Generate JSON String error! %s", e.getMessage());
         }
         return result;
     }
@@ -82,20 +97,18 @@ public class JSONUtil {
      * @param elementClasses
      *            元素类型
      */
-
     // YourBean bean = (YourBean)readJson(jsonString, YourBean.class)
     // List<YourBean> list = (List<YourBean>)readJson(jsonString, List.class,
     // yourBean.class);
-    // Map<H,D> map = (Map<H,D>)readJson(jsonString, HashMap.class, String.class,
+    // Map<H,D> map = (Map<H,D>)readJson(jsonString, HashMap.class,
+    // String.class,
     // YourBean.class);
     public static <T> T readJson(String jsonStr, Class<?> collectionClass, Class<?>... elementClasses)
             throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         JavaType javaType = mapper.getTypeFactory().constructParametricType(collectionClass, elementClasses);
-
         return mapper.readValue(jsonStr, javaType);
-
     }
 
     public static boolean isJSONValid(String jsonInString) {

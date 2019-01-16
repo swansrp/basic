@@ -6,7 +6,6 @@
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
  *  
 */
-
 package com.srct.service.config.db;
 
 import org.aspectj.lang.annotation.After;
@@ -28,10 +27,10 @@ import com.srct.service.utils.log.Log;
  * @since JDK 1.8
  * @see
  */
-
 @Aspect
 @Component
 public class DynamicDataSourceAspectCommon {
+
     @Pointcut("execution(public * com.srct.service.service..*.*(..))")
     public void callSecruityMapper() {
         // Just a pointCut function

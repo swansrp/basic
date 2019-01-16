@@ -4,6 +4,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 public class SHA256Util {
+
     /**
      * common SHA256
      * 
@@ -23,7 +24,6 @@ public class SHA256Util {
         }
         char[] charArray = input.toCharArray();
         byte[] byteArray = new byte[charArray.length];
-
         for (int i = 0; i < charArray.length; i++)
             byteArray[i] = (byte) charArray[i];
         byte[] sha256Bytes = sha256.digest(byteArray);
@@ -35,6 +35,5 @@ public class SHA256Util {
             hexValue.append(Integer.toHexString(val));
         }
         return hexValue.toString();
-
     }
 }

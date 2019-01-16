@@ -34,7 +34,6 @@ import com.srct.service.utils.log.Log;
  * @ClassName: AuthInterceptor
  * @Description: TODO
  */
-
 @Component
 public class AuthInterceptor extends HandlerInterceptorAdapter {
 
@@ -49,9 +48,8 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.springframework.web.servlet.handler.HandlerInterceptorAdapter#preHandle(
-     * javax.servlet.http.HttpServletRequest,
+     * @see org.springframework.web.servlet.handler.HandlerInterceptorAdapter#
+     * preHandle( javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse, java.lang.Object)
      */
     @Override
@@ -60,7 +58,6 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
         // TODO Auto-generated method stub
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
-
         if (method.isAnnotationPresent(TokenRole.class)) {
             String token = request.getHeader("accessToken");
             if (token.equals("test")) {
@@ -69,21 +66,17 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
             if (StringUtils.isEmpty(token)) {
                 throw new UserNotLoginException();
             }
-
             String uid = redisTokenOperateService.getUid(token);
-            if (StringUtils.isEmpty(uid))
-            {
+            if (StringUtils.isEmpty(uid)) {
                 throw new AccessTokenExpiredException();
             }
             String serverToken = redisTokenOperateService.getAccessToken(Integer.valueOf(uid));
-
             if (StringUtils.isEmpty(serverToken)) {
                 throw new AccessTokenExpiredException();
             }
             if (!token.equals(serverToken)) {
                 throw new UserNotLoginException();
             }
-
             String roleStr = redisTokenOperateService.getUserRole(Integer.valueOf(uid));
             if (StringUtils.isEmpty(roleStr)) {
                 throw new UserNotLoginException();
@@ -94,10 +87,9 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
             }
             Annotation annotation[] = method.getDeclaredAnnotations();
             Arrays.stream(annotation).filter(it -> it.annotationType().equals(TokenRole.class)).forEach(it -> {
-
                 int[] roles = ((TokenRole) it).roles();
                 Arrays.stream(roles).forEach(methodRole -> {
-                    Log.i(this.getClass(),"roles = " + methodRole);
+                    Log.i(this.getClass(), "roles = " + methodRole);
                     if (methodRole == role)
                         hasAuth = true;
                 });
@@ -114,9 +106,8 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
     /*
      * (non-Javadoc)
      * 
-     * @see
-     * org.springframework.web.servlet.handler.HandlerInterceptorAdapter#postHandle(
-     * javax.servlet.http.HttpServletRequest,
+     * @see org.springframework.web.servlet.handler.HandlerInterceptorAdapter#
+     * postHandle( javax.servlet.http.HttpServletRequest,
      * javax.servlet.http.HttpServletResponse, java.lang.Object,
      * org.springframework.web.servlet.ModelAndView)
      */

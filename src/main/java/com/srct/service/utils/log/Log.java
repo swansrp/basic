@@ -8,13 +8,13 @@ import com.srct.service.utils.JSONUtil;
 public class Log {
 
     private Log() {
-
     }
 
     private static Logger mLogger = null;
 
     private static String getCallerClassName() {
         return new SecurityManager() {
+
             public String getClassName() {
                 return getClassContext()[4].getSimpleName();
             }
@@ -23,6 +23,7 @@ public class Log {
 
     private static Class<?> getCallerClass() {
         return new SecurityManager() {
+
             public Class<?> getClassName() {
                 try {
                     return Class.forName(getClassContext()[4].getName());
@@ -157,5 +158,4 @@ public class Log {
     public static void vv(Class<?> clazz, Object o) {
         v(clazz, JSONUtil.toJSONString(o));
     }
-
 }

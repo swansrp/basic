@@ -21,6 +21,7 @@ import com.srct.service.utils.CommonEnum;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface TokenRole {
+
     int[] roles() default { CommonEnum.AccountRoleEnum.ACCOUNT_ROLE_ROOT,
             CommonEnum.AccountRoleEnum.ACCOUNT_ROLE_OTHERS };
 }

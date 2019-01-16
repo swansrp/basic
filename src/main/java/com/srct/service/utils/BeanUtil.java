@@ -6,7 +6,6 @@
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
  *  
 */
-
 package com.srct.service.utils;
 
 import java.util.HashMap;
@@ -54,7 +53,9 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
     private static final Logger logger = LoggerFactory.getLogger(BeanUtil.class);
 
     private static ScopeMetadataResolver scopeMetadataResolver = new AnnotationScopeMetadataResolver();
+
     private static BeanNameGenerator beanNameGenerator = new AnnotationBeanNameGenerator();
+
     private static WebApplicationContext ctx = null;
 
     /**
@@ -91,9 +92,7 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
         abd.setScope(scopeMetadata.getScopeName());
         // 可以自动生成name
         String beanName = (name != null ? name : beanNameGenerator.generateBeanName(abd, registry));
-
         AnnotationConfigUtils.processCommonDefinitionAnnotations(abd);
-
         BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
         BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, registry);
     }
@@ -115,7 +114,6 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         Log.i("setApplicationContext");
         ctx = (WebApplicationContext) applicationContext;
-
     }
 
     /** 
@@ -153,15 +151,14 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
      * (2)get和set方法不匹配的处理，创建拷贝的时候报错，无法拷贝任何属性(当且仅当sourceClass的get方法超过set方法时出现)
      * (3)BeanCopier 初始化例子：BeanCopier copier = BeanCopier.create(Source.class,
      * Target.class, useConverter=true)
-     * 第三个参数userConverter,是否开启Convert,默认BeanCopier只会做同名，同类型属性的copier,否则就会报错. copier
-     * = BeanCopier.create(source.getClass(), target.getClass(), false);
+     * 第三个参数userConverter,是否开启Convert,默认BeanCopier只会做同名，同类型属性的copier,否则就会报错.
+     * copier = BeanCopier.create(source.getClass(), target.getClass(), false);
      * copier.copy(source, target, null); (4)修复beanCopier对set方法强限制的约束
      * 改写net.sf.cglib.beans.BeanCopier.Generator.generateClass(ClassVisitor)方法
      * 将133行的 MethodInfo write =
-     * ReflectUtils.getMethodInfo(setter.getWriteMethod()); 预先存一个names2放入 109 Map
-     * names2 = new HashMap(); 110 for (int i = 0; i < getters.length; ++i) { 111
-     * names2.put(setters[i].getName(), getters[i]); }
+     * ReflectUtils.getMethodInfo(setter.getWriteMethod()); 预先存一个names2放入 109
+     * Map names2 = new HashMap(); 110 for (int i = 0; i < getters.length; ++i)
+     * { 111 names2.put(setters[i].getName(), getters[i]); }
      * 调用这行代码前判断查询下，如果没有改writeMethod则忽略掉该字段的操作，这样就可以避免异常的发生。
      */
-
 }

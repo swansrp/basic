@@ -16,42 +16,49 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-/** 
- * @ClassName: AuthorizationConfigureAdapter 
- * @Description: TODO 
+/**
+ * @ClassName: AuthorizationConfigureAdapter
+ * @Description: TODO
  */
-
 @Configuration
-public class AuthorizationConfigureAdapter extends WebMvcConfigurationSupport{
-    /* (non-Javadoc)
-     * @see org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport#addInterceptors(org.springframework.web.servlet.config.annotation.InterceptorRegistry)
+public class AuthorizationConfigureAdapter extends WebMvcConfigurationSupport {
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.web.servlet.config.annotation.
+     * WebMvcConfigurationSupport#
+     * addInterceptors(org.springframework.web.servlet.config.annotation.
+     * InterceptorRegistry)
      */
-	@Autowired
-	AuthInterceptor authInterceptor;
-	/* (non-Javadoc)
-	 * @see org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport#addResourceHandlers(org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry)
-	 */
-	
-	@Override
-	protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-		// TODO Auto-generated method stub
-		registry.addResourceHandler("/js/**").addResourceLocations("classpath:/js/");
-        registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
-	}	
-	
+    @Autowired
+    AuthInterceptor authInterceptor;
+    /*
+     * (non-Javadoc)
+     * 
+     * @see org.springframework.web.servlet.config.annotation.
+     * WebMvcConfigurationSupport#
+     * addResourceHandlers(org.springframework.web.servlet.config.annotation.
+     * ResourceHandlerRegistry)
+     */
+
+    @Override
+    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // TODO Auto-generated method stub
+        registry.addResourceHandler("/js/**").addResourceLocations("classpath:/js/");
+        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+    }
+
     @Override
     protected void addInterceptors(InterceptorRegistry registry) {
-    	// TODO Auto-generated method stub
-        //registry.addInterceptor(authInterceptor).addPathPatterns("/**");
+        // TODO Auto-generated method stub
+        // registry.addInterceptor(authInterceptor).addPathPatterns("/**");
         registry.addInterceptor(authInterceptor).addPathPatterns("/rfu/**");
     }
+
     @Override
-    public void configureContentNegotiation(
-            ContentNegotiationConfigurer configurer) {
-        configurer.ignoreAcceptHeader(true).defaultContentType(
-                MediaType.APPLICATION_JSON_UTF8);
+    public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
+        configurer.ignoreAcceptHeader(true).defaultContentType(MediaType.APPLICATION_JSON_UTF8);
     }
 }

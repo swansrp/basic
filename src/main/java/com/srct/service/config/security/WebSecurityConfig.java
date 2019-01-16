@@ -11,29 +11,33 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter{
-	@Bean
-    UserDetailsService customUserService(){ // Regist UserDetailsService bean
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Bean
+    UserDetailsService customUserService() { // Regist UserDetailsService bean
         return new CustomUserService();
     }
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(customUserService()).passwordEncoder(new BCryptPasswordEncoder()); //user Details Service验证
-
+        auth.userDetailsService(customUserService()).passwordEncoder(new BCryptPasswordEncoder()); // user
+                                                                                                   // Details
+                                                                                                   // Service验证
     }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http
-//            .authorizeRequests(）
-//                .antMatchers("/hello").hasAnyAuthority("ADMIN")
-//                .anyRequest().authenticated()
-//                .and()
-//            .formLogin()
-//                .defaultSuccessUrl("/hello")
-//                .permitAll()
-//                .and()
-//            .logout()
-//                .permitAll();
-    	http.csrf().disable().authorizeRequests().anyRequest().permitAll();
+        // http
+        // .authorizeRequests(）
+        // .antMatchers("/hello").hasAnyAuthority("ADMIN")
+        // .anyRequest().authenticated()
+        // .and()
+        // .formLogin()
+        // .defaultSuccessUrl("/hello")
+        // .permitAll()
+        // .and()
+        // .logout()
+        // .permitAll();
+        http.csrf().disable().authorizeRequests().anyRequest().permitAll();
     }
 }

@@ -16,6 +16,7 @@ import com.srct.service.bo.RegistRequestInfoBO;
  * @Description: TODO
  */
 public interface AccountService {
+
     LoginResponseInfoBO login(LoginRequestInfoBO loginRequestInfoBO);
 
     int regist(RegistRequestInfoBO registRequestInfoBO);

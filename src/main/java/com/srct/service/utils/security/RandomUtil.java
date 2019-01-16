@@ -6,7 +6,6 @@
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
  *  
 */
-
 package com.srct.service.utils.security;
 
 import java.io.UnsupportedEncodingException;
@@ -32,7 +31,6 @@ import com.srct.service.utils.log.Log;
 public class RandomUtil {
 
     private RandomUtil() {
-
     }
 
     private static final String SOURCES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
@@ -62,10 +60,10 @@ public class RandomUtil {
         String sdf = new SimpleDateFormat("yyMMddHHmmssSSS").format(new Date());
         return sdf + suffix;
     }
-    
+
     public static Integer getNumber(Integer start, Integer end) {
         Random random = new SecureRandom();
-        return random.nextInt(end-start)+start;
+        return random.nextInt(end - start) + start;
     }
 
     public static String getUUIDNumber(int length) {
@@ -77,7 +75,6 @@ public class RandomUtil {
         } else {
             return String.valueOf(value).substring(0, length);
         }
-
     }
 
     public static String getUUID() {
@@ -87,7 +84,6 @@ public class RandomUtil {
         } catch (UnsupportedEncodingException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-
         }
         if (uuid22 == null) {
             Log.d("uuid22 generate fail");
@@ -101,12 +97,10 @@ public class RandomUtil {
         long msb = uuid.getMostSignificantBits();
         long lsb = uuid.getLeastSignificantBits();
         byte[] buffer = new byte[16];
-
         for (int i = 0; i < 8; i++) {
             buffer[i] = (byte) ((msb >>> 8 * (7 - i)) & 0xFF);
             buffer[i + 8] = (byte) ((lsb >>> 8 * (7 - i)) & 0xFF);
         }
         return buffer;
     }
-
 }
