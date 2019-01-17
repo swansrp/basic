@@ -91,7 +91,7 @@
 		<appender-ref ref="STDOUTIDE" />
 	</logger>
 
-	<root level="trace">
+	<root level="info">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="syslog" />
 	</root>
