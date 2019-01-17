@@ -15,9 +15,9 @@ package com.srct.service.config.db;
 public class DataSourceCommonConstant {
 
     // Common
-    public static final Integer DATABASE_COMMON_INVALID = 0;
+    public static final Byte DATABASE_COMMON_INVALID = 0;
 
-    public static final Integer DATABASE_COMMON_VALID = 1;
+    public static final Byte DATABASE_COMMON_VALID = 1;
 
-    public static final Integer DATABASE_COMMON_IGORE_VALID = -1;
+    public static final Byte DATABASE_COMMON_IGORE_VALID = -1;
 }

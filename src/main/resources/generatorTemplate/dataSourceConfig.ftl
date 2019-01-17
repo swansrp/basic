@@ -27,5 +27,4 @@ public class DataBaseConfig {
 	}
 
 </#list>
-
 }

@@ -23,19 +23,18 @@ public class DynamicDataSourceAspect {
 <#list dbConfigMap?keys as db>	
 	@Pointcut("execution(* ${commonPackage}.datalayer.${dbConfigMapPackageName[db]}.repository..*.*(..))")
 	public void repository${dbConfigMap[db]}() {
-		// Just a pointCut function
-	}
+        // Just a pointCut function
+    }
 
 	@Before("repository${dbConfigMap[db]}()")
 	public void before${dbConfigMap[db]}() {
 		DataSourceContextHolder.setDB("${dbConfigMapPackageName[db]}");
-	}
+    }
 
 	@After("repository${dbConfigMap[db]}()")
 	public void after${dbConfigMap[db]}() {
-		DataSourceContextHolder.clearDB();
-	}
+        DataSourceContextHolder.clearDB();
+    }
 
 </#list>
-
 }

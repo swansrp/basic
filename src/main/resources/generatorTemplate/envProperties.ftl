@@ -12,13 +12,13 @@ my.db.config.property = ${r"${"}db.config.${dbConfigMapPackageName[db]}.property
 </#if>
 #===================================== RDS (${db}) ==============================
 <#if env == "-dev"> 
-db.config.${dbConfigMapPackageName[db]}.ip = 109.130.241.38
+db.config.${dbConfigMapPackageName[db]}.ip = localhost
 db.config.${dbConfigMapPackageName[db]}.port = 3306
 db.config.${dbConfigMapPackageName[db]}.property = characterEncoding=utf8&useSSL=false
 
 db.config.${dbConfigMapPackageName[db]}.url = jdbc:mysql://${r"${"}db.config.${dbConfigMapPackageName[db]}.ip${r"}"}:${r"${"}db.config.${dbConfigMapPackageName[db]}.port${r"}"}/${r"${"}db.config.${dbConfigMapPackageName[db]}.name${r"}"}?${r"${"}db.config.${dbConfigMapPackageName[db]}.property${r"}"}
 db.config.${dbConfigMapPackageName[db]}.username = root
-db.config.${dbConfigMapPackageName[db]}.password = admin
+db.config.${dbConfigMapPackageName[db]}.password = 
 db.config.${dbConfigMapPackageName[db]}.driver-class-name = com.mysql.jdbc.Driver
 
 <#else>
@@ -35,9 +35,9 @@ db.config.${dbConfigMapPackageName[db]}.driver-class-name = com.mysql.jdbc.Drive
 </#list>
 #===================================== Redis ==============================
 <#if env == "-dev"> 
-spring.redis.host = 109.130.241.38
-spring.redis.port = 8005
-spring.redis.password = Adm!n
+spring.redis.host = Localhost
+spring.redis.port = 6379
+spring.redis.password = 
 <#else>
 spring.redis.host = 
 spring.redis.port = 

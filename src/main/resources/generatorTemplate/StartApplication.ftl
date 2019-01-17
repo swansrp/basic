@@ -14,7 +14,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.ComponentScan;
 
-/** 
+/**
  * @ClassName: ${moduleName}StartApplication 
  * @Description: Start Application for ${projectName} - ${moduleName} 
  */

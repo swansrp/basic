@@ -42,8 +42,8 @@ public class ${projectName}ExceptionHandler extends CommonExceptionHandler {
     }
     
     /**
-     * return response with data,if data is null,return no data message,or return
-     * data
+     * return response with data,if data is null,return no data message,or
+     * return data
      *
      * @param data
      * @return

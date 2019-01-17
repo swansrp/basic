@@ -53,7 +53,7 @@ public class ${modelName}Dao {
 	
     @Cacheable(value = "${modelName}", key = "'valid_' + #valid")
     @CacheExpire(expire = 3600L)
-    public List<${modelName}> getAll${modelName}List(Integer valid) {
+    public List<${modelName}> getAll${modelName}List(Byte valid) {
         ${modelName}Example example = new ${modelName}Example();
         ${modelName}Example.Criteria criteria = example.createCriteria();
         if (!valid.equals(DataSourceCommonConstant.DATABASE_COMMON_IGORE_VALID)) {
