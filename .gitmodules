@@ -1,0 +1,3 @@
+[submodule "config/aliconfig"]
+	path = config/aliconfig
+	url = https://github.com/alibaba/p3c.git

@@ -1,5 +1,8 @@
 package com.srct.service.utils.log;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -7,8 +10,7 @@ import com.srct.service.utils.JSONUtil;
 
 public class Log {
 
-    private Log() {
-    }
+    private Log() {}
 
     private static Logger mLogger = null;
 
@@ -42,6 +44,48 @@ public class Log {
 
     private static String loc() {
         return "(" + getCallerClassName() + ".java:" + getCallerLine() + ") " + "%s";
+    }
+
+    private static String getExceptionMessage(Exception e) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(new StringWriter());
+        e.printStackTrace(pw);
+        return sw.toString();
+    }
+
+    public static void i(Exception e) {
+        mLogger = LoggerFactory.getLogger(getCallerClass());
+        if (mLogger.isInfoEnabled()) {
+            mLogger.info(String.format(loc(), getExceptionMessage(e)));
+        }
+    }
+
+    public static void d(Exception e) {
+        mLogger = LoggerFactory.getLogger(getCallerClass());
+        if (mLogger.isDebugEnabled()) {
+            mLogger.debug(String.format(loc(), getExceptionMessage(e)));
+        }
+    }
+
+    public static void e(Exception e) {
+        mLogger = LoggerFactory.getLogger(getCallerClass());
+        if (mLogger.isErrorEnabled()) {
+            mLogger.error(String.format(loc(), getExceptionMessage(e)));
+        }
+    }
+
+    public static void w(Exception e) {
+        mLogger = LoggerFactory.getLogger(getCallerClass());
+        if (mLogger.isWarnEnabled()) {
+            mLogger.warn(String.format(loc(), getExceptionMessage(e)));
+        }
+    }
+
+    public static void v(Exception e) {
+        mLogger = LoggerFactory.getLogger(getCallerClass());
+        if (mLogger.isTraceEnabled()) {
+            mLogger.trace(String.format(loc(), getExceptionMessage(e)));
+        }
     }
 
     public static void i(String msg, Object... strings) {
