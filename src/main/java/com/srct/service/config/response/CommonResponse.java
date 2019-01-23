@@ -1,11 +1,8 @@
-/**  
- * Project Name:SpringBootCommon  
- * File Name:CommonResponse.java  
- * Package Name:com.srct.service.config.response  
- * Date:Apr 26, 2018 7:31:49 PM  
- * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
- *  
-*/
+/**
+ * Project Name:SpringBootCommon File Name:CommonResponse.java Package Name:com.srct.service.config.response Date:Apr
+ * 26, 2018 7:31:49 PM Copyright (c) 2018, ruopeng.sha All Rights Reserved.
+ * 
+ */
 package com.srct.service.config.response;
 
 import org.springframework.http.HttpStatus;
@@ -23,7 +20,7 @@ import org.springframework.util.MultiValueMap;
  * @since JDK 1.8
  * @see
  */
-public class CommonResponse {
+public class CommonResponse<T> {
 
     private Resp res;
 
@@ -35,10 +32,10 @@ public class CommonResponse {
 
         public String message;
 
-        public Object data;
+        public T data;
     }
 
-    public CommonResponse(CommonResponseCode code, Object obj) {
+    public CommonResponse(CommonResponseCode code, T obj) {
         res = new Resp();
         res.code = code.getResultCode();
         res.message = code.getResultMessage();

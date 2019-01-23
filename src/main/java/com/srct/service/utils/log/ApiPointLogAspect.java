@@ -32,29 +32,19 @@ public class ApiPointLogAspect {
 
     private static final Logger mLogger = LoggerFactory.getLogger(ApiPointLogAspect.class);
 
-    private static final String LogFormat_SND = "[SND]|%s|%s|%s|%s|%s";
+    private static final String LogFormat_SND = "[SND]|%s|%s|%s\n|%s|%s";
 
-    private static final String LogFormat_RCV = "[RCV]|%s|%s|%s|%s|%s";
+    private static final String LogFormat_RCV = "[RCV]|%s|%s|%s|%s";
 
-    private static final String LogFormat_EX = "[EXP]|%s|%s|%s|%s|%s";
+    private static final String LogFormat_EX = "[EXP]|%s|%s|%s|%s";
 
-    private static final String LogFormat_TIME = "[TIME]|%s|%s|%s|%s|%s";
+    private static final String LogFormat_TIME = "[TIME]|%s|%s|%s|%s";
 
-    public static ThreadLocal<ThreadLogInfo> threadLocal = new ThreadLocal<ThreadLogInfo>();
+    private static final String LogFormat = "[%s]|%s|%s";
 
-    private String url = "-";
+    private static ThreadLocal<ThreadLogInfo> threadLocal = new ThreadLocal<ThreadLogInfo>();
 
-    private String ipAddress = "0.0.0.0";
-
-    private String partnerId = "-";
-
-    private String methodName = "-";
-
-    private String paramNames = "-";
-
-    private Long startTime = 0L;
-
-    private Long endTime = 0L;
+    private static ThreadLocal<MySlf4jLogInfo> mySlfLogLocal = new ThreadLocal<MySlf4jLogInfo>();
 
     @Pointcut("execution(public * com.srct.service..*.*Controller.*(..))")
     public void apiLog() {
@@ -62,8 +52,7 @@ public class ApiPointLogAspect {
     }
 
     @Pointcut("@annotation(com.srct.service.utils.log.MySlf4j)" + "||" + "@within(com.srct.service.utils.log.MySlf4j)")
-    public void myslf4j() {
-    }
+    public void myslf4j() {}
 
     @Before("apiLog()")
     public void before(JoinPoint point) {
@@ -73,25 +62,23 @@ public class ApiPointLogAspect {
     @Around("apiLog()")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         Object res = null;
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        ServletRequestAttributes attr = (ServletRequestAttributes)RequestContextHolder.currentRequestAttributes();
         HttpServletRequest req = attr.getRequest();
-        url = req.getMethod() + " " + req.getRequestURI();
-        ipAddress = req.getHeader("x-forwarded-for");
-        partnerId = HttpUtil.getHeader(req, "partnerid");
-        methodName = pjp.getSignature().getName();
-        paramNames = getParams(pjp);
-        startTime = System.currentTimeMillis();
-        threadLocal.set(new ThreadLogInfo(methodName, paramNames, startTime, null));
-        mLogger.trace(String.format(LogFormat_SND, ipAddress, url, partnerId, methodName, paramNames));
+        String url = req.getMethod() + " " + req.getRequestURI();
+        String ipAddress = req.getHeader("x-forwarded-for");
+        String header = JSONUtil.toJSONString(HttpUtil.getHeadersInfoMap(req));
+        String methodName = pjp.getSignature().getName();
+        String paramNames = getParams(pjp);
+        Long startTime = System.currentTimeMillis();
+        threadLocal.set(new ThreadLogInfo(url, ipAddress, header, methodName, paramNames, startTime, null));
+        mLogger.trace(String.format(LogFormat_SND, ipAddress, url, header, methodName, paramNames));
         try {
             res = pjp.proceed();
-            endTime = System.currentTimeMillis();
+            Long endTime = System.currentTimeMillis();
             threadLocal.get().setEndTime(endTime);
-            mLogger.trace(
-                    String.format(LogFormat_RCV, ipAddress, url, partnerId, methodName, JSONUtil.toJSONString(res)));
+            mLogger.trace(String.format(LogFormat_RCV, ipAddress, url, methodName, JSONUtil.toJSONString(res)));
         } catch (Throwable e) {
-            endTime = System.currentTimeMillis();
-            ;
+            Long endTime = System.currentTimeMillis();
             threadLocal.get().setEndTime(endTime);
             throw e;
         }
@@ -100,37 +87,9 @@ public class ApiPointLogAspect {
 
     @After("apiLog()")
     public void after() {
-        mLogger.trace(String.format(LogFormat_TIME, endTime - startTime, ipAddress, url, partnerId, methodName));
-    }
-
-    @Around("myslf4j()")
-    public Object aroundMyslf4j(ProceedingJoinPoint pjp) throws Throwable {
-        Object res = null;
-        if (threadLocal.get() == null) {
-            threadLocal.set(
-                    new ThreadLogInfo(pjp.getSignature().getName(), getParams(pjp), System.currentTimeMillis(), null));
-        } else {
-            threadLocal.get().setStartTime(System.currentTimeMillis());
-        }
-        try {
-            res = pjp.proceed();
-            endTime = System.currentTimeMillis();
-            threadLocal.get().setEndTime(endTime);
-            mLogger.trace(
-                    String.format(LogFormat_RCV, ipAddress, url, partnerId, methodName, JSONUtil.toJSONString(res)));
-        } catch (Throwable e) {
-            endTime = System.currentTimeMillis();
-            threadLocal.get().setEndTime(endTime);
-            throw e;
-        }
-        return res;
-    }
-
-    @After("myslf4j()")
-    public void afterMyslf4j() {
         ThreadLogInfo info = threadLocal.get();
-        mLogger.info(String.format(LogFormat_TIME, info.getEndTime() - info.getStartTime(), "-", "-", "-",
-                info.getMethodName()));
+        mLogger.trace(String.format(LogFormat_TIME, info.getEndTime() - info.getStartTime(), info.getIpAddress(),
+            info.getUrl(), info.getMethodName()));
         threadLocal.remove();
     }
 
@@ -141,16 +100,52 @@ public class ApiPointLogAspect {
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         String msg = sw.toString();
-        endTime = System.currentTimeMillis();
-        mLogger.trace(String.format(LogFormat_EX, ipAddress, url, partnerId, methodName, msg));
+        ThreadLogInfo info = threadLocal.get();
+        mLogger.trace(String.format(LogFormat_EX, info.getIpAddress(), info.getUrl(), methodName, msg));
     }
 
     @AfterReturning("apiLog()")
-    public void afterReturning() {
+    public void afterReturning() {}
+
+    @Around("myslf4j()")
+    public Object aroundMyslf4j(ProceedingJoinPoint pjp) throws Throwable {
+        Object res = null;
+        String methodName = pjp.getSignature().getName();
+        String paramNames = getParams(pjp);
+        mySlfLogLocal.set(new MySlf4jLogInfo(methodName, paramNames, System.currentTimeMillis(), null));
+        mLogger.trace(String.format(LogFormat, "Start", methodName, paramNames));
+        try {
+            res = pjp.proceed();
+            Long endTime = System.currentTimeMillis();
+            threadLocal.get().setEndTime(endTime);
+            mLogger.trace(String.format(LogFormat, "END", methodName, JSONUtil.toJSONString(res)));
+        } catch (Throwable e) {
+            Long endTime = System.currentTimeMillis();
+            threadLocal.get().setEndTime(endTime);
+            throw e;
+        }
+        return res;
+    }
+
+    @After("myslf4j()")
+    public void afterMyslf4j() {
+        ThreadLogInfo info = threadLocal.get();
+        mLogger.info(String.format(LogFormat, "TIME", info.getEndTime() - info.getStartTime(), info.getMethodName()));
+    }
+
+    @AfterThrowing(pointcut = "myslf4j()", throwing = "e")
+    public void afterThrowMyslf4j(JoinPoint point, Throwable e) {
+        String methodName = point.getSignature().getName();
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        e.printStackTrace(pw);
+        String msg = sw.toString();
+        ThreadLogInfo info = threadLocal.get();
+        mLogger.trace(String.format(LogFormat, "EXP", info.getIpAddress(), info.getUrl(), methodName, msg));
     }
 
     private String getParams(JoinPoint point) {
-        Method method = ((MethodSignature) point.getSignature()).getMethod();
+        Method method = ((MethodSignature)point.getSignature()).getMethod();
         LocalVariableTableParameterNameDiscoverer u = new LocalVariableTableParameterNameDiscoverer();
         String[] names = u.getParameterNames(method);
         Class<?>[] types = method.getParameterTypes();

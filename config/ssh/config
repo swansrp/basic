@@ -1,0 +1,23 @@
+Host *
+	ForwardAgent yes
+	PasswordAuthentication yes
+	StrictHostKeyChecking no
+	HashKnownHosts yes
+	Compression yes
+	ServerAliveInterval 60
+	ServerAliveCountMax 5
+
+Host bastion
+	HostName 148.70.49.19
+	port 22
+	User root
+	#IdentityFile ~/.ssh/*.pem#
+
+Host *
+	port 22
+	User root
+	#IdentityFile ~/.ssh/*.pem#
+	#ProxyComand ssh bastion -W %h:%p -i ~/.ssh/*.pem#
+	
+Host dev
+	HostName 148.70.49.19
