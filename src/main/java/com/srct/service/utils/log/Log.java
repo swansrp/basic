@@ -48,7 +48,7 @@ public class Log {
 
     private static String getExceptionMessage(Exception e) {
         StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(new StringWriter());
+        PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         return sw.toString();
     }

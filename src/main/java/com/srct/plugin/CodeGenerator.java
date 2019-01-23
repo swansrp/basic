@@ -183,8 +183,12 @@ public class CodeGenerator {
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
-            cfg.getTemplate("commonProperties.ftl", "UTF-8").process(config.getData(), new FileWriter(file));
-            System.out.println(file.getAbsolutePath() + "生成成功");
+            if (file.exists()) {
+                System.out.println(file.getAbsolutePath() + "已经存在不再覆盖");
+            } else {
+                cfg.getTemplate("commonProperties.ftl", "UTF-8").process(config.getData(), new FileWriter(file));
+                System.out.println(file.getAbsolutePath() + "生成成功");
+            }
         } catch (Exception e) {
             throw new RuntimeException("生成 commonProperties 失败", e);
         }
@@ -196,6 +200,10 @@ public class CodeGenerator {
                 File file = new File(config.getResoureConfigPath() + "application" + env + ".properties");
                 if (!file.getParentFile().exists()) {
                     file.getParentFile().mkdirs();
+                }
+                if (file.exists()) {
+                    System.out.println(file.getAbsolutePath() + "已经存在不再覆盖");
+                    continue;
                 }
                 cfg.getTemplate("envProperties.ftl", "UTF-8").process(config.getData(), new FileWriter(file));
                 System.out.println(file.getAbsolutePath() + "生成成功");

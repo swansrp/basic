@@ -1,11 +1,10 @@
-/**  
-* @Title: TestController.java 
-* Copyright (c) 2019 Sharp. All rights reserved.
-* @Project Name: SpringBootCommonLib
-* @Package: com.srct.service.controller
-* @author sharp
-* @date 2019-01-23 12:47:57   
-*/  
+/**
+ * @Title: TestController.java Copyright (c) 2019 Sharp. All rights reserved.
+ * @Project Name: SpringBootCommonLib
+ * @Package: com.srct.service.controller
+ * @author sharp
+ * @date 2019-01-23 12:47:57
+ */
 package com.srct.service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,45 +38,42 @@ import io.swagger.annotations.ApiResponses;
 @RequestMapping(value = "/test")
 @CrossOrigin(origins = "*")
 public class TestController {
-    
+
     @Autowired
     private RestService conn;
 
-    @ApiOperation(value = "GET param测试", notes = "guid hzrvxbpg7")
-    @ApiImplicitParams({
-        @ApiImplicitParam(paramType = "paramater", dataType = "String", name = "guid", value = "UserInfo", required = true) })
-    @ApiResponses({ @ApiResponse(code = 200, message = "操作成功"),
-        @ApiResponse(code = 500, message = "服务器内部异常"),
-        @ApiResponse(code = 403, message = "权限不足") })
+    @ApiOperation(value = "GET param测试", notes = "guid hzrvxzbpg7")
+    @ApiImplicitParams({@ApiImplicitParam(paramType = "paramater", dataType = "String", name = "guid",
+        value = "UserInfo", required = true)})
+    @ApiResponses({@ApiResponse(code = 200, message = "操作成功"), @ApiResponse(code = 500, message = "服务器内部异常"),
+        @ApiResponse(code = 403, message = "权限不足")})
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<CommonResponse<String>.Resp> getParamater(@RequestParam(value = "id", required = false) String guid) {
+    public ResponseEntity<CommonResponse<String>.Resp>
+        getParamater(@RequestParam(value = "id", required = false) String guid) {
         String url = "Https://usersstg.rewards.samsung.com.cn/users/info/" + guid;
         HttpHeaders header = new HttpHeaders();
         String res = conn.get(url, header, String.class);
         return CommonExceptionHandler.generateResponse(res);
     }
-    
-    @ApiOperation(value = "GET 测试", notes = "guid hzrvxbpg7")
-    @ApiImplicitParams({
-        @ApiImplicitParam(paramType = "variable", dataType = "String", name = "guid", value = "UserInfo", required = true) })
-    @ApiResponses({ @ApiResponse(code = 200, message = "操作成功"),
-        @ApiResponse(code = 500, message = "服务器内部异常"),
-        @ApiResponse(code = 403, message = "权限不足") })
-    @RequestMapping(value = "{guid}", method = RequestMethod.GET)
-    
+
+    @ApiOperation(value = "GET 测试", notes = "guid hzrvxzbpg7")
+    @ApiImplicitParams({@ApiImplicitParam(paramType = "variable", dataType = "String", name = "guid",
+        value = "UserInfo", required = true)})
+    @ApiResponses({@ApiResponse(code = 200, message = "操作成功"), @ApiResponse(code = 500, message = "服务器内部异常"),
+        @ApiResponse(code = 403, message = "权限不足")})
+    @RequestMapping(value = "/{guid}", method = RequestMethod.GET)
     public ResponseEntity<CommonResponse<String>.Resp> getPathVariable(@PathVariable("guid") String guid) {
         String url = "Https://usersstg.rewards.samsung.com.cn/users/info/" + guid;
         HttpHeaders header = new HttpHeaders();
         String res = conn.get(url, header, String.class);
         return CommonExceptionHandler.generateResponse(res);
     }
-    
-    @ApiOperation(value = "POST 测试", notes = "guid hzrvxbpg7")
+
+    @ApiOperation(value = "POST 测试", notes = "guid hzrvxzbpg7")
     @ApiImplicitParams({
-        @ApiImplicitParam(paramType = "body", dataType = "String", name = "guid", value = "UserInfo", required = true) })
-    @ApiResponses({ @ApiResponse(code = 200, message = "操作成功"),
-        @ApiResponse(code = 500, message = "服务器内部异常"),
-        @ApiResponse(code = 403, message = "权限不足") })
+        @ApiImplicitParam(paramType = "body", dataType = "String", name = "guid", value = "UserInfo", required = true)})
+    @ApiResponses({@ApiResponse(code = 200, message = "操作成功"), @ApiResponse(code = 500, message = "服务器内部异常"),
+        @ApiResponse(code = 403, message = "权限不足")})
     @RequestMapping(value = "", method = RequestMethod.POST)
     public ResponseEntity<CommonResponse<String>.Resp> post(@RequestBody String guid) {
         String url = "Https://usersstg.rewards.samsung.com.cn/users/info/" + guid;

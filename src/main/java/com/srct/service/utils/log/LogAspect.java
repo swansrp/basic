@@ -10,70 +10,90 @@ import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.stereotype.Component;
+
+import com.srct.service.utils.JSONUtil;
 
 @Aspect
 @Component
 public class LogAspect {
 
-    @Pointcut("execution(public * com.srct.service.controller..*.*(..))" + " || "
-            + "execution(public * com.srct.service.service..*.*(..))" + " || "
-            + "execution(public * com.srct.service.temp..*.*(..))" + " || "
-            // Annotate Class
-            + "@within(com.srct.service.utils.log.MySlf4j)" + " || "
-            // Annotate Method
-            + "@annotation(com.srct.service.utils.log.MySlf4j)")
-    public void recordLog() {
-        // Just a pointCut function
-    }
+    private static final Logger mLogger = LoggerFactory.getLogger(LogAspect.class);
 
-    @Before("recordLog()")
-    public void before(JoinPoint point) {
-        // TODO:
-    }
+    private static final String LogFormat = "[%s]|%s|%s";
 
-    @Around("recordLog()")
-    public Object around(ProceedingJoinPoint pjp) throws Throwable {
-        Object res;
+    private static ThreadLocal<MySlf4jLogInfo> mySlfLogLocal = new ThreadLocal<MySlf4jLogInfo>();
+
+    @Pointcut("@annotation(com.srct.service.utils.log.MySlf4j)" + "||" + "@within(com.srct.service.utils.log.MySlf4j)")
+    public void myslf4j() {}
+
+    @Around("myslf4j()")
+    public Object aroundMyslf4j(ProceedingJoinPoint pjp) throws Throwable {
+        Object res = null;
         String methodName = pjp.getSignature().getName();
         String paramNames = getParams(pjp);
-        Log.d("Enter " + methodName + "(" + paramNames + ")");
-        res = pjp.proceed();
-        Log.d("Exit " + methodName + "(" + paramNames + ")");
+        mySlfLogLocal.set(new MySlf4jLogInfo(methodName, paramNames, System.currentTimeMillis(), null));
+        mLogger.trace(String.format(LogFormat, "START", methodName, paramNames));
+        try {
+            res = pjp.proceed();
+            Long endTime = System.currentTimeMillis();
+            mySlfLogLocal.get().setEndTime(endTime);
+            mLogger.trace(String.format(LogFormat, "END", methodName, JSONUtil.toJSONString(res)));
+        } catch (Throwable e) {
+            Long endTime = System.currentTimeMillis();
+            mySlfLogLocal.get().setEndTime(endTime);
+            throw e;
+        }
         return res;
     }
 
-    @After("recordLog()")
-    public void after() {
-        // TODO:
+    @After("myslf4j()")
+    public void afterMyslf4j() {
+        MySlf4jLogInfo info = mySlfLogLocal.get();
+        mLogger.trace(String.format(LogFormat, "TIME", info.getEndTime() - info.getStartTime(), info.getMethodName()));
     }
 
-    @AfterThrowing(pointcut = "recordLog()", throwing = "e")
-    public void afterThrow(JoinPoint point, Throwable e) {
+    @AfterThrowing(pointcut = "myslf4j()", throwing = "e")
+    public void afterThrowMyslf4j(JoinPoint point, Throwable e) {
         String methodName = point.getSignature().getName();
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
         String msg = sw.toString();
-        Log.d("Exception is occured on " + methodName + "(" + getParams(point) + ") : " + msg);
+        MySlf4jLogInfo info = mySlfLogLocal.get();
+        mLogger.trace(String.format(LogFormat, "EXP", methodName, msg));
     }
 
     private String getParams(JoinPoint point) {
-        Method method = ((MethodSignature) point.getSignature()).getMethod();
+        Method method = ((MethodSignature)point.getSignature()).getMethod();
         LocalVariableTableParameterNameDiscoverer u = new LocalVariableTableParameterNameDiscoverer();
         String[] names = u.getParameterNames(method);
         Class<?>[] types = method.getParameterTypes();
         Object[] args = point.getArgs();
         String res = "";
         if (args != null && args.length > 0) {
-            res = types[0].getSimpleName() + " " + names[0] + "<" + args[0].toString() + ">";
+            String value = null;
+            try {
+                value = JSONUtil.toJSONString(args[0]);
+            } catch (Exception e) {
+                value = args[0].toString();
+            } finally {
+                res = types[0].getSimpleName() + " " + names[0] + "<" + value + ">";
+            }
             for (int i = 1; i < names.length; i++) {
-                res += ", ";
-                res += types[i].getSimpleName() + " " + names[i] + "<" + args[i].toString() + ">";
+                value = null;
+                try {
+                    value = JSONUtil.toJSONString(args[i]);
+                } catch (Exception e) {
+                    value = args[i].toString();
+                } finally {
+                    res += ", " + types[i].getSimpleName() + " " + names[i] + "<" + value + ">";
+                }
             }
         }
         return res;

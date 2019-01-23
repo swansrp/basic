@@ -18,7 +18,7 @@
 	<appender name="STDOUTIDE"
 		class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d{HH:mm:ss} %-5level %m%n</pattern>
+			<pattern>%d{HH:mm:ss} %-5level %-50logger{15} %m%n</pattern>
 			<!-- 控制台也要使用UTF-8，不要使用GBK，否则会中文乱码 -->
 			<charset>UTF-8</charset>
 		</encoder>
@@ -60,7 +60,7 @@
 
 	<appender name="apipoint"
 		class="ch.qos.logback.core.rolling.RollingFileAppender">
-		<File>log/apipoint/apiPoint.log</File>
+		<File>log/apiPoint.log</File>
 		<!-- rollingPolicy:当发生滚动时，决定 RollingFileAppender 的行为，涉及文件移动和重命名。 -->
 		<!-- TimeBasedRollingPolicy： 最常用的滚动策略，它根据时间来制定滚动策略，既负责滚动也负责出发滚动 -->
 		<rollingPolicy
