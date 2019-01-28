@@ -1,9 +1,9 @@
-/**   
+/**
  * Copyright ?2018 SRC-TJ Service TG. All rights reserved.
  * 
  * @Project Name: SpringBootCommonLib
- * @Package: com.srct.plugin.mbg 
- * @author: ruopeng.sha   
+ * @Package: com.srct.plugin.mbg
+ * @author: ruopeng.sha
  * @date: 2018-10-30 19:13
  */
 package com.srct.plugin.utils;
@@ -238,10 +238,10 @@ public class DatabaseUtil {
             DatabaseMetaData dbMetData = conn.getMetaData();
             // mysql convertDatabaseCharsetType null
             ResultSet rs = dbMetData.getTables(null, convertDatabaseCharsetType("root", "mysql"), null,
-                    new String[] { "TABLE", "VIEW" });
+                new String[] {"TABLE", "VIEW"});
             while (rs.next()) {
                 if (rs.getString(4) != null
-                        && (rs.getString(4).equalsIgnoreCase("TABLE") || rs.getString(4).equalsIgnoreCase("VIEW"))) {
+                    && (rs.getString(4).equalsIgnoreCase("TABLE") || rs.getString(4).equalsIgnoreCase("VIEW"))) {
                     String tableName = rs.getString(3).toLowerCase();
                     tableNameList.add(tableName);
                 }
@@ -261,10 +261,10 @@ public class DatabaseUtil {
             DatabaseMetaData dbMetData = conn.getMetaData();
             // mysql convertDatabaseCharsetType null
             ResultSet rs = dbMetData.getTables(null, convertDatabaseCharsetType("root", "mysql"), null,
-                    new String[] { "TABLE", "VIEW" });
+                new String[] {"TABLE", "VIEW"});
             while (rs.next()) {
                 if (rs.getString(4) != null
-                        && (rs.getString(4).equalsIgnoreCase("TABLE") || rs.getString(4).equalsIgnoreCase("VIEW"))) {
+                    && (rs.getString(4).equalsIgnoreCase("TABLE") || rs.getString(4).equalsIgnoreCase("VIEW"))) {
                     String tableName = rs.getString(3).toLowerCase();
                     System.out.print(tableName + "\t");
                     // 根据表名提前表里面信息：
@@ -352,36 +352,39 @@ public class DatabaseUtil {
     private static String getJavaType(String sqlType) {
         String javaType = null;
         switch (sqlType) {
-        case "VARCHAR":
-        case "TEXT":
-        case "CHAR":
-        case "ENUM":
-            javaType = "String";
-            break;
-        case "DATETIME":
-        case "TIMESTAMP":
-        case "TIME":
-            javaType = "Date";
-            break;
-        case "DECIMAL":
-            javaType = "BigDecimal";
-            break;
-        case "INT UNSIGNED":
-        case "SMALLINT UNSIGNED":
-        case "TINYINT UNSIGNED":
-        case "SMALLINT":
-        case "TINYINT":
-        case "INT":
-            javaType = "Integer";
-            break;
-        case "BIGINT":
-        case "BIGINT UNSIGNED":
-            javaType = "Long";
-            break;
-        default:
-            javaType = "未知类型";
-            System.out.println("存在不支持类型！请手写:" + sqlType);
-            break;
+            case "VARCHAR":
+            case "TEXT":
+            case "CHAR":
+            case "ENUM":
+                javaType = "String";
+                break;
+            case "DATETIME":
+            case "TIMESTAMP":
+            case "TIME":
+                javaType = "Date";
+                break;
+            case "DECIMAL":
+                javaType = "BigDecimal";
+                break;
+            case "INT UNSIGNED":
+            case "SMALLINT UNSIGNED":
+            case "TINYINT UNSIGNED":
+            case "SMALLINT":
+            case "TINYINT":
+            case "INT":
+                javaType = "Integer";
+                break;
+            case "BIGINT":
+            case "BIGINT UNSIGNED":
+                javaType = "Long";
+                break;
+            case "DOUBLE":
+                javaType = "Double";
+                break;
+            default:
+                javaType = "未知类型";
+                System.out.println("==========存在不支持类型！请手写:" + sqlType);
+                break;
         }
         return javaType;
     }

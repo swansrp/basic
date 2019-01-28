@@ -43,8 +43,8 @@ public class TestController {
     private RestService conn;
 
     @ApiOperation(value = "GET param测试", notes = "guid hzrvxzbpg7")
-    @ApiImplicitParams({@ApiImplicitParam(paramType = "paramater", dataType = "String", name = "guid",
-        value = "UserInfo", required = true)})
+    @ApiImplicitParams({@ApiImplicitParam(paramType = "query", dataType = "String", name = "guid", value = "UserInfo",
+        required = true)})
     @ApiResponses({@ApiResponse(code = 200, message = "操作成功"), @ApiResponse(code = 500, message = "服务器内部异常"),
         @ApiResponse(code = 403, message = "权限不足")})
     @RequestMapping(value = "", method = RequestMethod.GET)
@@ -57,12 +57,12 @@ public class TestController {
     }
 
     @ApiOperation(value = "GET 测试", notes = "guid hzrvxzbpg7")
-    @ApiImplicitParams({@ApiImplicitParam(paramType = "variable", dataType = "String", name = "guid",
-        value = "UserInfo", required = true)})
+    @ApiImplicitParams({
+        @ApiImplicitParam(paramType = "path", dataType = "String", name = "guid", value = "UserInfo", required = true)})
     @ApiResponses({@ApiResponse(code = 200, message = "操作成功"), @ApiResponse(code = 500, message = "服务器内部异常"),
         @ApiResponse(code = 403, message = "权限不足")})
     @RequestMapping(value = "/{guid}", method = RequestMethod.GET)
-    public ResponseEntity<CommonResponse<String>.Resp> getPathVariable(@PathVariable("guid") String guid) {
+    public ResponseEntity<CommonResponse<String>.Resp> getPathVariable(@PathVariable(value = "guid") String guid) {
         String url = "Https://usersstg.rewards.samsung.com.cn/users/info/" + guid;
         HttpHeaders header = new HttpHeaders();
         String res = conn.get(url, header, String.class);

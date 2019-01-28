@@ -38,7 +38,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
                     <!-- 指定该Main Class为全局的唯一入口 -->
-                    <mainClass>${BASIC_PACKAGE}.${projectName}.${moduleName}.${applicationName}</mainClass>
+                    <mainClass>${packageName}.${applicationName}</mainClass>
                     <layout>ZIP</layout>
                     <classifier>exec</classifier>
                 </configuration>
