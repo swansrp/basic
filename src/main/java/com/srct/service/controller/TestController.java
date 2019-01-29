@@ -8,6 +8,7 @@
 package com.srct.service.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -37,6 +38,7 @@ import io.swagger.annotations.ApiResponses;
 @RestController("TestController")
 @RequestMapping(value = "/test")
 @CrossOrigin(origins = "*")
+@Profile(value = {"dev", "test"})
 public class TestController {
 
     @Autowired
