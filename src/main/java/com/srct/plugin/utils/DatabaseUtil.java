@@ -366,11 +366,13 @@ public class DatabaseUtil {
             case "DECIMAL":
                 javaType = "BigDecimal";
                 break;
+            case "TINYINT UNSIGNED":
+            case "TINYINT":
+                javaType = "Byte";
+                break;
             case "INT UNSIGNED":
             case "SMALLINT UNSIGNED":
-            case "TINYINT UNSIGNED":
             case "SMALLINT":
-            case "TINYINT":
             case "INT":
                 javaType = "Integer";
                 break;

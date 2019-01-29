@@ -67,14 +67,15 @@ public class CodeGenerator {
     }
 
     public static void main(String[] args) {
-        Scanner s = new Scanner(System.in);
+        /*Scanner s = new Scanner(System.in);
         System.out.println("请输入项目名称: ");
         String projectName = s.nextLine();
         System.out.println("请输入项目缩写: ");
         String alias = s.nextLine();
         System.out.println("请输入数据库名称(多库用','隔开): ");
         String dbNames = s.nextLine();
-        init(projectName, alias, dbNames);
+        init(projectName, alias, dbNames);*/
+        init("Tanya", "TYA", "tanya");
         genCommonModule();
         genModule("portal");
         genDBRelatedCode();
@@ -154,7 +155,7 @@ public class CodeGenerator {
     private static void genLogback(ModuleConfig config) {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
-            File file = new File(config.getResourePath() + "logback-boot" + BaseConfig.XML_SUFFIX);
+            File file = new File(config.getResoureConfigPath() + "logback-boot" + BaseConfig.XML_SUFFIX);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
@@ -165,7 +166,7 @@ public class CodeGenerator {
         }
         try {
             freemarker.template.Configuration cfg = getConfiguration();
-            File file = new File(config.getResourePath() + "prd-logback-boot" + BaseConfig.XML_SUFFIX);
+            File file = new File(config.getResoureConfigPath() + "prd-logback-boot" + BaseConfig.XML_SUFFIX);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
@@ -192,7 +193,7 @@ public class CodeGenerator {
         } catch (Exception e) {
             throw new RuntimeException("生成 commonProperties 失败", e);
         }
-        String[] envArray = { "-basetion", "-dev", "-devbastion", "-prod", "-stg", "-stress" };
+        String[] envArray = { "-test", "-dev", "-prod", "-stg", "-stress" };
         for (String env : envArray) {
             try {
                 config.getData().put("env", env);
@@ -284,17 +285,16 @@ public class CodeGenerator {
         config.getData().put("modelName", modelName);
         config.getData().put("modelNameFL", StringUtil.firstLowerCamelCase(modelName));
         config.getData().put("modelNameURL", StringUtil.firstLowerCamelCase(modelName).toLowerCase());
+        initDBField(config, tableName);
         genRepository(config, modelName);
         genMapper(config, modelName);
-        genVO(config, tableName);
+        genEntityVO(config, modelName);
         genController(config, modelName);
     }
 
-    private static void genVO(MbgConfig config, String tableName) {
+    private static void initDBField(MbgConfig config, String tableName) {
         List<BaseData> baseDataList = DatabaseUtil.getBaseDataList(config.getDbName(), tableName);
         config.getData().put("baseDataList", baseDataList);
-        String modelName = StringUtil.firstUpperCamelCase(tableName);
-        genEntityVO(config, modelName);
     }
 
     private static void genEntityVO(MbgConfig config, String modelName) {

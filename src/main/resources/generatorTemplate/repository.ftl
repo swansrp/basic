@@ -1,3 +1,13 @@
+<#list baseDataList as data>
+    <#if ((data.columnName) == "createAt")>
+        <#assign FeatureCreateAt="true">
+    </#if>
+    <#if ((data.columnName) == "updateAt")>
+        <#assign FeatureUpdateAt="true">
+    </#if>
+</#list>
+
+
 /**   
  * Copyright ?2018 SRC-TJ Service TG. All rights reserved.
  * 
@@ -10,6 +20,9 @@ package ${repositoryPackage};
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+<#if ((FeatureCreateAt??) || (FeatureUpdateAt??))>
+import java.util.Date;
+</#if>
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,8 +56,14 @@ public class ${modelName}Dao {
     public Integer update${modelName}(${modelName} info) {
         Integer id = null;
         if (info.getId() == null) {
-            ${modelNameFL}Mapper.insert(info);
+            <#if FeatureCreateAt??>
+            info.setCreateAt(new Date());
+            </#if>
+            ${modelNameFL}Mapper.insertSelective(info);
         } else {
+            <#if FeatureUpdateAt??>
+            info.setUpdateAt(new Date());
+            </#if>
             ${modelNameFL}Mapper.updateByPrimaryKeySelective(info);
         }
         id = info.getId();

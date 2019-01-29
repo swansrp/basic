@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -39,6 +40,7 @@ import io.swagger.annotations.ApiResponses;
 @RestController("${dbPackageName}${modelName}Controller")
 @RequestMapping(value = "/portal/admin/${dbPackageName}/${modelNameURL}")
 @CrossOrigin(origins = "*")
+@Profile(value = {"dev", "test"})
 public class ${modelName}Controller {
 
     @Autowired
