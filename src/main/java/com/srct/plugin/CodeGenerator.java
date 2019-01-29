@@ -155,7 +155,7 @@ public class CodeGenerator {
     private static void genLogback(ModuleConfig config) {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
-            File file = new File(config.getResoureConfigPath() + "logback-boot" + BaseConfig.XML_SUFFIX);
+            File file = new File(config.getResourePath() + "logback-boot" + BaseConfig.XML_SUFFIX);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
@@ -166,7 +166,7 @@ public class CodeGenerator {
         }
         try {
             freemarker.template.Configuration cfg = getConfiguration();
-            File file = new File(config.getResoureConfigPath() + "prd-logback-boot" + BaseConfig.XML_SUFFIX);
+            File file = new File(config.getResourePath() + "prd-logback-boot" + BaseConfig.XML_SUFFIX);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
