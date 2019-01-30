@@ -1,9 +1,9 @@
-/**   
+/**
  * Copyright ?2018 SRC-TJ Service TG. All rights reserved.
  * 
  * @Project Name: SpringBootCommonLib
- * @Package: com.srct.plugin.mbg 
- * @author: ruopeng.sha   
+ * @Package: com.srct.plugin.mbg
+ * @author: ruopeng.sha
  * @date: 2018-11-03 11:08
  */
 package com.srct.plugin;
@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Scanner;
 
 import org.mybatis.generator.api.MyBatisGenerator;
 import org.mybatis.generator.config.Configuration;
@@ -76,9 +75,13 @@ public class CodeGenerator {
         String dbNames = s.nextLine();
         init(projectName, alias, dbNames);*/
         init("Tanya", "TYA", "tanya");
-        genCommonModule();
-        genModule("portal");
-        genDBRelatedCode();
+
+        //genCommonModule();
+        genModule("user");
+        //genDBRelatedCode();
+
+//         MbgConfig config = new MbgConfig(projectName, "tanya");
+//         genDBCode(config, "tanya", "user_info");
     }
 
     private static void genCommonModule() {
@@ -129,7 +132,7 @@ public class CodeGenerator {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
             File file = new File(
-                    config.getResponsePath() + config.getProjectName() + "ExceptionHandler" + BaseConfig.JAVA_SUFFIX);
+                config.getResponsePath() + config.getProjectName() + "ExceptionHandler" + BaseConfig.JAVA_SUFFIX);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
@@ -141,7 +144,7 @@ public class CodeGenerator {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
             File file = new File(
-                    config.getResponsePath() + config.getProjectName() + "ResponseConstant" + BaseConfig.JAVA_SUFFIX);
+                config.getResponsePath() + config.getProjectName() + "ResponseConstant" + BaseConfig.JAVA_SUFFIX);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
@@ -193,7 +196,7 @@ public class CodeGenerator {
         } catch (Exception e) {
             throw new RuntimeException("生成 commonProperties 失败", e);
         }
-        String[] envArray = { "-test", "-dev", "-prod", "-stg", "-stress" };
+        String[] envArray = {"-test", "-dev", "-prod", "-stg", "-stress"};
         for (String env : envArray) {
             try {
                 config.getData().put("env", env);
@@ -214,6 +217,20 @@ public class CodeGenerator {
         }
     }
 
+    public static void genDBCode(MbgConfig config, String dbName, String tableName) {
+        List<String> tableNames = DatabaseUtil.getTableListFromDB(dbName);
+        if (tableName == null) {
+            for (String table : tableNames) {
+                System.out.println(table);
+                genCode(config, table);
+                genModelAndMapper(config, config.getDbName(), table);
+            }
+        } else {
+            genCode(config, tableName);
+            genModelAndMapper(config, config.getDbName(), tableName);
+        }
+    }
+
     public static void genDBRelatedCode() {
         ModuleConfig commonConfig = new ModuleConfig(projectName, "common");
         commonConfig.getData().put("dbConfigMap", CodeGenerator.dbConfigMap);
@@ -222,12 +239,7 @@ public class CodeGenerator {
         for (Entry<String, String> entry : dbConfigMap.entrySet()) {
             System.out.println("Start to genarator: " + entry.getKey());
             MbgConfig config = new MbgConfig(projectName, entry.getKey());
-            List<String> tableNames = DatabaseUtil.getTableListFromDB(entry.getKey());
-            for (String tableName : tableNames) {
-                System.out.println(tableName);
-                genCode(config, tableName);
-                genModelAndMapper(config, config.getDbName(), tableName);
-            }
+            genDBCode(config, entry.getKey(), null);
         }
     }
 
@@ -273,7 +285,7 @@ public class CodeGenerator {
                 file.getParentFile().mkdirs();
             }
             cfg.getTemplate("dynamicDataSourceAspect.ftl", "UTF-8").process(commonConfig.getData(),
-                    new FileWriter(file));
+                new FileWriter(file));
             System.out.println(file.getAbsolutePath() + "生成成功");
         } catch (Exception e) {
             throw new RuntimeException("生成 DynamicDataSourceAspect 失败", e);
@@ -434,8 +446,8 @@ public class CodeGenerator {
     }
 
     private static freemarker.template.Configuration getConfiguration() throws IOException {
-        freemarker.template.Configuration cfg = new freemarker.template.Configuration(
-                freemarker.template.Configuration.VERSION_2_3_28);
+        freemarker.template.Configuration cfg =
+            new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_28);
         cfg.setDirectoryForTemplateLoading(new File(BaseConfig.TEMPLATE_PATH));
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);

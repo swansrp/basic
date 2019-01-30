@@ -88,7 +88,7 @@ public class ${modelName}Dao {
         return ${modelNameFL}Mapper.selectByPrimaryKey(id);
     }
 
-	@Cacheable(value = "${modelName}", key = "CacheKeyByParam")
+	@Cacheable(value = "${modelName}", keyGenerator = "CacheKeyByParam")
 	@CacheExpire(expire = 3600L)
     public List<${modelName}> get${modelName}Selective(${modelName} ${modelNameFL}) {
         ${modelName}Example example = new ${modelName}Example();
