@@ -53,23 +53,28 @@ public class ${modelName}Dao {
     ${modelName}Mapper ${modelNameFL}Mapper;
 
     @CacheEvict(value = "${modelName}", allEntries = true)
-    public Integer update${modelName}(${modelName} info) {
-        Integer id = null;
-        if (info.getId() == null) {
-            <#if FeatureCreateAt??>
-            info.setCreateAt(new Date());
+    public ${modelName} update${modelName}(${modelName} ${modelNameFL}) {
+        if (${modelNameFL}.getId() == null) {
+            ${modelName}Example example = get${modelName}Example(${modelNameFL});
+            <#if FeatureUpdateAt??>
+            ${modelNameFL}.setUpdateAt(new Date());
             </#if>
-            ${modelNameFL}Mapper.insertSelective(info);
+            int updateNum = ${modelNameFL}Mapper.updateByExampleSelective(${modelNameFL}, example);
+            if (updateNum == 0) {
+                <#if FeatureCreateAt??>
+                ${modelNameFL}.setCreateAt(new Date());
+                </#if>
+                ${modelNameFL}Mapper.insertSelective(${modelNameFL});
+            }
         } else {
             <#if FeatureUpdateAt??>
-            info.setUpdateAt(new Date());
+            ${modelNameFL}.setUpdateAt(new Date());
             </#if>
-            ${modelNameFL}Mapper.updateByPrimaryKeySelective(info);
+            ${modelNameFL}Mapper.updateByPrimaryKeySelective(${modelNameFL});
         }
-        id = info.getId();
-        return id;
+        return ${modelNameFL};
     }
-	
+
     @Cacheable(value = "${modelName}", key = "'valid_' + #valid")
     @CacheExpire(expire = 3600L)
     public List<${modelName}> getAll${modelName}List(Byte valid) {
@@ -81,16 +86,22 @@ public class ${modelName}Dao {
 
         return ${modelNameFL}Mapper.selectByExample(example);
     }
-	
+    
     @Cacheable(value = "${modelName}", key = "'id_' + #id")
-	@CacheExpire(expire = 24 * 3600L)
+    @CacheExpire(expire = 24 * 3600L)
     public ${modelName} get${modelName}byId(Integer id) {
         return ${modelNameFL}Mapper.selectByPrimaryKey(id);
     }
 
-	@Cacheable(value = "${modelName}", keyGenerator = "CacheKeyByParam")
-	@CacheExpire(expire = 3600L)
+    @Cacheable(value = "${modelName}", keyGenerator = "CacheKeyByParam")
+    @CacheExpire(expire = 3600L)
     public List<${modelName}> get${modelName}Selective(${modelName} ${modelNameFL}) {
+        ${modelName}Example example = get${modelName}Example(${modelNameFL});
+        List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
+        return res;
+    }
+
+    private ${modelName}Example get${modelName}Example(${modelName} ${modelNameFL}) {
         ${modelName}Example example = new ${modelName}Example();
         ${modelName}Example.Criteria criteria = example.createCriteria();
         HashMap<String, Object> valueMap = ReflectionUtil.getHashMap(${modelNameFL});
@@ -112,10 +123,8 @@ public class ${modelName}Dao {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
-
             }
         });
-        List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
-        return res;
-    }	
+        return example;
+    }
 }

@@ -56,7 +56,7 @@ public class ${modelName}Controller {
     public ResponseEntity<CommonResponse<Integer>.Resp> update${modelName}(@RequestBody ${modelName}EntityVO vo) {
         ${modelName} ${modelNameFL} = new ${modelName}();
         BeanUtil.copyProperties(vo, ${modelNameFL});
-        Integer id = ${modelNameFL}Dao.update${modelName}(${modelNameFL});
+        Integer id = ${modelNameFL}Dao.update${modelName}(${modelNameFL}).getId();
         return ${projectName}ExceptionHandler.generateResponse(id);
     }
 
@@ -109,7 +109,7 @@ public class ${modelName}Controller {
         ${modelName} ${modelNameFL} = new ${modelName}();
         ${modelNameFL}.setId(id);
         ${modelNameFL}.setValid(DataSourceCommonConstant.DATABASE_COMMON_INVALID);
-        Integer delId = ${modelNameFL}Dao.update${modelName}(${modelNameFL});
+        Integer delId = ${modelNameFL}Dao.update${modelName}(${modelNameFL}).getId();
         return ${projectName}ExceptionHandler.generateResponse(delId);
     }
 }
