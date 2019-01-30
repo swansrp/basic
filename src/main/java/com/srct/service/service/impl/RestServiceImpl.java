@@ -37,8 +37,18 @@ public class RestServiceImpl implements RestService {
     }
 
     @Override
+    public <T> T get(String url, Class<T> clazz) {
+        return getSelf().exec(url, HttpMethod.GET, new HttpHeaders(), clazz, null);
+    }
+
+    @Override
     public <T> T get(String url, HttpHeaders header, Class<T> clazz) {
         return getSelf().exec(url, HttpMethod.GET, header, clazz, null);
+    }
+
+    @Override
+    public <T> T post(String url, Class<T> clazz, Object req) {
+        return getSelf().exec(url, HttpMethod.POST, new HttpHeaders(), clazz, req);
     }
 
     @Override
@@ -55,10 +65,10 @@ public class RestServiceImpl implements RestService {
         try {
             response = restTemplate.exchange(url, method, entity, parameter);
             Log.ii(response.getBody());
-            return response.getBody();
+            return JSONUtil.readJson(JSONUtil.toJSONString(response.getBody()), clazz);
         } catch (Exception e) {
             Log.e(e);
-            throw e;
+            return null;
         }
     }
 }

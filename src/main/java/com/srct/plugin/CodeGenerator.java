@@ -76,12 +76,12 @@ public class CodeGenerator {
         init(projectName, alias, dbNames);*/
         init("Tanya", "TYA", "tanya");
 
-        //genCommonModule();
-        genModule("user");
-        //genDBRelatedCode();
+        // genCommonModule();
+        // genModule("user");
+        genDBRelatedCode();
 
-//         MbgConfig config = new MbgConfig(projectName, "tanya");
-//         genDBCode(config, "tanya", "user_info");
+        // MbgConfig config = new MbgConfig(projectName, "tanya");
+        // genDBCode(config, "tanya", "user_info");
     }
 
     private static void genCommonModule() {

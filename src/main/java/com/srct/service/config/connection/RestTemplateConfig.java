@@ -21,6 +21,7 @@ package com.srct.service.config.connection;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -35,6 +36,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
@@ -70,6 +72,11 @@ public class RestTemplateConfig {
 
         RestTemplate restTemplate = new RestTemplate(httpRequestFactory);
         restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
+        MappingJackson2HttpMessageConverter mappingJackson2HttpMessageConverter =
+            new MappingJackson2HttpMessageConverter();
+        mappingJackson2HttpMessageConverter
+            .setSupportedMediaTypes(Arrays.asList(MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN));
+        restTemplate.getMessageConverters().add(1, mappingJackson2HttpMessageConverter);
         restTemplate.setInterceptors(Collections.singletonList(new AgentInterceptor()));
         restTemplate.setErrorHandler(responseErrorHandler);
         return restTemplate;
