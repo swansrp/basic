@@ -14,7 +14,7 @@ public interface RedisService {
 
     boolean setnx(String key, int seconds, String value);
 
-    String get(String key);
+    byte[] getByte(String key);
 
     int getInt(String key);
 
@@ -26,7 +26,7 @@ public interface RedisService {
 
     Set<byte[]> getKeys(String pattern);
 
-    Long delete(String key);
+    boolean delete(String key);
 
     void delete(List<String> keys);
 
@@ -55,11 +55,8 @@ public interface RedisService {
     void openPipeline();
 
     List<Object> closePipeline();
-    // void addData(RedisKeyDto redisKeyDto);
-    //
-    // void delete(RedisKeyDto redisKeyDto);
-    //
-    // RedisKeyDto redisGet(RedisKeyDto redisKeyDto);
-    //
-    // void addRedisData(RedisKeyDto redisKeyDto, int outTime);
+    
+    void set(String key, Object value);
+
+    void set(String key, int seconds, Object value);
 }

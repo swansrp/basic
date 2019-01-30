@@ -1,8 +1,8 @@
-/**   
+/**
  * Copyright © 2018 SRC-TJ Service TG. All rights reserved.
  * 
- * @Package: com.srct.service.service.impl 
- * @author: xu1223.zhang   
+ * @Package: com.srct.service.service.impl
+ * @author: xu1223.zhang
  * @date: 2018-08-07 14:11
  */
 package com.srct.service.service.impl;
@@ -12,8 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.srct.service.service.RedisService;
 import com.srct.service.service.RedisTokenOperateService;
-import com.srct.service.utils.CommonEnum.AccountRoleEnum;
-import com.srct.service.utils.CommonUtil;
 
 /**
  * @ClassName: RedisTokenOperateServiceImpl
@@ -55,7 +53,7 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
      */
     @Override
     public String getAccessToken(Integer uid) {
-        return redisService.get(uid + REDIS_ACCESSTOKEN_SUFFIX);
+        return redisService.get(uid + REDIS_ACCESSTOKEN_SUFFIX, String.class);
     }
 
     /*
@@ -79,7 +77,7 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
      */
     @Override
     public String getRefreshToken(Integer uid) {
-        return redisService.get(uid + REDIS_REFRESHTOKEN_SUFFIX);
+        return redisService.get(uid + REDIS_REFRESHTOKEN_SUFFIX, String.class);
     }
 
     /*
@@ -103,7 +101,7 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
      */
     @Override
     public String getUserRole(Integer uid) {
-        return redisService.get(uid + REDIS_ROLE_SUFFIX);
+        return redisService.get(uid + REDIS_ROLE_SUFFIX, String.class);
     }
 
     /*
@@ -114,6 +112,6 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
      */
     @Override
     public String getUid(String accessToken) {
-        return redisService.get(accessToken);
+        return redisService.get(accessToken, String.class);
     }
 }
