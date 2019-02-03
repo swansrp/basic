@@ -5,9 +5,10 @@
     <#if ((data.columnName) == "updateAt")>
         <#assign FeatureUpdateAt="true">
     </#if>
+    <#if ((data.columnName) == "valid")>
+        <#assign FeatureValid="true">
+    </#if>
 </#list>
-
-
 /**   
  * Copyright ?2018 SRC-TJ Service TG. All rights reserved.
  * 
@@ -55,17 +56,10 @@ public class ${modelName}Dao {
     @CacheEvict(value = "${modelName}", allEntries = true)
     public ${modelName} update${modelName}(${modelName} ${modelNameFL}) {
         if (${modelNameFL}.getId() == null) {
-            ${modelName}Example example = get${modelName}Example(${modelNameFL});
-            <#if FeatureUpdateAt??>
-            ${modelNameFL}.setUpdateAt(new Date());
+            <#if FeatureCreateAt??>
+            ${modelNameFL}.setCreateAt(new Date());
             </#if>
-            int updateNum = ${modelNameFL}Mapper.updateByExampleSelective(${modelNameFL}, example);
-            if (updateNum == 0) {
-                <#if FeatureCreateAt??>
-                ${modelNameFL}.setCreateAt(new Date());
-                </#if>
-                ${modelNameFL}Mapper.insertSelective(${modelNameFL});
-            }
+            ${modelNameFL}Mapper.insertSelective(${modelNameFL});
         } else {
             <#if FeatureUpdateAt??>
             ${modelNameFL}.setUpdateAt(new Date());
@@ -73,6 +67,46 @@ public class ${modelName}Dao {
             ${modelNameFL}Mapper.updateByPrimaryKeySelective(${modelNameFL});
         }
         return ${modelNameFL};
+    }
+
+    @CacheEvict(value = "${modelName}", allEntries = true)
+    public Integer update${modelName}ByExample(${modelName} ${modelNameFL}, ${modelName}Example example) {
+        return ${modelNameFL}Mapper.updateByExampleSelective(${modelNameFL}, example);
+    }
+
+    @CacheEvict(value = "${modelName}", allEntries = true)
+    public Integer del${modelName}(${modelName} ${modelNameFL}) {
+        ${modelName}Example example = get${modelName}Example(${modelNameFL});
+        <#if FeatureValid??>
+        ${modelNameFL}.setValid(DataSourceCommonConstant.DATABASE_COMMON_INVALID);
+        return ${modelNameFL}Mapper.updateByExampleSelective(${modelNameFL}, example);
+        <#else>
+        return ${modelNameFL}Mapper.deleteByExample(example);
+        </#if>
+    }
+
+    @CacheEvict(value = "${modelName}", allEntries = true)
+    public Integer del${modelName}ByExample(${modelName}Example example) {
+        <#if FeatureValid??>
+        Integer res = 0;
+        List<${modelName}> ${modelNameFL}List = get${modelName}ByExample(example);
+        for (${modelName} ${modelNameFL} : ${modelNameFL}List) {
+            ${modelNameFL}.setValid(DataSourceCommonConstant.DATABASE_COMMON_INVALID);
+            res += ${modelNameFL}Mapper.updateByPrimaryKey(${modelNameFL});
+        }
+        return res;
+        <#else>
+        return ${modelNameFL}Mapper.deleteByExample(example);
+        </#if>
+    }
+
+    public Long count${modelName}(${modelName} ${modelNameFL}) {
+        ${modelName}Example example = get${modelName}Example(${modelNameFL});
+        return ${modelNameFL}Mapper.countByExample(example);
+    }
+
+    public Long count${modelName}ByExample(${modelName}Example example) {
+        return ${modelNameFL}Mapper.countByExample(example);
     }
 
     @Cacheable(value = "${modelName}", key = "'valid_' + #valid")
@@ -86,7 +120,7 @@ public class ${modelName}Dao {
 
         return ${modelNameFL}Mapper.selectByExample(example);
     }
-    
+
     @Cacheable(value = "${modelName}", key = "'id_' + #id")
     @CacheExpire(expire = 24 * 3600L)
     public ${modelName} get${modelName}byId(Integer id) {
@@ -97,6 +131,11 @@ public class ${modelName}Dao {
     @CacheExpire(expire = 3600L)
     public List<${modelName}> get${modelName}Selective(${modelName} ${modelNameFL}) {
         ${modelName}Example example = get${modelName}Example(${modelNameFL});
+        List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
+        return res;
+    }
+
+    public List<${modelName}> get${modelName}ByExample(${modelName}Example example) {
         List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
         return res;
     }
