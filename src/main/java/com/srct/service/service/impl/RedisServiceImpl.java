@@ -23,7 +23,7 @@ import com.srct.service.utils.log.Log;
 
 @Service
 public class RedisServiceImpl implements RedisService {
-    
+
     private final static long DEFAULTTIME = 600L;
 
     @Autowired
@@ -31,6 +31,7 @@ public class RedisServiceImpl implements RedisService {
     private RedisTemplate<String, byte[]> redisTemplate;
 
     @Autowired
+    @Qualifier("redisTemplate")
     private RedisTemplate<String, Object> objectRedisTemplate;
 
     private ZSetOperations<String, Object> opsForZSet;
@@ -114,7 +115,7 @@ public class RedisServiceImpl implements RedisService {
         opsForZSet = objectRedisTemplate.opsForZSet();
         return opsForZSet.rangeByScore(key, min, max);
     }
-    
+
     /* (non-Javadoc)
      * @see com.srct.service.service.RedisService#set(java.lang.String, java.lang.Object)
      */
@@ -125,10 +126,10 @@ public class RedisServiceImpl implements RedisService {
             Log.e(" set key[{}], value[{}] is null", key, value);
             return;
         }
-        objectRedisTemplate.opsForValue().set(key,value, DEFAULTTIME, TimeUnit.SECONDS);
+        objectRedisTemplate.opsForValue().set(key, value, DEFAULTTIME, TimeUnit.SECONDS);
         return;
     }
-    
+
     @Override
     public void set(String key, int seconds, Object value) {
         // TODO Auto-generated method stub
@@ -136,7 +137,7 @@ public class RedisServiceImpl implements RedisService {
             Log.e(" set key[{}], value[{}] is null", key, value);
             return;
         }
-        objectRedisTemplate.opsForValue().set(key,value, seconds, TimeUnit.SECONDS);
+        objectRedisTemplate.opsForValue().set(key, value, seconds, TimeUnit.SECONDS);
         return;
     }
 
@@ -238,7 +239,7 @@ public class RedisServiceImpl implements RedisService {
             return null;
         }
     }
-    
+
     /* (non-Javadoc)
      * @see com.srct.service.service.RedisService#get(java.lang.String, java.lang.Class)
      */
