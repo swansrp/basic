@@ -1,11 +1,10 @@
-/**  
- * Project Name:SpringBootCommon  
- * File Name:RedisCacheConfig.java  
- * Package Name:com.srct.service.config.redis  
- * Date:May 14, 2018 10:17:27 AM  
- * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
- *  
-*/
+/**
+ * Project Name:SpringBootCommon 
+ * File Name:RedisCacheConfig.java Package Name:com.srct.service.config.redis 
+ * Date:May 14, 2018 10:17:27 AM 
+ * Copyright (c) 2018, ruopeng.sha All Rights Reserved.
+ * 
+ */
 package com.srct.service.config.redis;
 
 import java.lang.reflect.Method;
@@ -44,9 +43,8 @@ import org.springframework.session.data.redis.config.ConfigureRedisAction;
 public class RedisCacheConfig extends CachingConfigurerSupport {
 
     /**
-     * Set RedisTemplate add Serializer key StringRedisSerializer value
-     * GenericJackson2JsonRedisSerializer another easier way , change
-     * defaultSerializer implementation
+     * Set RedisTemplate add Serializer key StringRedisSerializer value GenericJackson2JsonRedisSerializer another
+     * easier way , change defaultSerializer implementation
      * 
      * @return
      */
@@ -64,9 +62,8 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
     }
 
     /**
-     * Set RedisTemplate add Serializer key StringRedisSerializer value
-     * GenericJackson2JsonRedisSerializer another easier way , change
-     * defaultSerializer implementation
+     * Set RedisTemplate add Serializer key StringRedisSerializer value GenericJackson2JsonRedisSerializer another
+     * easier way , change defaultSerializer implementation
      * 
      * @return
      */
@@ -109,10 +106,10 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
         // Set Default TTL as 10 mins, serialize factory is
         // GenericJackson2JsonRedisSerializer
         GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
-        RedisSerializationContext.SerializationPair<Object> pair = RedisSerializationContext.SerializationPair
-                .fromSerializer(serializer);
-        RedisCacheConfiguration defaultCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
-                .serializeValuesWith(pair).entryTtl(Duration.ofSeconds(600));
+        RedisSerializationContext.SerializationPair<Object> pair =
+            RedisSerializationContext.SerializationPair.fromSerializer(serializer);
+        RedisCacheConfiguration defaultCacheConfig =
+            RedisCacheConfiguration.defaultCacheConfig().serializeValuesWith(pair).entryTtl(Duration.ofSeconds(600));
         // Init RedisCacheManager
         RedisCacheManager cacheManager = new MyRedisCacheManager(redisCacheWriter, defaultCacheConfig);
         return cacheManager;
