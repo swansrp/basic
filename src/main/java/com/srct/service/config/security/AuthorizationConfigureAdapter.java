@@ -8,8 +8,6 @@
  */
 package com.srct.service.config.security;
 
-import javax.servlet.ServletContext;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,11 +64,5 @@ public class AuthorizationConfigureAdapter extends WebMvcConfigurationSupport {
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         configurer.ignoreAcceptHeader(true).defaultContentType(MediaType.APPLICATION_JSON_UTF8);
-    }
-
-    /*for shiro servletContext loss issue*/
-    @Override
-    public void setServletContext(ServletContext servletContext) {
-        super.setServletContext(servletContext);
     }
 }

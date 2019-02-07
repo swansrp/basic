@@ -1,7 +1,7 @@
 /**
- * Project Name:SpringBootCommon 
- * File Name:RedisCacheConfig.java Package Name:com.srct.service.config.redis 
- * Date:May 14, 2018 10:17:27 AM 
+ * Project Name:SpringBootCommon
+ * File Name:RedisCacheConfig.java Package Name:com.srct.service.config.redis
+ * Date:May 14, 2018 10:17:27 AM
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.
  * 
  */

@@ -37,10 +37,10 @@ public class CommonResponseConstant {
         new CommonResponseCode(TAG + "0005", "Access Token Expired Or Invalid Error", HttpStatus.FORBIDDEN);
 
     public static final CommonResponseCode ACCOUNT_OR_PASSWORD_INCORRECT_ERROR =
-        new CommonResponseCode(TAG + "0004", "Account Or Passwork Incorrect", HttpStatus.UNAUTHORIZED);
+        new CommonResponseCode(TAG + "0006", "Account Or Passwork Incorrect", HttpStatus.UNAUTHORIZED);
 
     public static final CommonResponseCode USER_NOT_LOGIN_ERROR =
-        new CommonResponseCode(TAG + "0006", "User Not Login Error", HttpStatus.UNAUTHORIZED);
+        new CommonResponseCode(TAG + "0004", "User Not Login Error", HttpStatus.UNAUTHORIZED);
 
     public static final CommonResponseCode REDIRECT = new CommonResponseCode(TAG + "9999", "Redirect", HttpStatus.OK);
 }
