@@ -1,11 +1,11 @@
-/**  
- * Project Name:SpringBootCommon  
- * File Name:BeanUtil.java  
- * Package Name:com.srct.service.utils  
- * Date:2018年4月26日上午11:17:45  
- * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
- *  
-*/
+/**
+ * Project Name:SpringBootCommon
+ * File Name:BeanUtil.java
+ * Package Name:com.srct.service.utils
+ * Date:2018年4月26日上午11:17:45
+ * Copyright (c) 2018, ruopeng.sha All Rights Reserved.
+ * 
+ */
 package com.srct.service.utils;
 
 import java.util.HashMap;
@@ -34,15 +34,16 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.srct.service.utils.log.Log;
 
-/**  
- * ClassName:BeanUtil <br/>  
- * Function: TODO ADD FUNCTION. <br/>  
- * Reason:   TODO ADD REASON. <br/>  
- * Date:     2018年4月26日 上午11:17:45 <br/>  
- * @author   ruopeng.sha  
- * @version    
- * @since    JDK 1.8  
- * @see        
+/**
+ * ClassName:BeanUtil <br/>
+ * Function: TODO ADD FUNCTION. <br/>
+ * Reason: TODO ADD REASON. <br/>
+ * Date: 2018年4月26日 上午11:17:45 <br/>
+ * 
+ * @author ruopeng.sha
+ * @version
+ * @since JDK 1.8
+ * @see
  */
 /**
  * 工具类-spring bean
@@ -113,7 +114,11 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         Log.i("setApplicationContext");
-        ctx = (WebApplicationContext) applicationContext;
+        ctx = (WebApplicationContext)applicationContext;
+    }
+
+    public static String[] getBeanNamesForType(Class<?> clazz) {
+        return ctx.getBeanNamesForType(clazz);
     }
 
     /** 

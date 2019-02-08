@@ -47,7 +47,7 @@ public class CacheKeyByParam implements KeyGenerator {
                         }
                         if (tempObject != null) {
                             if (field.get(i).getType().equals(Date.class)) {
-                                value = String.valueOf(((Date) tempObject).getTime());
+                                value = String.valueOf(((Date)tempObject).getTime());
                             } else {
                                 value = tempObject.toString();
                             }
