@@ -55,7 +55,7 @@ public class ApiPointLogAspect {
     @Around("apiLog()")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         Object res = null;
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        ServletRequestAttributes attr = (ServletRequestAttributes)RequestContextHolder.currentRequestAttributes();
         HttpServletRequest req = attr.getRequest();
         String url = req.getMethod() + " " + req.getRequestURI();
         String ipAddress = req.getHeader("x-forwarded-for");
@@ -82,8 +82,8 @@ public class ApiPointLogAspect {
     public void after() {
         ThreadLogInfo info = threadLocal.get();
         mLogger.trace(String.format(LogFormat_TIME, info.getEndTime() - info.getStartTime(), info.getIpAddress(),
-                info.getUrl(), info.getMethodName()));
-        threadLocal.remove();
+            info.getUrl(), info.getMethodName()));
+        // threadLocal.remove();
     }
 
     @AfterThrowing(pointcut = "apiLog()", throwing = "e")
@@ -92,18 +92,18 @@ public class ApiPointLogAspect {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);
-        String msg = sw.toString();
+        int endIndex = sw.toString().indexOf("\n", 500);
+        String msg = sw.toString().substring(0, endIndex);
         ThreadLogInfo info = threadLocal.get();
         if (info != null)
             mLogger.trace(String.format(LogFormat_EX, info.getIpAddress(), info.getUrl(), methodName, msg));
     }
 
     @AfterReturning("apiLog()")
-    public void afterReturning() {
-    }
+    public void afterReturning() {}
 
     private String getParams(JoinPoint point) {
-        Method method = ((MethodSignature) point.getSignature()).getMethod();
+        Method method = ((MethodSignature)point.getSignature()).getMethod();
         LocalVariableTableParameterNameDiscoverer u = new LocalVariableTableParameterNameDiscoverer();
         String[] names = u.getParameterNames(method);
         Class<?>[] types = method.getParameterTypes();

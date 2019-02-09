@@ -1,11 +1,11 @@
-/**  
- * Project Name:SpringBootCommon  
- * File Name:ProxyFilter.java  
- * Package Name:com.srct.service.config.proxy  
- * Date:May 2, 2018 2:47:20 PM  
- * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
- *  
-*/
+/**
+ * Project Name:SpringBootCommon
+ * File Name:ProxyFilter.java
+ * Package Name:com.srct.service.config.proxy
+ * Date:May 2, 2018 2:47:20 PM
+ * Copyright (c) 2018, ruopeng.sha All Rights Reserved.
+ * 
+ */
 package com.srct.service.config.proxy;
 
 import java.io.IOException;
@@ -47,15 +47,15 @@ public class ProxyFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
+        throws IOException, ServletException {
         // TODO Auto-generated method stub
-        HttpServletRequest req = (HttpServletRequest) request;
-        HttpServletResponse resp = (HttpServletResponse) response;
+        HttpServletRequest req = (HttpServletRequest)request;
+        HttpServletResponse resp = (HttpServletResponse)response;
         String requestURI = req.getRequestURI();
         String queryString = req.getQueryString();
         Log.d("...ProxyFilter doFilter...");
-        Log.d("req:" + requestURI);
-        Log.d("query:" + queryString);
+        Log.d("req: {}", requestURI);
+        Log.d("query: {}", queryString);
         if (requestURI != null && requestURI.contains("elb.check")) {
             return;
         }

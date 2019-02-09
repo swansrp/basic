@@ -48,7 +48,7 @@ public class EmailUtil {
             if (!(atta.getData() instanceof ArrayList<?>)) {
                 attaArray.add(atta.getData());
             } else {
-                attaArray.addAll((ArrayList<Object>) atta.getData());
+                attaArray.addAll((ArrayList<Object>)atta.getData());
             }
             File f = createFile(atta.getName());
             if (f == null)
@@ -73,10 +73,10 @@ public class EmailUtil {
         String attachmentCmd = buildAttachmentObjCmd(repo.getAttachment(), fileList);
         String bodyCmd = "echo " + JSONUtil.toJSONString(repo.getBody());
         String cmd = bodyCmd + "　| mail " + titleCmd + ccCmd + defaultBccCmd + bccCmd + attachPathCmd + attachmentCmd
-                + recipientsCmd;
-        Log.d(cmd);
+            + recipientsCmd;
+        Log.i(cmd);
         try {
-            Process p = Runtime.getRuntime().exec(new String[] { "/bin/sh", "-c", cmd });
+            Process p = Runtime.getRuntime().exec(new String[] {"/bin/sh", "-c", cmd});
             InputStream is = p.getErrorStream();
             BufferedReader reader = new BufferedReader(new InputStreamReader(is));
             String line;

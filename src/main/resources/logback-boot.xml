@@ -101,7 +101,7 @@
 	<logger name="com.srct.service.utils.log" level="TRACE">
 		<appender-ref ref="apipoint" />
 	</logger>
-	<logger name="com.srct.service" level="TRACE">
+	<logger name="com.srct.service" level="TRACE" additivity="false">
 		<appender-ref ref="syslog" />
 	</logger>
 </configuration>    

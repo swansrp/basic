@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.srct.service.config.response.CommonExceptionHandler;
 import com.srct.service.config.response.CommonResponse;
 import com.srct.service.service.RestService;
+import com.srct.service.utils.log.Log;
+import com.srct.service.utils.security.EncryptUtil;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -82,5 +84,18 @@ public class TestController {
         HttpHeaders header = new HttpHeaders();
         String res = conn.get(url, header, String.class);
         return CommonExceptionHandler.generateResponse(res);
+    }
+
+    @RequestMapping(value = "/aes", method = RequestMethod.GET)
+    public ResponseEntity<CommonResponse<String>.Resp>
+        aes(@RequestParam(value = "token", required = false) String token) {
+
+        String encryptToken = EncryptUtil.encryptBase64(token, "Tanya");
+        Log.i("{}  -  {}", token, encryptToken);
+
+        String oriToken = EncryptUtil.decryptBase64(encryptToken, "Tanya");
+        Log.i("{}  -  {}", oriToken, encryptToken);
+
+        return CommonExceptionHandler.generateResponse("");
     }
 }

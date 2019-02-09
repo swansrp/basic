@@ -126,7 +126,7 @@ public class RedisServiceImpl implements RedisService {
             Log.e(" set key[{}], value[{}] is null", key, value);
             return;
         }
-        objectRedisTemplate.opsForValue().set(key, value, DEFAULTTIME, TimeUnit.SECONDS);
+        objectRedisTemplate.opsForValue().set(key, value);
         return;
     }
 
@@ -139,23 +139,6 @@ public class RedisServiceImpl implements RedisService {
         }
         objectRedisTemplate.opsForValue().set(key, value, seconds, TimeUnit.SECONDS);
         return;
-    }
-
-    /**
-     * @param key
-     * @param value
-     */
-    @Override
-    public void set(final String key, final String value) {
-        if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
-            Log.e(" set key[{}], value[{}] is null", key, value);
-            return;
-        }
-        Log.d(" set key[{}], value[{}]", key, value);
-        redisTemplate.execute((RedisCallback<String>)connection -> {
-            connection.set(key.getBytes(), value.getBytes());
-            return null;
-        });
     }
 
     @Override

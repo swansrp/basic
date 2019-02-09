@@ -1,26 +1,34 @@
-/**   
+/**
  * Copyright © 2018 SRC-TJ Service TG. All rights reserved.
  * 
- * @Package: com.srct.service.utils.security 
- * @author: xu1223.zhang   
+ * @Package: com.srct.service.utils.security
+ * @author: xu1223.zhang
  * @date: 2018-09-27 10:31
  */
 package com.srct.service.utils.security;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.security.GeneralSecurityException;
+import java.security.InvalidKeyException;
 import java.security.KeyFactory;
+import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -31,6 +39,9 @@ import com.srct.service.utils.CommonUtil;
 import com.srct.service.utils.StreamUtil;
 import com.srct.service.utils.codec.Base64;
 import com.srct.service.utils.log.Log;
+
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 /**
  * @ClassName: EncryptUtil
@@ -54,8 +65,7 @@ public class EncryptUtil {
      */
     private static final int MAX_DECRYPT_BLOCK = 256;
 
-    private EncryptUtil() {
-    }
+    private EncryptUtil() {}
 
     /**
      * 
@@ -92,7 +102,7 @@ public class EncryptUtil {
      *             String
      */
     public static String decryptContent(String content, String encryptType, String encryptKey, String charset)
-            throws ServiceException {
+        throws ServiceException {
         if (CommonEnum.SecurityEnum.AES_ALG.equals(encryptType)) {
             return aesDecrypt(content, encryptKey, charset);
         } else if (CommonEnum.SecurityEnum.RSA_ALG.equals(encryptType)) {
@@ -118,7 +128,7 @@ public class EncryptUtil {
             Cipher cipher = Cipher.getInstance(AES_CBC_PCK_ALG);
             IvParameterSpec iv = new IvParameterSpec(AES_IV);
             cipher.init(Cipher.ENCRYPT_MODE,
-                    new SecretKeySpec(Base64.decodeBase64(aesKey.getBytes()), CommonEnum.SecurityEnum.AES_ALG), iv);
+                new SecretKeySpec(Base64.decodeBase64(aesKey.getBytes()), CommonEnum.SecurityEnum.AES_ALG), iv);
             byte[] encryptBytes = cipher.doFinal(content.getBytes(charset));
             return new String(Base64.encodeBase64(encryptBytes));
         } catch (Exception e) {
@@ -142,7 +152,7 @@ public class EncryptUtil {
             Cipher cipher = Cipher.getInstance(AES_CBC_PCK_ALG);
             IvParameterSpec iv = new IvParameterSpec(initIv(AES_CBC_PCK_ALG));
             cipher.init(Cipher.DECRYPT_MODE,
-                    new SecretKeySpec(Base64.decodeBase64(key.getBytes()), CommonEnum.SecurityEnum.AES_ALG), iv);
+                new SecretKeySpec(Base64.decodeBase64(key.getBytes()), CommonEnum.SecurityEnum.AES_ALG), iv);
             byte[] cleanBytes = cipher.doFinal(Base64.decodeBase64(content.getBytes()));
             return new String(cleanBytes, charset);
         } catch (Exception e) {
@@ -165,8 +175,8 @@ public class EncryptUtil {
     private static String rsaEncrypt(String content, String publicKey, String charset) {
         try {
             Cipher cipher = Cipher.getInstance(CommonEnum.SecurityEnum.RSA_ALG);
-            PublicKey pubKey = getPublicKeyFromX509(CommonEnum.SecurityEnum.RSA_ALG,
-                    new ByteArrayInputStream(publicKey.getBytes()));
+            PublicKey pubKey =
+                getPublicKeyFromX509(CommonEnum.SecurityEnum.RSA_ALG, new ByteArrayInputStream(publicKey.getBytes()));
             cipher.init(Cipher.ENCRYPT_MODE, pubKey);
             byte[] data = content.getBytes();
             int inputLen = data.length;
@@ -210,7 +220,7 @@ public class EncryptUtil {
         try {
             Cipher cipher = Cipher.getInstance(CommonEnum.SecurityEnum.RSA_ALG);
             PrivateKey priKey = getPrivateKeyFromPKCS8(CommonEnum.SecurityEnum.RSA_ALG,
-                    new ByteArrayInputStream(privateKey.getBytes()));
+                new ByteArrayInputStream(privateKey.getBytes()));
             cipher.init(Cipher.DECRYPT_MODE, priKey);
             byte[] data = java.util.Base64.getDecoder().decode(content);
             int inputLen = data.length;
@@ -294,7 +304,7 @@ public class EncryptUtil {
         for (int i = 0; i < hexStr.length() / 2; i++) {
             int high = Integer.parseInt(hexStr.substring(i * 2, i * 2 + 1), 16);
             int low = Integer.parseInt(hexStr.substring(i * 2 + 1, i * 2 + 2), 16);
-            result[i] = (byte) (high * 16 + low);
+            result[i] = (byte)(high * 16 + low);
         }
         return result;
     }
@@ -319,4 +329,106 @@ public class EncryptUtil {
         }
         return sb.toString();
     }
+
+    /**
+     * AES加密字符串
+     * 
+     * @param content
+     *            需要被加密的字符串
+     * @param password
+     *            加密需要的密码
+     * @return 密文
+     */
+    public static byte[] encrypt(String content, String password) {
+        try {
+            // 创建AES的Key生产者
+            KeyGenerator kgen = KeyGenerator.getInstance("AES");
+            // 利用用户密码作为随机数初始化出128位的key生产者
+            kgen.init(128, new SecureRandom(password.getBytes()));
+            // 加密没关系，SecureRandom是生成安全随机数序列，password.getBytes()是种子，只要种子相同，序列就一样，所以解密只要有password就行
+            SecretKey secretKey = kgen.generateKey();// 根据用户密码，生成一个密钥
+            // 返回基本编码格式的密钥，如果此密钥不支持编码，则返回null
+            byte[] enCodeFormat = secretKey.getEncoded();
+            // 转换为AES专用密钥
+            SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");// 转换为AES专用密钥
+            Cipher cipher = Cipher.getInstance("AES");// 创建密码器
+            byte[] byteContent = content.getBytes("utf-8");
+            cipher.init(Cipher.ENCRYPT_MODE, key);// 初始化为加密模式的密码器
+            byte[] result = cipher.doFinal(byteContent);// 加密
+
+            return result;
+
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /**
+     * 解密AES加密过的字符串
+     * 
+     * @param content
+     *            AES加密过过的内容
+     * @param password
+     *            加密时的密码
+     * @return 明文
+     */
+    public static byte[] decrypt(byte[] content, String password) {
+        try {
+            KeyGenerator kgen = KeyGenerator.getInstance("AES");// 创建AES的Key生产者
+            kgen.init(128, new SecureRandom(password.getBytes()));
+            SecretKey secretKey = kgen.generateKey();// 根据用户密码，生成一个密钥
+            byte[] enCodeFormat = secretKey.getEncoded();// 返回基本编码格式的密钥
+            SecretKeySpec key = new SecretKeySpec(enCodeFormat, "AES");// 转换为AES专用密钥
+            Cipher cipher = Cipher.getInstance("AES");// 创建密码器
+            cipher.init(Cipher.DECRYPT_MODE, key);// 初始化为解密模式的密码器
+
+            byte[] byteResult = cipher.doFinal(content);
+            return byteResult;
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static String encryptBase64(String content, String password) {
+        return new String(new BASE64Encoder().encode(encrypt(content, password)));
+    }
+
+    public static String decryptBase64(String content, String password) {
+        byte[] byteContent = null;
+        try {
+            byteContent = new BASE64Decoder().decodeBuffer(content);
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        try {
+            return new String(decrypt(byteContent, password), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

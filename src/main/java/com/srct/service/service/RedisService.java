@@ -6,8 +6,6 @@ import java.util.Set;
 
 public interface RedisService {
 
-    void set(String key, String value);
-
     boolean setex(String key, int seconds, String value);
 
     boolean setnx(String key, String value);
@@ -55,7 +53,7 @@ public interface RedisService {
     void openPipeline();
 
     List<Object> closePipeline();
-    
+
     void set(String key, Object value);
 
     void set(String key, int seconds, Object value);

@@ -20,7 +20,7 @@ import org.springframework.http.HttpStatus;
  */
 public class CommonResponseConstant {
 
-    private static final String TAG = "SRP";
+    public static final String TAG = "SRP";
 
     public static final CommonResponseCode SUCCESS = new CommonResponseCode(TAG + "0000", "Success", HttpStatus.OK);
 
@@ -34,13 +34,13 @@ public class CommonResponseConstant {
         new CommonResponseCode(TAG + "0003", "Access denied", HttpStatus.FORBIDDEN);
 
     public static final CommonResponseCode ACCESS_TOKEN_EXPIRED_OR_INVALID_ERROR =
-        new CommonResponseCode(TAG + "0005", "Access Token Expired Or Invalid Error", HttpStatus.FORBIDDEN);
+        new CommonResponseCode(TAG + "0005", "Access Token Expired Or Invalid Error", HttpStatus.OK);
 
     public static final CommonResponseCode ACCOUNT_OR_PASSWORD_INCORRECT_ERROR =
-        new CommonResponseCode(TAG + "0006", "Account Or Passwork Incorrect", HttpStatus.UNAUTHORIZED);
+        new CommonResponseCode(TAG + "0006", "Account Or Passwork Incorrect", HttpStatus.OK);
 
     public static final CommonResponseCode USER_NOT_LOGIN_ERROR =
-        new CommonResponseCode(TAG + "0004", "User Not Login Error", HttpStatus.UNAUTHORIZED);
+        new CommonResponseCode(TAG + "0004", "User Not Login Error", HttpStatus.OK);
 
     public static final CommonResponseCode REDIRECT = new CommonResponseCode(TAG + "9999", "Redirect", HttpStatus.OK);
 }

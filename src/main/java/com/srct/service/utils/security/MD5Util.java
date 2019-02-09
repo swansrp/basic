@@ -1,16 +1,16 @@
-/**  
- * Project Name:SpringBootCommon  
- * File Name:MD5Util.java  
- * Package Name:com.srct.service.utils.security  
- * Date:Apr 28, 2018 5:38:54 PM  
- * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
- *  
-*/
+/**
+ * Project Name:SpringBootCommon
+ * File Name:MD5Util.java
+ * Package Name:com.srct.service.utils.security
+ * Date:Apr 28, 2018 5:38:54 PM
+ * Copyright (c) 2018, ruopeng.sha All Rights Reserved.
+ * 
+ */
 package com.srct.service.utils.security;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
+import java.util.Random;
 
 import org.apache.commons.codec.binary.Hex;
 
@@ -27,8 +27,7 @@ import org.apache.commons.codec.binary.Hex;
  */
 public class MD5Util {
 
-    private MD5Util() {
-    }
+    private MD5Util() {}
 
     /**
      * common MD5
@@ -50,11 +49,11 @@ public class MD5Util {
         char[] charArray = input.toCharArray();
         byte[] byteArray = new byte[charArray.length];
         for (int i = 0; i < charArray.length; i++)
-            byteArray[i] = (byte) charArray[i];
+            byteArray[i] = (byte)charArray[i];
         byte[] md5Bytes = md5.digest(byteArray);
         StringBuilder hexValue = new StringBuilder();
         for (int i = 0; i < md5Bytes.length; i++) {
-            int val = ((int) md5Bytes[i]) & 0xff;
+            int val = ((int)md5Bytes[i]) & 0xff;
             if (val < 16)
                 hexValue.append("0");
             hexValue.append(Integer.toHexString(val));
@@ -73,13 +72,7 @@ public class MD5Util {
         if (str == null) {
             return "";
         } else {
-            SecureRandom r;
-            try {
-                r = SecureRandom.getInstance("SHA1PRNG");
-            } catch (NoSuchAlgorithmException e) {
-                // TODO Auto-generated catch block
-                return "";
-            }
+            Random r = new Random();
             StringBuilder sb = new StringBuilder(16);
             sb.append(r.nextInt(99999999)).append(r.nextInt(99999999));
             int len = sb.length();

@@ -21,7 +21,7 @@ public class CacheKeyByParam implements KeyGenerator {
         if (params.length > 0) {
             for (Object object : params) {
                 Class clazz = object.getClass();
-                List<Field> field = ReflectionUtil.getFieldList(clazz);
+                List<Field> field = ReflectionUtil.getFieldList(object);
                 if (field != null && field.size() > 0) {
                     for (int i = 0; i < field.size(); i++) {
                         String name = field.get(i).getName();

@@ -1,13 +1,14 @@
-/**   
+/**
  * Copyright ?2018 SRC-TJ Service TG. All rights reserved.
  * 
  * @Project Name: SpringBootCommon
- * @Package: com.srct.service.utils.email 
- * @author: ruopeng.sha   
+ * @Package: com.srct.service.utils.email
+ * @author: ruopeng.sha
  * @date: 2018-08-22 13:35
  */
 package com.srct.service.utils.email;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -33,6 +34,14 @@ public class EmailRepository {
     private List<String> attachmentPath;
 
     private List<EmailAttachment> attachment;
+
+    public EmailRepository() {
+        recipients = new ArrayList<>();
+        cc = new ArrayList<>();
+        bcc = new ArrayList<>();
+        attachmentPath = new ArrayList<>();
+        attachment = new ArrayList<>();
+    }
 
     public String getTopic() {
         return topic;
@@ -63,7 +72,7 @@ public class EmailRepository {
     }
 
     public void setRecipients(String recipients) {
-        this.recipients = Arrays.asList(new String[] { recipients });
+        this.recipients = Arrays.asList(new String[] {recipients});
     }
 
     public List<String> getCc() {
@@ -79,7 +88,7 @@ public class EmailRepository {
     }
 
     public void setCc(String cc) {
-        this.cc = Arrays.asList(new String[] { cc });
+        this.cc = Arrays.asList(new String[] {cc});
     }
 
     public List<String> getBcc() {
@@ -95,7 +104,7 @@ public class EmailRepository {
     }
 
     public void setBcc(String bcc) {
-        this.bcc = Arrays.asList(new String[] { bcc });
+        this.bcc = Arrays.asList(new String[] {bcc});
     }
 
     public List<String> getAttachmentPath() {
@@ -111,7 +120,7 @@ public class EmailRepository {
     }
 
     public void setAttachmentPath(String attchamentPath) {
-        this.attachmentPath = Arrays.asList(new String[] { attchamentPath });
+        this.attachmentPath = Arrays.asList(new String[] {attchamentPath});
     }
 
     public List<EmailAttachment> getAttachment() {
@@ -127,6 +136,6 @@ public class EmailRepository {
     }
 
     public void setAttachment(EmailAttachment attachment) {
-        this.attachment = Arrays.asList(new EmailAttachment[] { attachment });
+        this.attachment = Arrays.asList(new EmailAttachment[] {attachment});
     }
 }

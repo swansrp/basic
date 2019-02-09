@@ -25,6 +25,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.session.SessionRepository;
+import org.springframework.session.data.redis.RedisOperationsSessionRepository;
 import org.springframework.session.data.redis.config.ConfigureRedisAction;
 
 /**
@@ -74,6 +76,19 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
         redisTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.afterPropertiesSet();
+        return redisTemplate;
+    }
+
+    @Bean(name = "objectRedisTemplate")
+    public RedisTemplate<Object, Object> objectRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
+        RedisTemplate<Object, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+        redisTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setKeySerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setHashKeySerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
         redisTemplate.afterPropertiesSet();
@@ -159,4 +174,20 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
     public ConfigureRedisAction configureRedisAction() {
         return ConfigureRedisAction.NO_OP;
     }
+
+    /**
+     * 设置spring session redis 序列化方式
+     * 
+     * @param factory
+     * @return
+     */
+    @Bean
+    public SessionRepository sessionRepository(RedisConnectionFactory factory) {
+        RedisOperationsSessionRepository sessionRepository =
+            new RedisOperationsSessionRepository(objectRedisTemplate(factory));
+        sessionRepository.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
+        sessionRepository.setDefaultMaxInactiveInterval(36000);
+        return sessionRepository;
+    }
+
 }
