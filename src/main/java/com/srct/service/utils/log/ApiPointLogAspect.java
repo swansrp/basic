@@ -111,6 +111,9 @@ public class ApiPointLogAspect {
         String res = "";
         if (args != null && args.length > 0) {
             String value = null;
+            if (types[0].getSimpleName().toLowerCase().contains("servletresponse")) {
+                return res;
+            }
             try {
                 value = JSONUtil.toJSONString(args[0]);
             } catch (Exception e) {
@@ -119,6 +122,9 @@ public class ApiPointLogAspect {
                 res = types[0].getSimpleName() + " " + names[0] + "<" + value + ">";
             }
             for (int i = 1; i < names.length; i++) {
+                if (types[i].getSimpleName().toLowerCase().contains("servletresponse")) {
+                    continue;
+                }
                 value = null;
                 try {
                     value = JSONUtil.toJSONString(args[i]);
