@@ -42,5 +42,8 @@ public class CommonResponseConstant {
     public static final CommonResponseCode USER_NOT_LOGIN_ERROR =
         new CommonResponseCode(TAG + "0004", "User Not Login Error", HttpStatus.OK);
 
+    public static final CommonResponseCode NOT_IMPLEMENTS =
+        new CommonResponseCode(TAG + "99999", "Until now have not implemented", HttpStatus.OK);
+
     public static final CommonResponseCode REDIRECT = new CommonResponseCode(TAG + "9999", "Redirect", HttpStatus.OK);
 }

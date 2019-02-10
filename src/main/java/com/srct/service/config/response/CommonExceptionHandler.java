@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.srct.service.exception.AccessTokenExpiredException;
 import com.srct.service.exception.AccountOrPasswordIncorrectException;
+import com.srct.service.exception.NotImplementException;
 import com.srct.service.exception.ServiceException;
 import com.srct.service.exception.UserNotLoginException;
 
@@ -125,6 +126,13 @@ public class CommonExceptionHandler {
     @ExceptionHandler(value = ServiceException.class)
     public ResponseEntity<CommonResponse<String>.Resp> errorHandler(ServiceException ex) {
         CommonResponse<String> res = new CommonResponse<String>(CommonResponseConstant.SERVER_ERROR, ex.getMessage());
+        return res.getEntity();
+    }
+
+    @ResponseBody
+    @ExceptionHandler(value = NotImplementException.class)
+    public ResponseEntity<CommonResponse<String>.Resp> errorHandler(NotImplementException ex) {
+        CommonResponse<String> res = new CommonResponse<String>(CommonResponseConstant.NOT_IMPLEMENTS, ex.getMessage());
         return res.getEntity();
     }
 
