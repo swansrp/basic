@@ -15,7 +15,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.srct.service.exception.AccessTokenExpiredException;
 import com.srct.service.exception.AccountOrPasswordIncorrectException;
@@ -34,7 +33,7 @@ import com.srct.service.exception.UserNotLoginException;
  * @since JDK 1.8
  * @see
  */
-@RestControllerAdvice
+// @RestControllerAdvice
 public class CommonExceptionHandler {
 
     /**

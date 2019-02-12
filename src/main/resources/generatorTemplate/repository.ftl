@@ -55,16 +55,40 @@ public class ${modelName}Dao {
 
     @CacheEvict(value = "${modelName}", allEntries = true)
     public ${modelName} update${modelName}(${modelName} ${modelNameFL}) {
+        int res = 0;
         if (${modelNameFL}.getId() == null) {
             <#if FeatureCreateAt??>
             ${modelNameFL}.setCreateAt(new Date());
             </#if>
-            ${modelNameFL}Mapper.insertSelective(${modelNameFL});
+            res = ${modelNameFL}Mapper.insertSelective(${modelNameFL});
         } else {
             <#if FeatureUpdateAt??>
             ${modelNameFL}.setUpdateAt(new Date());
             </#if>
-            ${modelNameFL}Mapper.updateByPrimaryKeySelective(${modelNameFL});
+            res = ${modelNameFL}Mapper.updateByPrimaryKeySelective(${modelNameFL});
+        }
+        if(res == 0) {
+            throw new ServiceException("update ${modelName} error");
+        }
+        return ${modelNameFL};
+    }
+
+    @CacheEvict(value = "${modelName}", allEntries = true)
+    public ${modelName} update${modelName}Strict(${modelName} ${modelNameFL}) {
+        int res = 0;
+        if (${modelNameFL}.getId() == null) {
+            <#if FeatureCreateAt??>
+            ${modelNameFL}.setCreateAt(new Date());
+            </#if>
+            res = ${modelNameFL}Mapper.insert(${modelNameFL});
+        } else {
+            <#if FeatureUpdateAt??>
+            ${modelNameFL}.setUpdateAt(new Date());
+            </#if>
+            res = ${modelNameFL}Mapper.updateByPrimaryKey(${modelNameFL});
+        }
+        if(res == 0) {
+            throw new ServiceException("update ${modelName} error");
         }
         return ${modelNameFL};
     }
@@ -72,6 +96,11 @@ public class ${modelName}Dao {
     @CacheEvict(value = "${modelName}", allEntries = true)
     public Integer update${modelName}ByExample(${modelName} ${modelNameFL}, ${modelName}Example example) {
         return ${modelNameFL}Mapper.updateByExampleSelective(${modelNameFL}, example);
+    }
+
+    @CacheEvict(value = "${modelName}", allEntries = true)
+    public Integer update${modelName}ByExampleStrict(${modelName} ${modelNameFL}, ${modelName}Example example) {
+        return ${modelNameFL}Mapper.updateByExample(${modelNameFL}, example);
     }
 
     @CacheEvict(value = "${modelName}", allEntries = true)
