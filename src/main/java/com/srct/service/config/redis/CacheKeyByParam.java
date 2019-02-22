@@ -51,16 +51,12 @@ public class CacheKeyByParam implements KeyGenerator {
                             } else {
                                 value = tempObject.toString();
                             }
-                            if (i == field.size() - 1) {
-                                key.append(name + "_" + value);
-                            } else {
-                                key.append(name + "_" + value + ",");
-                            }
+                            key.append(name + "_" + value + ",");
                         }
                     }
                 }
             }
         }
-        return key.toString();
+        return key.substring(0, key.length() - 1);
     }
 }
