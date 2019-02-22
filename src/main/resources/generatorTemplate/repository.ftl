@@ -32,6 +32,8 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import ${BASIC_PACKAGE}.config.db.DataSourceCommonConstant;
 import ${BASIC_PACKAGE}.config.redis.CacheExpire;
 import ${BASIC_PACKAGE}.exception.ServiceException;
@@ -158,12 +160,27 @@ public class ${modelName}Dao {
 
     @Cacheable(value = "${modelName}", keyGenerator = "CacheKeyByParam")
     @CacheExpire(expire = 3600L)
+    public List<${modelName}> getShopInfoSelective(${modelName} ${modelNameFL}, PageInfo<?> pageInfo) {
+        ${modelName}Example example = get${modelName}Example(${modelNameFL});
+        PageHelper.startPage(pageInfo);
+        List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
+        pageInfo = new PageInfo<${modelName}>(res);
+        return res;
+    }
+    @Cacheable(value = "${modelName}", keyGenerator = "CacheKeyByParam")
+    @CacheExpire(expire = 3600L)
     public List<${modelName}> get${modelName}Selective(${modelName} ${modelNameFL}) {
         ${modelName}Example example = get${modelName}Example(${modelNameFL});
         List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
         return res;
     }
 
+    public List<${modelName}> get${modelName}ByExample(${modelName}Example example, PageInfo<?> pageInfo) {
+        PageHelper.startPage(pageInfo);
+        List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
+        pageInfo = new PageInfo<${modelName}>(res);
+        return res;
+    }
     public List<${modelName}> get${modelName}ByExample(${modelName}Example example) {
         List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
         return res;
