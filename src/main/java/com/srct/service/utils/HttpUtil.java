@@ -6,7 +6,11 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import cn.hutool.core.util.StrUtil;
+
 public class HttpUtil {
+
+    private final static String COMMA = ",";
 
     /**
      * Extract request header
@@ -28,5 +32,42 @@ public class HttpUtil {
             map.put(key, value);
         }
         return map;
+    }
+
+    public static String getRemoteIp(HttpServletRequest request) {
+        String ip = request.getHeader("x-forwarded-for");
+        if (isUnknown(ip)) {
+            ip = request.getHeader("Proxy-Client-IP");
+        }
+        if (isUnknown(ip)) {
+            ip = request.getHeader("WL-Proxy-Client-IP");
+        }
+        if (isUnknown(ip)) {
+            ip = request.getRemoteAddr();
+        }
+
+        if (StrUtil.isNotBlank(ip) && ip.contains(StrUtil.COMMA)) {
+            String[] list = StrUtil.split(ip, StrUtil.COMMA);
+            if (list != null && list.length > 1) {
+                ip = list[0];
+            }
+        }
+
+        return cutLength(ip);
+    }
+
+    private static boolean isUnknown(String ip) {
+        return StrUtil.isBlank(ip) || "unknown".equalsIgnoreCase(ip);
+    }
+
+    private static String cutLength(String ip) {
+        String tempIp = ip;
+
+        final int size = 20;
+        if (StrUtil.isNotBlank(ip) && ip.length() > size) {
+            tempIp = ip.substring(0, size);
+        }
+
+        return tempIp;
     }
 }
