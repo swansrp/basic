@@ -121,6 +121,11 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
         return ctx.getBeanNamesForType(clazz);
     }
 
+    /// 获取当前环境
+    public static String getActiveProfile() {
+        return ctx.getEnvironment().getActiveProfiles()[0];
+    }
+
     /** 
      *  
      */
