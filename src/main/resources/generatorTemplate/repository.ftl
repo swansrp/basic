@@ -47,7 +47,7 @@ import ${BASIC_PACKAGE}.utils.StringUtil;
 
 /**
  * @ClassName: ${modelName}Dao
- * @Description: TODO
+ * @Description: Basic Repository 
  */
 @Repository("${dbPackageName}${modelName}Dao")
 public class ${modelName}Dao {
@@ -145,28 +145,42 @@ public class ${modelName}Dao {
     public List<${modelName}> getAll${modelName}List(Byte valid) {
         ${modelName}Example example = new ${modelName}Example();
         ${modelName}Example.Criteria criteria = example.createCriteria();
-        if (!valid.equals(DataSourceCommonConstant.DATABASE_COMMON_IGORE_VALID)) {
+        if (!valid.equals(DataSourceCommonConstant.DATABASE_COMMON_IGNORE_VALID)) {
             criteria.andValidEqualTo(valid);
         }
-
         return ${modelNameFL}Mapper.selectByExample(example);
+    }
+	
+	@Cacheable(value = "${modelName}", keyGenerator = "CacheKeyByParam")
+    @CacheExpire(expire = 3600L)
+    public List<${modelName}> getAll${modelName}List(Byte valid, PageInfo<?> pageInfo) {
+        ${modelName}Example example = new ${modelName}Example();
+        ${modelName}Example.Criteria criteria = example.createCriteria();
+        if (!valid.equals(DataSourceCommonConstant.DATABASE_COMMON_IGNORE_VALID)) {
+            criteria.andValidEqualTo(valid);
+        }
+        PageHelper.startPage(pageInfo);
+        List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
+        pageInfo = new PageInfo<${modelName}>(res);
+        return res;
     }
 
     @Cacheable(value = "${modelName}", key = "'id_' + #id")
     @CacheExpire(expire = 24 * 3600L)
-    public ${modelName} get${modelName}byId(Integer id) {
+    public ${modelName} get${modelName}ById(Integer id) {
         return ${modelNameFL}Mapper.selectByPrimaryKey(id);
     }
 
     @Cacheable(value = "${modelName}", keyGenerator = "CacheKeyByParam")
     @CacheExpire(expire = 3600L)
-    public List<${modelName}> getShopInfoSelective(${modelName} ${modelNameFL}, PageInfo<?> pageInfo) {
+    public List<${modelName}> get${modelName}Selective(${modelName} ${modelNameFL}, PageInfo<?> pageInfo) {
         ${modelName}Example example = get${modelName}Example(${modelNameFL});
         PageHelper.startPage(pageInfo);
         List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
         pageInfo = new PageInfo<${modelName}>(res);
         return res;
     }
+    
     @Cacheable(value = "${modelName}", keyGenerator = "CacheKeyByParam")
     @CacheExpire(expire = 3600L)
     public List<${modelName}> get${modelName}Selective(${modelName} ${modelNameFL}) {
@@ -181,6 +195,7 @@ public class ${modelName}Dao {
         pageInfo = new PageInfo<${modelName}>(res);
         return res;
     }
+    
     public List<${modelName}> get${modelName}ByExample(${modelName}Example example) {
         List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
         return res;

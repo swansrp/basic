@@ -1,6 +1,7 @@
 
 package ${entityVOPackage};
 
+import com.srct.service.vo.QueryReqVO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -11,10 +12,9 @@ import java.util.Date;
 * 根据需要删减无效参数
  * 
 * @author: ${author}
-* @create: ${date}
  **/
 @Data
-public class ${modelName}EntityVO {
+public class ${modelName}EntityVO extends QueryReqVO {
     <#list baseDataList as data>
  
     @ApiModelProperty(value = "${data.columnComment}")

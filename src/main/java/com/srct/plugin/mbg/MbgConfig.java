@@ -1,28 +1,29 @@
-/**   
+/**
  * Copyright ?2018 SRC-TJ Service TG. All rights reserved.
- * 
+ *
  * @Project Name: SpringBootCommonLib
- * @Package: com.srct.plugin.mbg 
- * @author: ruopeng.sha   
+ * @Package: com.srct.plugin.mbg
+ * @author: ruopeng.sha
  * @date: 2018-11-03 14:04
  */
 package com.srct.plugin.mbg;
-
-import java.util.HashMap;
 
 import com.srct.plugin.BaseConfig;
 import com.srct.plugin.utils.Utils;
 import com.srct.service.utils.JSONUtil;
 import com.srct.service.utils.ReflectionUtil;
 import com.srct.service.utils.StringUtil;
-
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.util.HashMap;
 
 /**
  * @ClassName: mbgConfig
  * @Description: TODO
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class MbgConfig extends BaseConfig {
 
     // 项目名称

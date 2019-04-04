@@ -1,9 +1,9 @@
-/**   
+/**
  * Copyright ?2018 SRC-TJ Service TG. All rights reserved.
- * 
+ *
  * @Project Name: SpringBootCommonLib
- * @Package: com.srct.plugin 
- * @author: ruopeng.sha   
+ * @Package: com.srct.plugin
+ * @author: ruopeng.sha
  * @date: 2018-11-06 13:15
  */
 package com.srct.plugin;

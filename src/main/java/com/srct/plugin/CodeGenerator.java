@@ -1,23 +1,20 @@
 /**
- * Copyright ?2018 SRC-TJ Service TG. All rights reserved.
- * 
- * @Project Name: SpringBootCommonLib
- * @Package: com.srct.plugin.mbg
+ * Copyright ?2018 SRC-TJ Service TG. All rights reserved. @Project Name: SpringBootCommonLib @Package:
+ * com.srct.plugin.mbg
+ *
  * @author: ruopeng.sha
  * @date: 2018-11-03 11:08
  */
 package com.srct.plugin;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import com.srct.plugin.mbg.BaseData;
+import com.srct.plugin.mbg.MbgConfig;
+import com.srct.plugin.module.ModuleConfig;
+import com.srct.plugin.utils.DatabaseUtil;
+import com.srct.service.utils.StringUtil;
+import freemarker.template.TemplateExceptionHandler;
 import org.mybatis.generator.api.MyBatisGenerator;
+import org.mybatis.generator.config.CommentGeneratorConfiguration;
 import org.mybatis.generator.config.Configuration;
 import org.mybatis.generator.config.Context;
 import org.mybatis.generator.config.GeneratedKey;
@@ -29,18 +26,15 @@ import org.mybatis.generator.config.SqlMapGeneratorConfiguration;
 import org.mybatis.generator.config.TableConfiguration;
 import org.mybatis.generator.internal.DefaultShellCallback;
 
-import com.srct.plugin.mbg.BaseData;
-import com.srct.plugin.mbg.MbgConfig;
-import com.srct.plugin.module.ModuleConfig;
-import com.srct.plugin.utils.DatabaseUtil;
-import com.srct.service.utils.StringUtil;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import freemarker.template.TemplateExceptionHandler;
-
-/**
- * @ClassName: CodeGenerator
- * @Description: TODO
- */
 public class CodeGenerator {
 
     private static String projectName;
@@ -80,8 +74,11 @@ public class CodeGenerator {
         // genModule("user");
         genDBRelatedCode();
 
-        // MbgConfig config = new MbgConfig(projectName, "tanya");
-        // genDBCode(config, "tanya", "user_info");
+        MbgConfig config = new MbgConfig(projectName, "tanya");
+        //genDBCode(config, "tanya", "goods_info");
+        //genDBCode(config, "tanya", "shop_info");
+        // genDBCode(config, "tanya", "shop_factory_merchant_map");
+        //genDBCode(config, "tanya", "order_info");
     }
 
     private static void genCommonModule() {
@@ -132,7 +129,7 @@ public class CodeGenerator {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
             File file = new File(
-                config.getResponsePath() + config.getProjectName() + "ExceptionHandler" + BaseConfig.JAVA_SUFFIX);
+                    config.getResponsePath() + config.getProjectName() + "ExceptionHandler" + BaseConfig.JAVA_SUFFIX);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
@@ -144,7 +141,7 @@ public class CodeGenerator {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
             File file = new File(
-                config.getResponsePath() + config.getProjectName() + "ResponseConstant" + BaseConfig.JAVA_SUFFIX);
+                    config.getResponsePath() + config.getProjectName() + "ResponseConstant" + BaseConfig.JAVA_SUFFIX);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
@@ -237,7 +234,7 @@ public class CodeGenerator {
         commonConfig.getData().put("dbConfigMapPackageName", CodeGenerator.dbConfigMapPackageName);
         genDBConfig(commonConfig);
         for (Entry<String, String> entry : dbConfigMap.entrySet()) {
-            System.out.println("Start to genarator: " + entry.getKey());
+            System.out.println("Start to generator: " + entry.getKey());
             MbgConfig config = new MbgConfig(projectName, entry.getKey());
             genDBCode(config, entry.getKey(), null);
         }
@@ -246,7 +243,7 @@ public class CodeGenerator {
     private static void genDBConfig(ModuleConfig commonConfig) {
         genDataSourceConfig(commonConfig);
         genDataSourceLifeCycle(commonConfig);
-        genDataSrouceAspect(commonConfig);
+        genDataSourceAspect(commonConfig);
     }
 
     private static void genDataSourceConfig(ModuleConfig commonConfig) {
@@ -277,15 +274,15 @@ public class CodeGenerator {
         }
     }
 
-    private static void genDataSrouceAspect(ModuleConfig commonConfig) {
+    private static void genDataSourceAspect(ModuleConfig commonConfig) {
         try {
             freemarker.template.Configuration cfg = getConfiguration();
             File file = new File(commonConfig.getDbConfigPath() + "DynamicDataSourceAspect" + BaseConfig.JAVA_SUFFIX);
             if (!file.getParentFile().exists()) {
                 file.getParentFile().mkdirs();
             }
-            cfg.getTemplate("dynamicDataSourceAspect.ftl", "UTF-8").process(commonConfig.getData(),
-                new FileWriter(file));
+            cfg.getTemplate("dynamicDataSourceAspect.ftl", "UTF-8")
+                    .process(commonConfig.getData(), new FileWriter(file));
             System.out.println(file.getAbsolutePath() + "生成成功");
         } catch (Exception e) {
             throw new RuntimeException("生成 DynamicDataSourceAspect 失败", e);
@@ -332,7 +329,7 @@ public class CodeGenerator {
             }
             if (file.exists()) {
                 System.out.println(file.getAbsolutePath() + "已经存在不再覆盖");
-                return;
+                // return;
             }
             cfg.getTemplate("repository.ftl", "UTF-8").process(config.getData(), new FileWriter(file));
             System.out.println(file.getAbsolutePath() + "生成成功");
@@ -376,18 +373,26 @@ public class CodeGenerator {
         context.setTargetRuntime("MyBatis3");
         context.addProperty(PropertyRegistry.CONTEXT_BEGINNING_DELIMITER, "`");
         context.addProperty(PropertyRegistry.CONTEXT_ENDING_DELIMITER, "`");
+        //设置是否生成注释
+        CommentGeneratorConfiguration commentGeneratorConfiguration = new CommentGeneratorConfiguration();
+        commentGeneratorConfiguration.addProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_DATE, "true");
+        commentGeneratorConfiguration.addProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_ALL_COMMENTS, "true");
+        context.setCommentGeneratorConfiguration(commentGeneratorConfiguration);
+        //JDBC配置
         JDBCConnectionConfiguration jdbcConnectionConfiguration = new JDBCConnectionConfiguration();
         jdbcConnectionConfiguration.setConnectionURL(DatabaseUtil.BASEURL + db + DatabaseUtil.PROFILE);
         jdbcConnectionConfiguration.setUserId(DatabaseUtil.USERNAME);
         jdbcConnectionConfiguration.setPassword(DatabaseUtil.PASSWORD);
         jdbcConnectionConfiguration.setDriverClass(DatabaseUtil.DRIVER);
         context.setJdbcConnectionConfiguration(jdbcConnectionConfiguration);
+        //Model配置
         JavaModelGeneratorConfiguration javaModelGeneratorConfiguration = new JavaModelGeneratorConfiguration();
         javaModelGeneratorConfiguration.setTargetProject(config.getCommonPath());
         javaModelGeneratorConfiguration.setTargetPackage(config.getEntityPackage());
         javaModelGeneratorConfiguration.addProperty("enableSubPackages", "true");
         javaModelGeneratorConfiguration.addProperty("trimStrings", "true");
         context.setJavaModelGeneratorConfiguration(javaModelGeneratorConfiguration);
+        //Mapper配置
         SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
         sqlMapGeneratorConfiguration.setTargetProject(config.getCommonPath());
         sqlMapGeneratorConfiguration.setTargetPackage(config.getMapperPackage());
@@ -426,9 +431,11 @@ public class CodeGenerator {
             Configuration mbgConfig = new Configuration();
             mbgConfig.addContext(context);
             mbgConfig.validate();
+            System.out.println(
+                    mbgConfig.getContext("SRC-T").getProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_DATE));
             boolean overwrite = true;
             DefaultShellCallback callback = new DefaultShellCallback(overwrite);
-            warnings = new ArrayList<String>();
+            warnings = new ArrayList<>();
             generator = new MyBatisGenerator(mbgConfig, callback, warnings);
             generator.generate(null);
         } catch (Exception e) {
@@ -447,7 +454,7 @@ public class CodeGenerator {
 
     private static freemarker.template.Configuration getConfiguration() throws IOException {
         freemarker.template.Configuration cfg =
-            new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_28);
+                new freemarker.template.Configuration(freemarker.template.Configuration.VERSION_2_3_28);
         cfg.setDirectoryForTemplateLoading(new File(BaseConfig.TEMPLATE_PATH));
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.IGNORE_HANDLER);

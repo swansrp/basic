@@ -3,14 +3,26 @@
  * 
  * @Project Name: ${projectName}
  * @Package: ${controllerPackage} 
- * @author: ${author}   
- * @date: ${date}
+ * @author: ${author}
  */
 package ${controllerPackage};
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.github.pagehelper.PageInfo;
+import ${BASIC_PACKAGE}.config.db.DataSourceCommonConstant;
+import ${BASIC_PACKAGE}.config.response.CommonResponse;
+import ${commonPackage}.config.response.${projectName}ExceptionHandler;
+import ${entityPackage}.${modelName};
+import ${repositoryPackage}.${modelName}Dao;
+import ${entityVOPackage}.${modelName}EntityVO;
+import com.srct.service.utils.BeanUtil;
+import com.srct.service.utils.DBUtil;
+import com.srct.service.vo.QueryRespVO;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
@@ -20,21 +32,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import ${BASIC_PACKAGE}.config.db.DataSourceCommonConstant;
-import ${BASIC_PACKAGE}.config.response.CommonResponse;
-import ${commonPackage}.config.response.${projectName}ExceptionHandler;
-import ${entityPackage}.${modelName};
-import ${repositoryPackage}.${modelName}Dao;
-import ${entityVOPackage}.${modelName}EntityVO;
-import com.srct.service.utils.BeanUtil;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 
 @Api(value = "${modelName}")
 @RestController("${dbPackageName}${modelName}Controller")
@@ -67,44 +64,52 @@ public class ${modelName}Controller {
         @ApiResponse(code = 500, message = "服务器内部异常"),
         @ApiResponse(code = 403, message = "权限不足") })
     @RequestMapping(value = "/selective", method = RequestMethod.POST)
-    public ResponseEntity<CommonResponse<List<${modelName}>>.Resp> get${modelName}Selective(
+    public ResponseEntity<CommonResponse<QueryRespVO<${modelName}>>.Resp> get${modelName}Selective(
             @RequestBody ${modelName}EntityVO vo
             ) {
-        List<${modelName}> res = new ArrayList<>();
+        QueryRespVO<${modelName}> res = new QueryRespVO<>();
         ${modelName} ${modelNameFL} = new ${modelName}();
         BeanUtil.copyProperties(vo, ${modelNameFL});
-        res.addAll(${modelNameFL}Dao.get${modelName}Selective(${modelNameFL}));
+		PageInfo pageInfo = DBUtil.buildPageInfo(vo);
+        res.getInfo().addAll(${modelNameFL}Dao.get${modelName}Selective(${modelNameFL}));
+        res.buildPageInfo(pageInfo);
         return ${projectName}ExceptionHandler.generateResponse(res);
     }
 
     @ApiOperation(value = "查询${modelName}", notes = "返回id对应的${modelName},id为空返回全部")
     @ApiImplicitParams({ 
-        @ApiImplicitParam(paramType = "query", dataType = "Interger", name = "id", value = "${modelName}的主键", required = false)})
+        @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "id", value = "${modelName}的主键"),
+            @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "currentPage", value = "当前页"),
+            @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "pageSize", value = "每页条目数量")})
     @ApiResponses({ @ApiResponse(code = 200, message = "操作成功"),
         @ApiResponse(code = 500, message = "服务器内部异常"),
         @ApiResponse(code = 403, message = "权限不足") })
     @RequestMapping(value = "", method = RequestMethod.GET)
-    public ResponseEntity<CommonResponse<List<${modelName}>>.Resp> get${modelName}(
+    public ResponseEntity<CommonResponse<QueryRespVO<${modelName}>>.Resp> get${modelName}(
+            @RequestParam(value = "currentPage", required = false) Integer currentPage,
+            @RequestParam(value = "pageSize", required = false) Integer pageSize,
             @RequestParam(value = "id", required = false) Integer id
             ) {
-        List<${modelName}> resList = new ArrayList<>();
+        QueryRespVO<${modelName}> res = new QueryRespVO<>();
         if (id == null) {
-            resList.addAll(${modelNameFL}Dao.getAll${modelName}List(DataSourceCommonConstant.DATABASE_COMMON_IGORE_VALID));
+            PageInfo pageInfo = DBUtil.buildPageInfo(currentPage, pageSize);
+            res.getInfo().addAll(${modelNameFL}Dao
+                    .getAll${modelName}List(DataSourceCommonConstant.DATABASE_COMMON_IGNORE_VALID, pageInfo));
         } else {
-            resList.add(${modelNameFL}Dao.get${modelName}byId(id));
+            res.getInfo().add(${modelNameFL}Dao.get${modelName}ById(id));
         }
-        return ${projectName}ExceptionHandler.generateResponse(resList);
+        return ${projectName}ExceptionHandler.generateResponse(res);
     }
     
     @ApiOperation(value = "软删除${modelName}", notes = "软删除主键为id的${modelName}")
     @ApiImplicitParams({
-        @ApiImplicitParam(paramType = "query", dataType = "Interger", name = "id", value = "${modelName}的主键", required = false)})
+        @ApiImplicitParam(paramType = "query", dataType = "Integer", name = "id", value = "${modelName}的主键")})
     @ApiResponses({ @ApiResponse(code = 200, message = "操作成功"),
         @ApiResponse(code = 500, message = "服务器内部异常"),
         @ApiResponse(code = 403, message = "权限不足") })
     @RequestMapping(value = "", method = RequestMethod.DELETE)
     public ResponseEntity<CommonResponse<Integer>.Resp> del${modelName}(
-            @RequestParam(value = "id", required = true) Integer id
+            @RequestParam(value = "id") Integer id
             ) {
         ${modelName} ${modelNameFL} = new ${modelName}();
         ${modelNameFL}.setId(id);
