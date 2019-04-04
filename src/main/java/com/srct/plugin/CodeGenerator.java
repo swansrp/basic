@@ -376,7 +376,8 @@ public class CodeGenerator {
         //设置是否生成注释
         CommentGeneratorConfiguration commentGeneratorConfiguration = new CommentGeneratorConfiguration();
         commentGeneratorConfiguration.addProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_DATE, "true");
-        commentGeneratorConfiguration.addProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_ALL_COMMENTS, "true");
+        //取消所有注释将会追加XML文件
+        //commentGeneratorConfiguration.addProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_ALL_COMMENTS, "true");
         context.setCommentGeneratorConfiguration(commentGeneratorConfiguration);
         //JDBC配置
         JDBCConnectionConfiguration jdbcConnectionConfiguration = new JDBCConnectionConfiguration();
@@ -431,8 +432,6 @@ public class CodeGenerator {
             Configuration mbgConfig = new Configuration();
             mbgConfig.addContext(context);
             mbgConfig.validate();
-            System.out.println(
-                    mbgConfig.getContext("SRC-T").getProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_DATE));
             boolean overwrite = true;
             DefaultShellCallback callback = new DefaultShellCallback(overwrite);
             warnings = new ArrayList<>();
