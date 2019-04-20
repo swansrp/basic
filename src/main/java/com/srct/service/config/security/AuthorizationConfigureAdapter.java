@@ -1,6 +1,6 @@
 /**
  * Copyright ?2018 SRC-TJ Service TG. All rights reserved.
- * 
+ *
  * @Project Name: SpringBootCommonLib
  * @Package: com.srct.service.config.security
  * @author: ruopeng.sha
@@ -15,48 +15,22 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * @ClassName: AuthorizationConfigureAdapter
  * @Description: TODO
  */
 @Configuration
-public class AuthorizationConfigureAdapter extends WebMvcConfigurationSupport {
+public class AuthorizationConfigureAdapter implements WebMvcConfigurer {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthorizationConfigureAdapter.class);
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.web.servlet.config.annotation.
-     * WebMvcConfigurationSupport#
-     * addInterceptors(org.springframework.web.servlet.config.annotation.
-     * InterceptorRegistry)
-     */
+
     @Autowired
     AuthInterceptor authInterceptor;
-    /*
-     * (non-Javadoc)
-     * 
-     * @see org.springframework.web.servlet.config.annotation.
-     * WebMvcConfigurationSupport#
-     * addResourceHandlers(org.springframework.web.servlet.config.annotation.
-     * ResourceHandlerRegistry)
-     */
 
     @Override
-    protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // TODO Auto-generated method stub
-        registry.addResourceHandler("/js/**").addResourceLocations("classpath:/js/");
-        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
-        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
-        super.addResourceHandlers(registry);
-    }
-
-    @Override
-    protected void addInterceptors(InterceptorRegistry registry) {
-        // TODO Auto-generated method stub
+    public void addInterceptors(InterceptorRegistry registry) {
         // registry.addInterceptor(authInterceptor).addPathPatterns("/**");
         registry.addInterceptor(authInterceptor).addPathPatterns("/rfu/**");
     }

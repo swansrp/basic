@@ -42,10 +42,9 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 
-
 /**
 * @ClassName: ${modelName}Dao
-* @Description: Basic Repository
+* @Description: TODO
 */
 @Repository("${dbPackageName}${modelName}Dao")
 public class ${modelName}Dao {
@@ -146,12 +145,13 @@ ${modelName}Example.Criteria criteria = example.createCriteria();
 if (!valid.equals(DataSourceCommonConstant.DATABASE_COMMON_IGNORE_VALID)) {
 criteria.andValidEqualTo(valid);
 }
+
 return ${modelNameFL}Mapper.selectByExample(example);
 }
 
 @Cacheable(value = "${modelName}", keyGenerator = "CacheKeyByParam")
 @CacheExpire(expire = 3600L)
-public List<${modelName}> getAll${modelName}List(Byte valid, PageInfo<?> pageInfo) {
+public PageInfo<${modelName}> getAll${modelName}List(Byte valid, PageInfo<?> pageInfo) {
 ${modelName}Example example = new ${modelName}Example();
 ${modelName}Example.Criteria criteria = example.createCriteria();
 if (!valid.equals(DataSourceCommonConstant.DATABASE_COMMON_IGNORE_VALID)) {
@@ -159,8 +159,7 @@ criteria.andValidEqualTo(valid);
 }
 PageHelper.startPage(pageInfo);
 List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
-pageInfo = new PageInfo<${modelName}>(res);
-return res;
+return new PageInfo<${modelName}>(res);
 }
 
 @Cacheable(value = "${modelName}", key = "'id_' + #id")
@@ -171,12 +170,11 @@ return ${modelNameFL}Mapper.selectByPrimaryKey(id);
 
 @Cacheable(value = "${modelName}", keyGenerator = "CacheKeyByParam")
 @CacheExpire(expire = 3600L)
-public List<${modelName}> get${modelName}Selective(${modelName} ${modelNameFL}, PageInfo<?> pageInfo) {
+public PageInfo<${modelName}> get${modelName}Selective(${modelName} ${modelNameFL}, PageInfo<?> pageInfo) {
 ${modelName}Example example = get${modelName}Example(${modelNameFL});
 PageHelper.startPage(pageInfo);
 List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
-pageInfo = new PageInfo<${modelName}>(res);
-return res;
+return new PageInfo<${modelName}>(res);
 }
 
 @Cacheable(value = "${modelName}", keyGenerator = "CacheKeyByParam")
@@ -187,11 +185,10 @@ List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
 return res;
 }
 
-public List<${modelName}> get${modelName}ByExample(${modelName}Example example, PageInfo<?> pageInfo) {
+public PageInfo<${modelName}> get${modelName}ByExample(${modelName}Example example, PageInfo<?> pageInfo) {
 PageHelper.startPage(pageInfo);
 List<${modelName}> res = ${modelNameFL}Mapper.selectByExample(example);
-pageInfo = new PageInfo<${modelName}>(res);
-return res;
+return new PageInfo<${modelName}>(res);
 }
 
 public List<${modelName}> get${modelName}ByExample(${modelName}Example example) {

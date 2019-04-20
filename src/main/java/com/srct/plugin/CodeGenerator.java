@@ -72,13 +72,17 @@ public class CodeGenerator {
 
         // genCommonModule();
         // genModule("user");
-        genDBRelatedCode();
+        // genDBRelatedCode();
 
         MbgConfig config = new MbgConfig(projectName, "tanya");
+        //genDBCode(config, "tanya", "factory_merchant_map");
+        //genDBCode(config, "tanya", "role_permission_map");
+        //genDBCode(config, "tanya", "goods_factory_merchant_map");
+        //genDBCode(config, "tanya", "goods_trader_factory_merchant_map");
+        //genDBCode(config, "tanya", "goods_trader_factory_merchant_map");
+        //genDBCode(config, "tanya", "shop_trader_factory_merchant_map");
+        //genDBCode(config, "tanya", "campaign_info");
         //genDBCode(config, "tanya", "goods_info");
-        //genDBCode(config, "tanya", "shop_info");
-        // genDBCode(config, "tanya", "shop_factory_merchant_map");
-        //genDBCode(config, "tanya", "order_info");
     }
 
     private static void genCommonModule() {
@@ -219,12 +223,12 @@ public class CodeGenerator {
         if (tableName == null) {
             for (String table : tableNames) {
                 System.out.println(table);
-                genCode(config, table);
                 genModelAndMapper(config, config.getDbName(), table);
+                genCode(config, table);
             }
         } else {
-            genCode(config, tableName);
             genModelAndMapper(config, config.getDbName(), tableName);
+            genCode(config, tableName);
         }
     }
 
@@ -297,6 +301,7 @@ public class CodeGenerator {
         initDBField(config, tableName);
         genRepository(config, modelName);
         genMapper(config, modelName);
+        genEntity(config, modelName);
         genEntityVO(config, modelName);
         genController(config, modelName);
     }
@@ -317,6 +322,20 @@ public class CodeGenerator {
             System.out.println(file.getAbsolutePath() + "生成成功");
         } catch (Exception e) {
             throw new RuntimeException("生成 Entity VO 失败", e);
+        }
+    }
+
+    private static void genEntity(MbgConfig config, String modelName) {
+        try {
+            freemarker.template.Configuration cfg = getConfiguration();
+            File file = new File(config.getEntityPath() + modelName + BaseConfig.JAVA_SUFFIX);
+            if (!file.getParentFile().exists()) {
+                file.getParentFile().mkdirs();
+            }
+            cfg.getTemplate("entity.ftl", "UTF-8").process(config.getData(), new FileWriter(file));
+            System.out.println(file.getAbsolutePath() + "生成成功");
+        } catch (Exception e) {
+            throw new RuntimeException("生成 Entity 失败", e);
         }
     }
 
@@ -386,6 +405,7 @@ public class CodeGenerator {
         jdbcConnectionConfiguration.setPassword(DatabaseUtil.PASSWORD);
         jdbcConnectionConfiguration.setDriverClass(DatabaseUtil.DRIVER);
         context.setJdbcConnectionConfiguration(jdbcConnectionConfiguration);
+
         //Model配置
         JavaModelGeneratorConfiguration javaModelGeneratorConfiguration = new JavaModelGeneratorConfiguration();
         javaModelGeneratorConfiguration.setTargetProject(config.getCommonPath());
@@ -393,6 +413,7 @@ public class CodeGenerator {
         javaModelGeneratorConfiguration.addProperty("enableSubPackages", "true");
         javaModelGeneratorConfiguration.addProperty("trimStrings", "true");
         context.setJavaModelGeneratorConfiguration(javaModelGeneratorConfiguration);
+
         //Mapper配置
         SqlMapGeneratorConfiguration sqlMapGeneratorConfiguration = new SqlMapGeneratorConfiguration();
         sqlMapGeneratorConfiguration.setTargetProject(config.getCommonPath());
@@ -438,6 +459,7 @@ public class CodeGenerator {
             generator = new MyBatisGenerator(mbgConfig, callback, warnings);
             generator.generate(null);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new RuntimeException("生成Model和Mapper失败", e);
         }
         if (generator.getGeneratedJavaFiles().isEmpty() || generator.getGeneratedXmlFiles().isEmpty()) {

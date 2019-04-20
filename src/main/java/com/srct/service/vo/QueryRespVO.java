@@ -30,7 +30,7 @@ public class QueryRespVO<T> extends QueryReqVO {
     }
 
     public void buildPageInfo(PageInfo pageInfo) {
-        this.setPageSize(pageInfo.getPages());
+        this.setTotalPages(pageInfo.getPages());
         this.setTotalSize(pageInfo.getTotal());
         this.setCurrentPage(pageInfo.getPageNum());
         this.setPageSize(pageInfo.getPageSize());
