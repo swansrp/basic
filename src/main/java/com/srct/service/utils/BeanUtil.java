@@ -4,13 +4,10 @@
  * Package Name:com.srct.service.utils
  * Date:2018年4月26日上午11:17:45
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.
- * 
  */
 package com.srct.service.utils;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import com.srct.service.utils.log.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -32,19 +29,22 @@ import org.springframework.context.annotation.ScopeMetadata;
 import org.springframework.context.annotation.ScopeMetadataResolver;
 import org.springframework.web.context.WebApplicationContext;
 
-import com.srct.service.utils.log.Log;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * ClassName:BeanUtil <br/>
  * Function: TODO ADD FUNCTION. <br/>
  * Reason: TODO ADD REASON. <br/>
  * Date: 2018年4月26日 上午11:17:45 <br/>
- * 
+ *
  * @author ruopeng.sha
  * @version
- * @since JDK 1.8
  * @see
+ * @since JDK 1.8
  */
+
+
 /**
  * 工具类-spring bean
  */
@@ -58,10 +58,14 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
     private static BeanNameGenerator beanNameGenerator = new AnnotationBeanNameGenerator();
 
     private static WebApplicationContext ctx = null;
+    /**
+     *
+     */
+    private static Map<String, BeanCopier> beanCopierMap = new HashMap<String, BeanCopier>();
 
     /**
      * 根据bean名称获取
-     * 
+     *
      * @param name
      * @return
      */
@@ -75,8 +79,8 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
 
     /**
      * 根据bean Class获取
-     * 
-     * @param name
+     *
+     * @param clazz
      * @return
      */
     public static Object getBean(Class<?> clazz) {
@@ -106,17 +110,6 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
         return ctx.getEnvironment().getProperty(name, clazz);
     }
 
-    @Override
-    public void onApplicationEvent(ApplicationEvent event) {
-        Log.i("onApplicationEvent {}", event);
-    }
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        Log.i("setApplicationContext");
-        ctx = (WebApplicationContext)applicationContext;
-    }
-
     public static String[] getBeanNamesForType(Class<?> clazz) {
         return ctx.getBeanNamesForType(clazz);
     }
@@ -126,22 +119,18 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
         return ctx.getEnvironment().getActiveProfiles()[0];
     }
 
-    /** 
-     *  
-     */
-    private static Map<String, BeanCopier> beanCopierMap = new HashMap<String, BeanCopier>();
-
     /**
+     * @param source 资源类
+     * @param target 目标类
      * @Title: copyProperties
-     * @Description: TODO(bean属性转换)
-     * @param source
-     *            资源类
-     * @param target
-     *            目标类
+     * @Description: bean属性转换
      * @author ruopeng.sha
      * @date 2018年11月8日下午11:41
      */
     public static void copyProperties(Object source, Object target) {
+        if (source == null) {
+            return;
+        }
         String beanKey = generateKey(source.getClass(), target.getClass());
         BeanCopier copier = null;
         if (!beanCopierMap.containsKey(beanKey)) {
@@ -155,6 +144,17 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
 
     private static String generateKey(Class<?> class1, Class<?> class2) {
         return class1.toString() + class2.toString();
+    }
+
+    @Override
+    public void onApplicationEvent(ApplicationEvent event) {
+        Log.i("onApplicationEvent {}", event);
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        Log.i("setApplicationContext");
+        ctx = (WebApplicationContext) applicationContext;
     }
     /*
      * 注： (1)相同属性名，且类型不匹配时候的处理，ok，但是未满足的属性不拷贝；

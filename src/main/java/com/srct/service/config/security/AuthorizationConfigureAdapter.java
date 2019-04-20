@@ -32,7 +32,7 @@ public class AuthorizationConfigureAdapter implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         // registry.addInterceptor(authInterceptor).addPathPatterns("/**");
-        registry.addInterceptor(authInterceptor).addPathPatterns("/rfu/**");
+        registry.addInterceptor(authInterceptor).addPathPatterns("/**");
     }
 
     @Override

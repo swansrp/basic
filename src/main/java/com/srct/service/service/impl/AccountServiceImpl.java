@@ -1,17 +1,11 @@
-/**   
+/**
  * Copyright © 2018 SRC-TJ Service TG. All rights reserved.
- * 
- * @Package: com.srct.service.service.impl 
- * @author: xu1223.zhang   
+ *
+ * @Package: com.srct.service.service.impl
+ * @author: xu1223.zhang
  * @date: 2018-08-06 14:38
  */
 package com.srct.service.service.impl;
-
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import com.srct.service.bo.LoginRequestInfoBO;
 import com.srct.service.bo.LoginResponseInfoBO;
@@ -22,10 +16,13 @@ import com.srct.service.dao.po.AccountInfoExample;
 import com.srct.service.service.AccountService;
 import com.srct.service.service.RedisService;
 import com.srct.service.service.RedisTokenOperateService;
-import com.srct.service.utils.CommonUtil;
-import com.srct.service.utils.CommonEnum.AccountRoleEnum;
 import com.srct.service.utils.log.Log;
 import com.srct.service.utils.security.MD5Util;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 /**
  * @ClassName: AccountServiceImpl
@@ -45,7 +42,7 @@ public class AccountServiceImpl implements AccountService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.srct.service.service.AccountService#login()
      */
     @Override
@@ -72,7 +69,7 @@ public class AccountServiceImpl implements AccountService {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.srct.service.service.AccountService#regist()
      */
     @Override
@@ -92,8 +89,8 @@ public class AccountServiceImpl implements AccountService {
                 Log.d("both accessToken and refreshToken can be use");
             } else {
                 Log.d("refreshToken is Expired");
-                refreshToken = MD5Util
-                        .MD5(accountInfo.getAccount() + ":" + accountInfo.getPassword() + System.currentTimeMillis());
+                refreshToken = MD5Util.MD5(
+                        accountInfo.getAccount() + ":" + accountInfo.getPassword() + System.currentTimeMillis());
                 redisTokenOperateService.setRefreshToken(uid, refreshToken);
             }
         } else {
@@ -104,8 +101,8 @@ public class AccountServiceImpl implements AccountService {
                 Log.d("can use refreshToken to getAccessToken");
             } else {
                 Log.d("accessToken , refreshToken is Expired");
-                refreshToken = MD5Util
-                        .MD5(accountInfo.getAccount() + ":" + accountInfo.getPassword() + System.currentTimeMillis());
+                refreshToken = MD5Util.MD5(
+                        accountInfo.getAccount() + ":" + accountInfo.getPassword() + System.currentTimeMillis());
                 redisTokenOperateService.setRefreshToken(uid, refreshToken);
             }
         }
