@@ -42,10 +42,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 
-/**
-* @ClassName: ${modelName}Dao
-* @Description: TODO
-*/
 @Repository("${dbPackageName}${modelName}Dao")
 public class ${modelName}Dao {
 
