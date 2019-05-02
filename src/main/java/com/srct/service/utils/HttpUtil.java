@@ -1,12 +1,11 @@
 package com.srct.service.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import cn.hutool.core.util.StrUtil;
 
 public class HttpUtil {
 
@@ -14,9 +13,8 @@ public class HttpUtil {
 
     /**
      * Extract request header
-     * 
-     * @param req
-     *            http request
+     *
+     * @param req http request
      * @return
      */
     public static String getHeader(HttpServletRequest req, String name) {
@@ -46,8 +44,8 @@ public class HttpUtil {
             ip = request.getRemoteAddr();
         }
 
-        if (StrUtil.isNotBlank(ip) && ip.contains(StrUtil.COMMA)) {
-            String[] list = StrUtil.split(ip, StrUtil.COMMA);
+        if (StringUtils.isNotBlank(ip) && ip.contains(",")) {
+            String[] list = StringUtils.split(ip, ",");
             if (list != null && list.length > 1) {
                 ip = list[0];
             }
@@ -57,14 +55,14 @@ public class HttpUtil {
     }
 
     private static boolean isUnknown(String ip) {
-        return StrUtil.isBlank(ip) || "unknown".equalsIgnoreCase(ip);
+        return StringUtils.isBlank(ip) || "unknown".equalsIgnoreCase(ip);
     }
 
     private static String cutLength(String ip) {
         String tempIp = ip;
 
         final int size = 20;
-        if (StrUtil.isNotBlank(ip) && ip.length() > size) {
+        if (StringUtils.isNotBlank(ip) && ip.length() > size) {
             tempIp = ip.substring(0, size);
         }
 

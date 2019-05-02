@@ -1,8 +1,8 @@
-/**   
+/**
  * Copyright © 2018 SRC-TJ Service TG. All rights reserved.
- * 
- * @Package: com.srct.service.service 
- * @author: xu1223.zhang   
+ *
+ * @Package: com.srct.service.service
+ * @author: xu1223.zhang
  * @date: 2018-08-07 14:09
  */
 package com.srct.service.service;
@@ -26,4 +26,12 @@ public interface RedisTokenOperateService {
     void setUserRole(Integer uid, Integer role);
 
     String getUserRole(Integer uid);
+
+    String fetchToken();
+
+    Object getToken(String token);
+
+    void updateToken(String token, Object obj);
+
+    void delToken(String token);
 }

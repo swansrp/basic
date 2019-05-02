@@ -21,7 +21,7 @@ import java.util.Date;
 public class ${modelName}{
 <#list baseDataList as data>
 
-	@ApiModelProperty(value = "${data.columnComment}")
-	private ${data.columnType} ${data.columnName};
+    @ApiModelProperty(value = "${data.columnComment}")
+    private ${data.columnType} ${data.columnName};
 </#list>
 }

@@ -72,7 +72,7 @@ public class CodeGenerator {
 
         // genCommonModule();
         // genModule("user");
-        // genDBRelatedCode();
+        genDBRelatedCode();
 
         MbgConfig config = new MbgConfig(projectName, "tanya");
         //genDBCode(config, "tanya", "factory_merchant_map");
@@ -81,8 +81,8 @@ public class CodeGenerator {
         //genDBCode(config, "tanya", "goods_trader_factory_merchant_map");
         //genDBCode(config, "tanya", "goods_trader_factory_merchant_map");
         //genDBCode(config, "tanya", "shop_trader_factory_merchant_map");
-        //genDBCode(config, "tanya", "campaign_info");
-        //genDBCode(config, "tanya", "goods_info");
+        genDBCode(config, "tanya", "campaign_info");
+        genDBCode(config, "tanya", "goods_info");
     }
 
     private static void genCommonModule() {

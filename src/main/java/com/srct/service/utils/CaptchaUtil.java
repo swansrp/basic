@@ -1,6 +1,6 @@
 /**
  * Title: CaptchaUtil.java Description: Copyright: Copyright (c) 2019 Company: Sharp
- * 
+ *
  * @Project Name: SpringBootCommonLib
  * @Package: com.srct.service.utils
  * @author Sharp
@@ -8,34 +8,61 @@
  */
 package com.srct.service.utils;
 
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
+import org.springframework.core.io.DefaultResourceLoader;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Random;
-
-import javax.imageio.ImageIO;
 
 /**
  * @author Sharp
- *
  */
 public class CaptchaUtil {
 
     // 随机产生的字符串
     private static final String RANDOM_STRS = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    private static final String FONT_NAME = "Fixedsys";
-    private static final int FONT_SIZE = 18;
-
+    private static final int FONT_SIZE = 30;
+    private static Font hanSansFont = null;
     private Random random = new Random();
-
     private int width = 80;// 图片宽
-    private int height = 25;// 图片高
+    private int height = 50;// 图片高
     private int lineNum = 50;// 干扰线数量
     private int strNum = 4;// 随机产生字符数量
+
+    public static void main(String[] args) {
+        CaptchaUtil tool = new CaptchaUtil();
+        StringBuffer code = new StringBuffer();
+        BufferedImage image = tool.genRandomCodeImage(code);
+        System.out.println("random code = " + code);
+        try {
+            // 将内存中的图片通过流动形式输出到客户端
+            ImageIO.write(image, "JPEG", new FileOutputStream(new File("/Users/wangsaichao/Desktop/random-code.jpg")));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static Font getHanSansFont(int fontStyle, float fontSize) {
+        if (hanSansFont == null) {
+            try {
+                DefaultResourceLoader resourceLoader = new DefaultResourceLoader();
+                InputStream inputStream =
+                        resourceLoader.getResource("classpath:/SourceHanSansCN-Regular.otf").getInputStream();
+                hanSansFont = Font.createFont(Font.TRUETYPE_FONT, inputStream);
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            } catch (FontFormatException | IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return hanSansFont.deriveFont(fontSize);
+    }
 
     /**
      * 生成随机图片
@@ -57,7 +84,7 @@ public class CaptchaUtil {
             drowLine(g);
         }
         // 绘制随机字符
-        g.setFont(new Font(FONT_NAME, Font.ROMAN_BASELINE, FONT_SIZE));
+        g.setFont(getHanSansFont(Font.PLAIN, FONT_SIZE));
         for (int i = 1; i <= strNum; i++) {
             randomCode.append(drowString(g, i));
         }
@@ -88,7 +115,7 @@ public class CaptchaUtil {
         g.setColor(new Color(random.nextInt(101), random.nextInt(111), random.nextInt(121)));
         String rand = String.valueOf(getRandomString(random.nextInt(RANDOM_STRS.length())));
         g.translate(random.nextInt(3), random.nextInt(3));
-        g.drawString(rand, 13 * i, 16);
+        g.drawString(rand, 13 * i, 40);
         return rand;
     }
 
@@ -108,19 +135,5 @@ public class CaptchaUtil {
      */
     private String getRandomString(int num) {
         return String.valueOf(RANDOM_STRS.charAt(num));
-    }
-
-    public static void main(String[] args) {
-        CaptchaUtil tool = new CaptchaUtil();
-        StringBuffer code = new StringBuffer();
-        BufferedImage image = tool.genRandomCodeImage(code);
-        System.out.println("random code = " + code);
-        try {
-            // 将内存中的图片通过流动形式输出到客户端
-            ImageIO.write(image, "JPEG", new FileOutputStream(new File("/Users/wangsaichao/Desktop/random-code.jpg")));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
 }
