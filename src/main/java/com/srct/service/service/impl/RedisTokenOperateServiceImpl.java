@@ -13,6 +13,9 @@ import com.srct.service.utils.security.RandomUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Service
 public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
 
@@ -28,7 +31,7 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
 
     private static final int REFRESHTOKEN_EXPIRATIONTIME = 30 * 24 * 60 * 60;
 
-    private static final int TOEKN_TIMEOUT = 3600;
+    private static final int TOKEN_TIMEOUT = 3600;
 
     @Autowired
     RedisService redisService;
@@ -67,18 +70,23 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
     @Override
     public String fetchToken() {
         String token = RandomUtil.getUUID();
-        redisService.set(REDIS_TOKEN + token, TOEKN_TIMEOUT, token);
+        Map<String, Object> tokenMap = new HashMap();
+        tokenMap.put("token", token);
+        redisService.set(REDIS_TOKEN + token, TOKEN_TIMEOUT, tokenMap);
         return token;
     }
 
     @Override
-    public Object getToken(String token) {
-        return redisService.get(REDIS_TOKEN + token, Object.class);
+    public Object getToken(String token, String key) {
+        Map<String, Object> tokenMap = redisService.get(REDIS_TOKEN + token, Map.class);
+        return tokenMap.get(key);
     }
 
     @Override
-    public void updateToken(String token, Object obj) {
-        redisService.set(REDIS_TOKEN + token, TOEKN_TIMEOUT, obj);
+    public void updateToken(String token, String key, Object obj) {
+        Map<String, Object> tokenMap = redisService.get(REDIS_TOKEN + token, Map.class);
+        tokenMap.put(key, obj);
+        redisService.set(REDIS_TOKEN + token, TOKEN_TIMEOUT, tokenMap);
     }
 
     @Override

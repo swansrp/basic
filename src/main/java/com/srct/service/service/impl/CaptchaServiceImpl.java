@@ -21,6 +21,8 @@ import java.awt.image.BufferedImage;
 @Service
 public class CaptchaServiceImpl implements CaptchaService {
 
+    final static private String tokenItem = "captcha";
+
     @Autowired
     private RedisTokenOperateService tokenService;
 
@@ -29,8 +31,8 @@ public class CaptchaServiceImpl implements CaptchaService {
         CaptchaUtil tool = new CaptchaUtil();
         StringBuffer code = new StringBuffer();
         BufferedImage image = tool.genRandomCodeImage(code);
-        if (token != null && null != tokenService.getToken(token)) {
-            tokenService.updateToken(token, code);
+        if (token != null) {
+            tokenService.updateToken(token, tokenItem, code.toString().toLowerCase());
         } else {
             throw new ServiceException("请先获取token");
         }
@@ -40,8 +42,8 @@ public class CaptchaServiceImpl implements CaptchaService {
 
     @Override
     public void validateCaptcha(String token, String code) {
-        if (token != null && code != null && code.equals(tokenService.getToken(token))) {
-            tokenService.updateToken(token, token);
+        if (token != null && code != null && code.toLowerCase().equals(tokenService.getToken(token, tokenItem))) {
+            tokenService.updateToken(token, tokenItem, null);
         } else {
             throw new ServiceException("验证码不正确");
         }

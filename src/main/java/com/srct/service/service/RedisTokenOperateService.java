@@ -29,9 +29,9 @@ public interface RedisTokenOperateService {
 
     String fetchToken();
 
-    Object getToken(String token);
+    Object getToken(String token, String key);
 
-    void updateToken(String token, Object obj);
+    void updateToken(String token, String key, Object obj);
 
     void delToken(String token);
 }
