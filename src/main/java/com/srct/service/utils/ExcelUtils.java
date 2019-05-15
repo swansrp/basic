@@ -1,56 +1,51 @@
 package com.srct.service.utils;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.srct.service.config.annotation.BeanFieldAnnotation;
+import com.srct.service.utils.log.Log;
+import io.swagger.annotations.ApiModelProperty;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FillPatternType;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.srct.service.config.annotation.BeanFieldAnnotation;
-import com.srct.service.utils.log.Log;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
- * 
  * @ClassName: ExcelUtils
  * @Description: Notice:
- *               <p>
- *               1.List that want to generate into Excel. If define
- *               {@link com.srct.service.config.annotation.BeanFieldAnnotation}
- *               it can show Chinese Title If not , It will use each field name
- *               as Column Title
- *               </p>
+ * @Author: Sharuopeng
+ * <p>
+ * 1.List that want to generate into Excel. If define
+ * {@link com.srct.service.config.annotation.BeanFieldAnnotation}
+ * it can show Chinese Title If not , It will use each field name
+ * as Column Title
+ * </p>
  */
 public class ExcelUtils {
+
+    public static final String EXCEL_SUFFIX = ".xls";
+    public static final String DEFAULT_SHEET = "result";
 
     private ExcelUtils() {
     }
 
-    // private static final String FIX_CLASS_CHINESE_TITLE_FILED_NAME =
-    // "sColumnTitle";
-    private static List<Field> sContentClassVariablesField;
-
-    private static List<String> sColumnTitle;
-
-    /**
-     *
-     * @Title: generateDefaultExcelResponse
-     * @Description:
-     * @param object
-     *            bean
-     * @return HSSFWorkbook
-     */
     @SuppressWarnings("unchecked")
     public static HSSFWorkbook generateResultExcelResponse(Object object) {
         if (!(object instanceof ArrayList<?>)) {
@@ -62,57 +57,56 @@ public class ExcelUtils {
             return null;
         }
         Class<?> itemClass = ((ArrayList<Object>) object).get(0).getClass();
-        setContentClassVariables(itemClass);
-        setColumnTitle(itemClass);
+        List<String> titles = getColumnTitle(itemClass);
+        List<Field> fields = getFieldList(itemClass);
         HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = createSheetWithName(wb, "result");
+        HSSFSheet sheet = createSheetWithName(wb, DEFAULT_SHEET, titles);
         HSSFCellStyle cellStyle = setContentCellStyle(wb);
         ArrayList<Object> list = (ArrayList<Object>) object;
         for (int line = 0; line < list.size(); line++) {
             HSSFRow row = sheet.createRow(line + 1);
-            for (int columnIndex = 0; columnIndex < sContentClassVariablesField.size(); columnIndex++) {
+            for (int columnIndex = 0; columnIndex < fields.size(); columnIndex++) {
                 HSSFCell cell = row.createCell(columnIndex);
                 cell.setCellStyle(cellStyle);
-                Method getMethod = null;
+                String value = null;
                 try {
-                    // Item Class should generate getXXX method
-                    getMethod = itemClass.getMethod("get" + convertGetFunctionNameByUsingVariables(
-                            sContentClassVariablesField.get(columnIndex).getName()));
-                } catch (NoSuchMethodException | SecurityException e1) {
-                    Log.e("getMethod Exception " + e1.getMessage());
-                }
-                try {
-                    if (getMethod == null) {
-                        Log.e("Doesnt find get Method for " + sContentClassVariablesField.get(columnIndex).getName());
-                    } else {
-                        Object invokeResult = getMethod.invoke(list.get(line));
-                        if (invokeResult != null) {
-                            invokeResult = invokeResult.toString();
+                    Object obj = ReflectionUtil.getValue(list.get(line), fields.get(columnIndex));
+                    if (obj != null) {
+                        if (obj instanceof Date) {
+                            value = DateUtils.formatDate((Date) obj, "yyyy-MM-dd HH:mm:ss");
+                        } else {
+                            value = obj.toString();
                         }
-                        cell.setCellValue((String) invokeResult);
                     }
-                } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e2) {
-                    Log.e("getMethod Exception " + e2.getMessage());
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
                 }
+                cell.setCellValue(value);
             }
         }
-        formatSheet(wb);
+        formatSheet(wb, fields);
         return wb;
     }
 
     public static int generateResultExcelResponse(Object object, String file) {
-        if (object == null || !file.endsWith(".xls")) {
+        if (object == null || !file.endsWith(EXCEL_SUFFIX)) {
             return -1;
         }
         HSSFWorkbook hssfWorkbook = generateResultExcelResponse(object);
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
             outputStream.flush();
-            hssfWorkbook.write(outputStream);
-            return 1;
+            if (hssfWorkbook != null) {
+                hssfWorkbook.write(outputStream);
+                return 1;
+            }
         } catch (IOException e) {
             Log.e(e.getMessage());
-            return -1;
         }
+        return -1;
     }
 
     private static HSSFCellStyle setContentCellStyle(HSSFWorkbook wb) {
@@ -139,52 +133,61 @@ public class ExcelUtils {
         return cellStyle;
     }
 
-    private static HSSFSheet createSheetWithName(HSSFWorkbook wb, String sheetName) {
-        HSSFSheet sheet = wb.createSheet("result");
+    private static HSSFSheet createSheetWithName(HSSFWorkbook wb, String sheetName, List<String> titles) {
+        HSSFSheet sheet = wb.createSheet(sheetName);
         HSSFRow titleRow = sheet.createRow(0);
         HSSFCellStyle colorStyle = setTitleCellStyle(wb);
-        for (int i = 0; i < sColumnTitle.size(); i++) {
+        for (int i = 0; i < titles.size(); i++) {
             HSSFCell titleCell = titleRow.createCell(i);
             titleCell.setCellStyle(colorStyle);
-            titleCell.setCellValue(sColumnTitle.get(i));
+            titleCell.setCellValue(titles.get(i));
         }
         return sheet;
     }
 
-    private static void formatSheet(HSSFWorkbook wb) {
+    private static void formatSheet(HSSFWorkbook wb, List<Field> fields) {
         for (int i = 0; i < wb.getNumberOfSheets(); i++) {
             HSSFSheet sheet = wb.getSheetAt(i);
-            for (int j = 0; j < sContentClassVariablesField.size(); j++) {
+            for (int j = 0; j < fields.size(); j++) {
                 sheet.autoSizeColumn(j);
             }
-            setSizeColumn(sheet);
-        }
-    }
-
-    private static void setContentClassVariables(Class<?> clazz) {
-        sContentClassVariablesField = new ArrayList<>();
-        if (clazz != null) {
-            Field[] f = clazz.getDeclaredFields();
-            for (Field fie : f) {
-                sContentClassVariablesField.add(fie);
-            }
+            setSizeColumn(sheet, fields);
         }
     }
 
     @SuppressWarnings("unchecked")
-    private static void setColumnTitle(Class<?> clazz) {
-        sColumnTitle = new ArrayList<>();
-        for (Field f : sContentClassVariablesField) {
-            if (f.getAnnotation(BeanFieldAnnotation.class) != null) {
-                sColumnTitle.add(f.getAnnotation(BeanFieldAnnotation.class).title());
-            } else {
-                sColumnTitle.add(f.getName());
-            }
-        }
+    private static List<String> getColumnTitle(Class<?> clazz) {
+        List<String> columnTitles = new ArrayList<>();
+        getFieldList(clazz, columnTitles);
+        return columnTitles;
     }
 
-    private static void setSizeColumn(HSSFSheet sheet) {
-        for (int columnNum = 0; columnNum <= sContentClassVariablesField.size(); columnNum++) {
+    private static List<Field> getFieldList(Class<?> clazz, List<String> titles) {
+        return ReflectionUtil.getFields(clazz).stream().filter(field -> {
+            ApiModelProperty apiModelAnnotation = field.getAnnotation(ApiModelProperty.class);
+            BeanFieldAnnotation beanFieldAnnotation = field.getAnnotation(BeanFieldAnnotation.class);
+            if (beanFieldAnnotation != null && StringUtils.isNotEmpty((beanFieldAnnotation).title())) {
+                if (titles != null) {
+                    titles.add((beanFieldAnnotation).title());
+                }
+                return true;
+            } else if (apiModelAnnotation != null && StringUtils.isNotEmpty((apiModelAnnotation).value())) {
+                if (titles != null) {
+                    titles.add((apiModelAnnotation).value());
+                }
+                return true;
+            } else {
+                return false;
+            }
+        }).collect(Collectors.toList());
+    }
+
+    private static List<Field> getFieldList(Class<?> clazz) {
+        return getFieldList(clazz, null);
+    }
+
+    private static void setSizeColumn(HSSFSheet sheet, List<Field> fields) {
+        for (int columnNum = 0; columnNum <= fields.size(); columnNum++) {
             int columnWidth = sheet.getColumnWidth(columnNum) / 256;
             for (int rowNum = 0; rowNum <= sheet.getLastRowNum(); rowNum++) {
                 HSSFRow currentRow;
@@ -209,7 +212,72 @@ public class ExcelUtils {
         }
     }
 
-    private static String convertGetFunctionNameByUsingVariables(String variables) {
-        return variables.substring(0, 1).toUpperCase() + variables.substring(1);
+    public static <T> ArrayList<T> readFromExcel(MultipartFile file, Class<T> clazz) {
+        File f;
+        ArrayList<T> objList = null;
+        try {
+            f = File.createTempFile("tmp", null);
+            file.transferTo(f);
+            objList = readFromExcel(f.getAbsolutePath(), clazz);
+            f.deleteOnExit();
+        } catch (IllegalStateException | IOException e) {
+            Log.e(e);
+        }
+        return objList;
     }
+
+    public static <T> ArrayList<T> readFromExcel(String filePath, Class<T> clazz) {
+        FileInputStream fs;
+        HSSFWorkbook wb;
+        ArrayList<T> objList = null;
+        try {
+            fs = new FileInputStream(filePath);
+            // 使用POI提供的方法得到excel的信息
+            POIFSFileSystem ps = new POIFSFileSystem(fs);
+            wb = new HSSFWorkbook(ps);
+            objList = readFormExcel(wb, clazz);
+            fs.close();
+        } catch (Exception e) {
+            Log.e(e);
+        }
+        return objList;
+    }
+
+    private static <T> ArrayList<T> readFormExcel(HSSFWorkbook wb, Class<T> clazz) {
+        ArrayList<T> resList = new ArrayList<>();
+        // 获取到工作表，因为一个excel可能有多个工作表
+        HSSFSheet sheet = wb.getSheetAt(0);
+        int maxline = sheet.getLastRowNum();
+        List<Field> fields = getFieldList(clazz);
+        for (int line = 1; line <= maxline; line++) {
+            HSSFRow row = sheet.getRow(line);
+            if (row == null) {
+                continue;
+            }
+            int maxColumn = row.getLastCellNum();
+            try {
+                T res = clazz.newInstance();
+                for (int column = 0; column < maxColumn; column++) {
+                    HSSFCell cell = row.getCell(column);
+                    String valueString = cell.getStringCellValue();
+                    try {
+                        Object value =
+                                JSONUtil.readJson(JSONUtil.toJSONString(valueString), fields.get(column).getType());
+                        ReflectionUtil.setValue(fields.get(column), res, value);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+                resList.add(res);
+            } catch (InstantiationException e) {
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return resList;
+    }
+
+
+
 }

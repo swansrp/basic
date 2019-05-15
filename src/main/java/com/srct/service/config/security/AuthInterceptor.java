@@ -22,10 +22,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
 
-/**
- * @ClassName: AuthInterceptor
- * @Description: TODO
- */
 @Component
 public class AuthInterceptor extends HandlerInterceptorAdapter {
 
@@ -39,8 +35,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
     private AuthTokenService authTokenService;
 
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
-            throws Exception {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
@@ -48,6 +43,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
         Method method = handlerMethod.getMethod();
         Class clazz = handlerMethod.getBeanType();
         Auth.AuthType authType = Auth.AuthType.UNLOGIN;
+
         if (method.isAnnotationPresent(Auth.class)) {
             Auth auth = method.getAnnotation(Auth.class);
             authType = auth.role();
@@ -57,6 +53,12 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
         }
         authTokenService.validate(request, response, authType);
         return true;
+    }
+
+    @Override
+    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
+            ModelAndView modelAndView) throws Exception {
+        super.postHandle(request, response, handler, modelAndView);
     }
         /*
         String token = request.getHeader("accessToken");
@@ -102,10 +104,4 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
     }*/
 
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
-            ModelAndView modelAndView) throws Exception {
-        // TODO Auto-generated method stub
-        super.postHandle(request, response, handler, modelAndView);
-    }
 }

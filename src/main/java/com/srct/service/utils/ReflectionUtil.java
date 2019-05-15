@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * ClassName:ReflectionUtil <br/>
@@ -26,9 +25,8 @@ import java.util.Map;
  * Date: 2018年4月26日 上午11:19:26 <br/>
  *
  * @author ruopeng.sha
- * @version
- * @since JDK 1.8
  * @see
+ * @since JDK 1.8
  */
 public class ReflectionUtil {
 
@@ -49,8 +47,9 @@ public class ReflectionUtil {
         String[] fieldNames = fieldName.split("\\.");
         for (String targetField : fieldNames) {
             field = searchField(object.getClass(), targetField, traceable, false);
-            if (field == null)
+            if (field == null) {
                 return null;
+            }
             object = getValue(object, field);
         }
         return (T) object;
@@ -76,7 +75,7 @@ public class ReflectionUtil {
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> T getValue(Object target, Field field)
+    public static <T> T getValue(Object target, Field field)
             throws IllegalAccessException, NoSuchMethodException, SecurityException, IllegalArgumentException,
             InvocationTargetException {
         if (!field.isAccessible()) {
@@ -114,16 +113,16 @@ public class ReflectionUtil {
             throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
             SecurityException {
         Field field = searchField(target.getClass(), fieldName, traceable, includeParent);
-        if (field != null)
+        if (field != null) {
             return setValue(field, target, value);
+        }
         return false;
     }
 
-    private static boolean setValue(Field field, Object target, Object value)
+    public static boolean setValue(Field field, Object target, Object value)
             throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
             SecurityException {
         if (!field.isAccessible()) {
-            // field.setAccessible(true);
             Method setFieldMethod;
             setFieldMethod = target.getClass()
                     .getMethod("set" + StringUtil.firstUpperCamelCase(field.getName()), field.getType());
@@ -134,56 +133,17 @@ public class ReflectionUtil {
         return true;
     }
 
-    public static List<Field> getFieldList(@NotNull Object obj) {
-        List<Field> fieldList = new ArrayList<>();
-        Class<?> aClass = obj.getClass();
-        Class tempClass = aClass;
-        while (tempClass != null) {// 当父类为null的时候说明到达了最上层的父类(Object类).
-            fieldList.addAll(Arrays.asList(tempClass.getDeclaredFields()));
-            tempClass = tempClass.getSuperclass(); // 得到父类,然后赋给自己
-        }
-        return fieldList;
-    }
-
-    public static Map<String, Object> getJsonMap(@NotNull Object obj) {
-        Map<String, Object> res = new HashMap();
-        Class<?> aClass = obj.getClass();
-        // aClass.getFields() 获取 public 类型的成员
-        Field[] declaredFields = aClass.getDeclaredFields(); // 获取所有成员包含 private
-        for (Field field : declaredFields) {
-            try {
-                // field.setAccessible(true);
-                String name = field.getName();
-                Object value = getValue(obj, field);
-                if (value != null) {
-                    res.put(name, value);
-                }
-                // Log.e(getClass().getSimpleName(), "属性名称：" + fn + "
-                // field.get(obj)= " +
-                // field.get(obj));
-            } catch (IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-        }
-        return res;
-    }
-
     public static LinkedMultiValueMap<String, Object> getLinkedMultiValueMap(@NotNull Object obj) {
         LinkedMultiValueMap<String, Object> res = new LinkedMultiValueMap<>();
         Class<?> aClass = obj.getClass();
-        // aClass.getFields() 获取 public 类型的成员
-        Field[] declaredFields = aClass.getDeclaredFields(); // 获取所有成员包含 private
-        for (Field field : declaredFields) {
+        List<Field> fieldList = getFields(aClass);
+        for (Field field : fieldList) {
             try {
-                // field.setAccessible(true);
                 String name = field.getName();
                 Object value = getValue(obj, field);
                 if (value != null) {
                     res.add(name, value);
                 }
-                // Log.e(getClass().getSimpleName(), "属性名称：" + fn + "
-                // field.get(obj)= " +
-                // field.get(obj));
             } catch (IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
                 e.printStackTrace();
             }
@@ -192,25 +152,16 @@ public class ReflectionUtil {
     }
 
     public static HashMap<String, Object> getHashMap(@NotNull Object obj) {
-        HashMap<String, Object> res = new HashMap<>();
         Class<?> aClass = obj.getClass();
-        List<Field> fieldList = new ArrayList<>();
-        Class tempClass = aClass;
-        while (tempClass != null) {// 当父类为null的时候说明到达了最上层的父类(Object类).
-            fieldList.addAll(Arrays.asList(tempClass.getDeclaredFields()));
-            tempClass = tempClass.getSuperclass(); // 得到父类,然后赋给自己
-        }
+        List<Field> fieldList = getFields(aClass);
+        HashMap<String, Object> res = new HashMap<>(fieldList.size());
         for (Field field : fieldList) {
             try {
-                // field.setAccessible(true);
                 String name = field.getName();
                 Object value = getValue(obj, field);
                 if (value != null) {
                     res.put(name, value);
                 }
-                // Log.e(getClass().getSimpleName(), "属性名称：" + fn + "
-                // field.get(obj)= " +
-                // field.get(obj));
             } catch (IllegalAccessException | NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
                 e.printStackTrace();
             }
@@ -218,7 +169,29 @@ public class ReflectionUtil {
         return res;
     }
 
-    public static List<?> getFiledList(List<?> list, String fieldName) {
+    public static List<Field> getA(@NotNull Object obj) {
+        Class<?> aClass = obj.getClass();
+        return getFields(aClass);
+    }
+
+    public static List<Field> getFields(@NotNull Object obj) {
+        Class<?> aClass = obj.getClass();
+        return getFields(aClass);
+    }
+
+    public static List<Field> getFields(Class<?> aClass) {
+        List<Field> fieldList = new ArrayList<>();
+        Class tempClass = aClass;
+        // 当父类为null的时候说明到达了最上层的父类(Object类).
+        while (tempClass != null) {
+            fieldList.addAll(Arrays.asList(tempClass.getDeclaredFields()));
+            // 得到父类,然后赋给自己
+            tempClass = tempClass.getSuperclass();
+        }
+        return fieldList;
+    }
+
+    public static List<?> getFieldList(List<?> list, String fieldName) {
         if (list == null || list.size() == 0) {
             return null;
         }

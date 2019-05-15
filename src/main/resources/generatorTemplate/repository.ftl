@@ -17,18 +17,8 @@
  * @author: ${author}
  * @date: ${date}
  */
-package ${repositoryPackage};
-
-import com.github.pagehelper.PageHelper;
+package ${repositoryPackage}import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import ${BASIC_PACKAGE}.config.db.DataSourceCommonConstant;
-import ${BASIC_PACKAGE}.config.redis.CacheExpire;
-import ${BASIC_PACKAGE}.exception.ServiceException;
-import ${entityPackage}.${modelName};
-import ${entityPackage}.${modelName}Example;
-import ${xmlPackage}.${modelName}Mapper;
-import ${BASIC_PACKAGE}.utils.ReflectionUtil;
-import ${BASIC_PACKAGE}.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -36,11 +26,29 @@ import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-<#if ((FeatureCreateAt??) || (FeatureUpdateAt??))>
-	import java.util.Date;
-</#if>
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+
+;
+${BASIC_PACKAGE}
+        .config.db.DataSourceCommonConstant;
+		${BASIC_PACKAGE}
+                .config.redis.CacheExpire;
+		${BASIC_PACKAGE}
+                .exception.ServiceException;
+		${entityPackage}
+                .${modelName};
+		${entityPackage}
+                .${modelName}Example;
+		${xmlPackage}
+                .${modelName}Mapper;
+		${BASIC_PACKAGE}
+                .utils.ReflectionUtil;
+		${BASIC_PACKAGE}
+                .utils.StringUtil;
+<#if((FeatureCreateAt??)||(FeatureUpdateAt??))>
+</#if>
 
 @Repository("${dbPackageName}${modelName}Dao")
 public class ${modelName}Dao {
@@ -101,24 +109,24 @@ public class ${modelName}Dao {
 		${modelName}Example example = get${modelName}Example(${modelNameFL});
 <#if FeatureValid??>
 	${modelNameFL}.setValid(DataSourceCommonConstant.DATABASE_COMMON_INVALID);
-	return ${modelNameFL}Mapper.updateByExampleSelective(${modelNameFL}, example);
+	    return ${modelNameFL}Mapper.updateByExampleSelective(${modelNameFL}, example);
 <#else>
-	return ${modelNameFL}Mapper.deleteByExample(example);
+	    return ${modelNameFL}Mapper.deleteByExample(example);
 </#if>
     }
 
     @CacheEvict(value = "${modelName}", allEntries = true)
     public Integer del${modelName}ByExample(${modelName}Example example) {
 <#if FeatureValid??>
-	Integer res = 0;
-	List<${modelName}> ${modelNameFL}List = get${modelName}ByExample(example);
-	for (${modelName} ${modelNameFL} :${modelNameFL}List){
+	    Integer res = 0;
+	    List<${modelName}> ${modelNameFL}List = get${modelName}ByExample(example);
+	    for (${modelName} ${modelNameFL} :${modelNameFL}List){
 	${modelNameFL}.setValid(DataSourceCommonConstant.DATABASE_COMMON_INVALID);
     res += ${modelNameFL}Mapper.updateByPrimaryKey(${modelNameFL});
 }
-	return res;
+	    return res;
 <#else>
-	return ${modelNameFL}Mapper.deleteByExample(example);
+	    return ${modelNameFL}Mapper.deleteByExample(example);
 </#if>
     }
 
@@ -189,7 +197,7 @@ public class ${modelName}Dao {
 		${modelName}Example example = new ${modelName}Example();
 		${modelName}Example.Criteria criteria = example.createCriteria();
         HashMap<String, Object> valueMap = ReflectionUtil.getHashMap(${modelNameFL});
-        ReflectionUtil.getFieldList(${modelNameFL}).forEach((field) -> {
+        ReflectionUtil.getFields(${modelNameFL}).forEach((field) -> {
             if (valueMap.get(field.getName()) != null) {
                 Method criteriaMethod = null;
                 try {

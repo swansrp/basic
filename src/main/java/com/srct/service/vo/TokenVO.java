@@ -20,5 +20,6 @@ import lombok.NoArgsConstructor;
 @Builder(toBuilder = true)
 public class TokenVO {
     private String userName;
+    private String name;
     private String Token;
 }

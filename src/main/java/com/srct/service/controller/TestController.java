@@ -22,8 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,6 +31,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
 
 /**
  * @author sharp
@@ -109,11 +112,18 @@ public class TestController {
     public ResponseEntity<CommonResponse<String>.Resp> email(
             @RequestParam(value = "token", required = false) String token) {
 
-        SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom(sender);
-        message.setTo(sender); //自己给自己发送邮件
-        message.setSubject("主题：简单邮件");
-        message.setText("测试邮件内容" + token);
+        MimeMessage message = mailSender.createMimeMessage();
+
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
+            helper.setFrom(sender);
+            helper.setSubject("主题：简单邮件");
+            helper.setText("测试邮件内容" + token);
+            //自己给自己发送邮件
+            helper.setTo(sender);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
         mailSender.send(message);
 
         return CommonExceptionHandler.generateResponse("");

@@ -1,15 +1,14 @@
 package com.srct.service.config.redis;
 
+import com.srct.service.utils.ReflectionUtil;
+import org.springframework.cache.interceptor.KeyGenerator;
+import org.springframework.stereotype.Component;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
-
-import org.springframework.cache.interceptor.KeyGenerator;
-import org.springframework.stereotype.Component;
-
-import com.srct.service.utils.ReflectionUtil;
 
 @Component("CacheKeyByParam") // @Cacheable(value="XXX",keyGenerator="CacheKeyByParam")
 public class CacheKeyByParam implements KeyGenerator {
@@ -21,7 +20,7 @@ public class CacheKeyByParam implements KeyGenerator {
         if (params.length > 0) {
             for (Object object : params) {
                 Class clazz = object.getClass();
-                List<Field> field = ReflectionUtil.getFieldList(object);
+                List<Field> field = ReflectionUtil.getFields(object);
                 if (field != null && field.size() > 0) {
                     for (int i = 0; i < field.size(); i++) {
                         String name = field.get(i).getName();
@@ -47,7 +46,7 @@ public class CacheKeyByParam implements KeyGenerator {
                         }
                         if (tempObject != null) {
                             if (field.get(i).getType().equals(Date.class)) {
-                                value = String.valueOf(((Date)tempObject).getTime());
+                                value = String.valueOf(((Date) tempObject).getTime());
                             } else {
                                 value = tempObject.toString();
                             }
