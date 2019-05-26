@@ -20,12 +20,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 /**
  * @ClassName: ExcelUtils
@@ -46,22 +48,43 @@ public class ExcelUtils {
     private ExcelUtils() {
     }
 
+    public static HSSFWorkbook generateExcel(Map<String, Object> map) {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        map.entrySet().forEach(entry -> generateExcel(entry.getValue(), entry.getKey(), wb));
+        return wb;
+    }
+
+    public static HSSFWorkbook generateExcel(Object object) {
+        return generateExcel(object, DEFAULT_SHEET, null);
+    }
+
     @SuppressWarnings("unchecked")
-    public static HSSFWorkbook generateResultExcelResponse(Object object) {
+    public static HSSFWorkbook generateExcel(Object object, String sheetName) {
+        return generateExcel(object, sheetName, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    public static HSSFWorkbook generateExcel(Object object, String sheetName, HSSFWorkbook wb) {
+        Class<?> itemClass;
         if (!(object instanceof ArrayList<?>)) {
             Log.e("The generate Object is not ArrayList");
-            return null;
+            itemClass = object.getClass();
+        } else {
+            itemClass = ((ArrayList<Object>) object).get(0).getClass();
         }
-        if (((ArrayList<Object>) object).isEmpty()) {
-            Log.e("The generate list is empty");
-            return null;
-        }
-        Class<?> itemClass = ((ArrayList<Object>) object).get(0).getClass();
         List<String> titles = getColumnTitle(itemClass);
-        List<Field> fields = getFieldList(itemClass);
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = createSheetWithName(wb, DEFAULT_SHEET, titles);
+        List<Field> fields = ReflectionUtil.getFields(itemClass);
+        if (wb == null) {
+            wb = new HSSFWorkbook();
+        }
+        HSSFSheet sheet = createSheetWithName(wb, sheetName, titles);
         HSSFCellStyle cellStyle = setContentCellStyle(wb);
+        if (!(object instanceof ArrayList<?>) || ((ArrayList<Object>) object).isEmpty()) {
+            Log.e("The generate list is empty");
+            formatSheet(wb, fields);
+            return wb;
+        }
+
         ArrayList<Object> list = (ArrayList<Object>) object;
         for (int line = 0; line < list.size(); line++) {
             HSSFRow row = sheet.createRow(line + 1);
@@ -92,15 +115,31 @@ public class ExcelUtils {
         return wb;
     }
 
-    public static int generateResultExcelResponse(Object object, String file) {
-        if (object == null || !file.endsWith(EXCEL_SUFFIX)) {
+    public static int generateExcel(Object object, OutputStream outputStream) {
+        HSSFWorkbook hssfWorkbook = generateExcel(object);
+        try {
+            outputStream.flush();
+            if (hssfWorkbook != null) {
+                hssfWorkbook.write(outputStream);
+                outputStream.close();
+                return 1;
+            }
+        } catch (IOException e) {
+            Log.e(e.getMessage());
+        }
+        return -1;
+    }
+
+    public static int generateExcel(Object object, File file) {
+        if (object == null || !file.getName().endsWith(EXCEL_SUFFIX)) {
             return -1;
         }
-        HSSFWorkbook hssfWorkbook = generateResultExcelResponse(object);
+        HSSFWorkbook hssfWorkbook = generateExcel(object);
         try (FileOutputStream outputStream = new FileOutputStream(file)) {
             outputStream.flush();
             if (hssfWorkbook != null) {
                 hssfWorkbook.write(outputStream);
+                outputStream.close();
                 return 1;
             }
         } catch (IOException e) {
@@ -158,32 +197,29 @@ public class ExcelUtils {
     @SuppressWarnings("unchecked")
     private static List<String> getColumnTitle(Class<?> clazz) {
         List<String> columnTitles = new ArrayList<>();
-        getFieldList(clazz, columnTitles);
+        Map<Field, String> fieldTitleMap = buildFieldTitleMap(clazz);
+        for (Map.Entry<Field, String> entry : fieldTitleMap.entrySet()) {
+            columnTitles.add(entry.getValue());
+        }
         return columnTitles;
     }
 
-    private static List<Field> getFieldList(Class<?> clazz, List<String> titles) {
-        return ReflectionUtil.getFields(clazz).stream().filter(field -> {
+    private static Map<Field, String> buildFieldTitleMap(Class<?> clazz) {
+        Map<Field, String> fieldTitleMap = new HashMap<>(0);
+        List<Field> fieldList = ReflectionUtil.getFields(clazz);
+
+        for (Field field : fieldList) {
             ApiModelProperty apiModelAnnotation = field.getAnnotation(ApiModelProperty.class);
             BeanFieldAnnotation beanFieldAnnotation = field.getAnnotation(BeanFieldAnnotation.class);
             if (beanFieldAnnotation != null && StringUtils.isNotEmpty((beanFieldAnnotation).title())) {
-                if (titles != null) {
-                    titles.add((beanFieldAnnotation).title());
-                }
-                return true;
+                fieldTitleMap.put(field, beanFieldAnnotation.title());
             } else if (apiModelAnnotation != null && StringUtils.isNotEmpty((apiModelAnnotation).value())) {
-                if (titles != null) {
-                    titles.add((apiModelAnnotation).value());
-                }
-                return true;
+                fieldTitleMap.put(field, apiModelAnnotation.value());
             } else {
-                return false;
+                continue;
             }
-        }).collect(Collectors.toList());
-    }
-
-    private static List<Field> getFieldList(Class<?> clazz) {
-        return getFieldList(clazz, null);
+        }
+        return fieldTitleMap;
     }
 
     private static void setSizeColumn(HSSFSheet sheet, List<Field> fields) {
@@ -246,36 +282,61 @@ public class ExcelUtils {
     private static <T> ArrayList<T> readFormExcel(HSSFWorkbook wb, Class<T> clazz) {
         ArrayList<T> resList = new ArrayList<>();
         // 获取到工作表，因为一个excel可能有多个工作表
-        HSSFSheet sheet = wb.getSheetAt(0);
-        int maxline = sheet.getLastRowNum();
-        List<Field> fields = getFieldList(clazz);
-        for (int line = 1; line <= maxline; line++) {
-            HSSFRow row = sheet.getRow(line);
-            if (row == null) {
-                continue;
-            }
-            int maxColumn = row.getLastCellNum();
-            try {
-                T res = clazz.newInstance();
-                for (int column = 0; column < maxColumn; column++) {
-                    HSSFCell cell = row.getCell(column);
-                    String valueString = cell.getStringCellValue();
+        for (int sheetIndex = 0; sheetIndex < wb.getNumberOfSheets(); sheetIndex++) {
+            HSSFSheet sheet = wb.getSheetAt(sheetIndex);
+            int maxline = sheet.getLastRowNum();
+            Map<Field, String> fieldTitleMap = buildFieldTitleMap(clazz);
+            Map<Field, Integer> fieldColumnMap = buildFieldColumnMap(sheet, fieldTitleMap);
+            if (fieldColumnMap.entrySet().size() > 0) {
+                for (int line = 1; line <= maxline; line++) {
+                    HSSFRow row = sheet.getRow(line);
+                    if (row == null) {
+                        continue;
+                    }
                     try {
-                        Object value =
-                                JSONUtil.readJson(JSONUtil.toJSONString(valueString), fields.get(column).getType());
-                        ReflectionUtil.setValue(fields.get(column), res, value);
-                    } catch (Exception e) {
+                        T res = clazz.newInstance();
+                        for (Map.Entry<Field, Integer> entry : fieldColumnMap.entrySet()) {
+                            HSSFCell cell = row.getCell(entry.getValue());
+                            String valueString = "";
+                            if (cell != null) {
+                                valueString = cell.getStringCellValue();
+                            }
+                            try {
+                                Object value =
+                                        JSONUtil.readJson(JSONUtil.toJSONString(valueString), entry.getKey().getType());
+                                ReflectionUtil.setValue(entry.getKey(), res, value);
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        resList.add(res);
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    } catch (IllegalAccessException e) {
                         e.printStackTrace();
                     }
                 }
-                resList.add(res);
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
             }
         }
         return resList;
+    }
+
+    private static Map<Field, Integer> buildFieldColumnMap(HSSFSheet sheet, Map<Field, String> fieldTitleMap) {
+        Map<Field, Integer> map = new HashMap<>(fieldTitleMap.entrySet().size());
+        HSSFRow titleRow = sheet.getRow(0);
+        int maxColumn = titleRow.getLastCellNum();
+        for (int column = 0; column < maxColumn; column++) {
+            HSSFCell cell = titleRow.getCell(column);
+            if (cell != null) {
+                for (Map.Entry<Field, String> entry : fieldTitleMap.entrySet()) {
+                    if (entry.getValue().equals(cell.getStringCellValue())) {
+                        map.put(entry.getKey(), column);
+                    }
+                }
+            }
+        }
+        return map;
     }
 
 

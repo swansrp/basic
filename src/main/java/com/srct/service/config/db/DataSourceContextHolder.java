@@ -5,22 +5,21 @@ import org.slf4j.LoggerFactory;
 
 public class DataSourceContextHolder {
 
-    private DataSourceContextHolder() {
-    }
-
     public static final Logger log = LoggerFactory.getLogger(DataSourceContextHolder.class);
-
     private static final ThreadLocal<String> contextHolder = new ThreadLocal<>();
 
-    // Set DataSource Name
-    public static void setDB(String dbType) {
-        log.info("Swith to DataBase: {}", dbType);
-        contextHolder.set(dbType);
+    private DataSourceContextHolder() {
     }
 
     // Get DataSource Name
     public static String getDB() {
         return (contextHolder.get());
+    }
+
+    // Set DataSource Name
+    public static void setDB(String dbType) {
+        log.debug("Swith to DataBase: {}", dbType);
+        contextHolder.set(dbType);
     }
 
     // Clear DataSource

@@ -1,6 +1,6 @@
 /**
  * Title: DateUtils.java Description: Copyright: Copyright (c) 2019 Company: Sharp
- * 
+ *
  * @Project Name: SpringBootCommonLib
  * @Package: com.srct.service.utils
  * @author sharuopeng
@@ -46,6 +46,90 @@ public class DateUtils {
         }
     }
 
+    public static Date getDate(Date date, int defaultType, int defaultValue) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(defaultType, c.get(defaultType) + defaultValue);
+        return c.getTime();
+    }
+
+    public static Date yesterdayBeginTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 00);
+        cal.set(Calendar.SECOND, 00);
+        return cal.getTime();
+    }
+
+    public static Date yesterdayEndTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        return cal.getTime();
+    }
+
+    public static Date todayBeginTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 00);
+        cal.set(Calendar.SECOND, 00);
+        return cal.getTime();
+    }
+
+    public static Date todayEndTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        return cal.getTime();
+    }
+
+    public static Date tomorrowBeginTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, 1);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 00);
+        cal.set(Calendar.SECOND, 00);
+        return cal.getTime();
+    }
+
+    public static Date tomorrowEndTime() {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, 1);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        return cal.getTime();
+    }
+
+    public static Date beginTime(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 00);
+        cal.set(Calendar.SECOND, 00);
+        return cal.getTime();
+    }
+
+    public static Date endTime(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.HOUR_OF_DAY, 23);
+        cal.set(Calendar.MINUTE, 59);
+        cal.set(Calendar.SECOND, 59);
+        return cal.getTime();
+    }
+
+    public static Date tomorrow(Date date, int defaultType, int defaultValue) {
+        Calendar c = Calendar.getInstance();
+        c.setTime(date);
+        c.set(defaultType, c.get(defaultType) + defaultValue);
+        return c.getTime();
+    }
+
     /**
      * 增加指定天数:返回Date类型
      *
@@ -72,7 +156,7 @@ public class DateUtils {
 
     public static int secondDiff(Date laterTime, Date earlyTime) {
         long millSecondDiff = laterTime.getTime() - earlyTime.getTime();
-        return (int)millSecondDiff / MILL_SECOND_PER_SECOND;
+        return (int) millSecondDiff / MILL_SECOND_PER_SECOND;
     }
 
     public static long dayDiff(Date laterDate, Date earlyDate) {
@@ -242,7 +326,9 @@ public class DateUtils {
         return sdf.format(date);
     }
 
-    /** 日期加上天数返回加上后的天数 */
+    /**
+     * 日期加上天数返回加上后的天数
+     */
     public static String addDate(String date, int day) {
         if (day == 0 && date.isEmpty()) {
             return "";

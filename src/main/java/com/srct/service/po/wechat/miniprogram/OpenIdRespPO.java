@@ -6,14 +6,14 @@
  * @author Sharp
  * @date 2019-01-30 21:29:09
  */
-package com.srct.service.po.wechat;
+package com.srct.service.po.wechat.miniprogram;
 
+import com.srct.service.po.wechat.WechatBasePO;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 /**
  * @author Sharp
- *
  */
 @Data
 @EqualsAndHashCode(callSuper = false)

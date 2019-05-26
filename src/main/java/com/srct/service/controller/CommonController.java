@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.imageio.ImageIO;
@@ -42,8 +43,8 @@ public class CommonController {
     private RedisTokenOperateService tokenService;
 
     @RequestMapping(value = "/captcha.jpg", method = RequestMethod.GET)
-    public void getCaptcha(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String token = request.getParameter("token");
+    public void getCaptcha(HttpServletRequest request, HttpServletResponse response,
+            @RequestParam(value = "token") String token) throws IOException {
         if (token == null) {
             throw new ServiceException("should get token firstly");
         }
