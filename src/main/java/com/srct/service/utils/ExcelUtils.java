@@ -198,6 +198,7 @@ public class ExcelUtils {
     private static Map<Field, String> buildFieldTitleMap(Class<?> clazz) {
         Map<Field, String> fieldTitleMap = new LinkedHashMap<>(0);
         List<Field> fieldList = ReflectionUtil.getFields(clazz);
+
         for (Field field : fieldList) {
             ApiModelProperty apiModelAnnotation = field.getAnnotation(ApiModelProperty.class);
             BeanFieldAnnotation beanFieldAnnotation = field.getAnnotation(BeanFieldAnnotation.class);
@@ -323,6 +324,7 @@ public class ExcelUtils {
     }
 
     private static Map<Field, Integer> buildFieldColumnMap(HSSFSheet sheet, Map<Field, String> fieldTitleMap) {
+
         Map<Field, Integer> map = new LinkedHashMap<>(fieldTitleMap.entrySet().size());
         HSSFRow titleRow = sheet.getRow(0);
         return buildFieldColumnMap(titleRow, fieldTitleMap, map);
@@ -330,6 +332,7 @@ public class ExcelUtils {
 
     private static Map<Field, Integer> buildFieldColumnMap(HSSFRow titleRow, Map<Field, String> fieldTitleMap,
             Map<Field, Integer> map) {
+
         int maxColumn = titleRow.getLastCellNum();
         for (int column = 0; column < maxColumn; column++) {
             HSSFCell cell = titleRow.getCell(column);
