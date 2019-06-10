@@ -14,8 +14,8 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
-import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanNameGenerator;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.cglib.beans.BeanCopier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -91,7 +91,8 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
         return ctx.getBean(clazz);
     }
 
-    public static void registerBean(BeanDefinitionRegistry registry, String name, Class<?> beanClass) {
+    public static void registerBean(String name, Class<?> beanClass) {
+        DefaultListableBeanFactory registry = (DefaultListableBeanFactory) ctx.getAutowireCapableBeanFactory();
         AnnotatedGenericBeanDefinition abd = new AnnotatedGenericBeanDefinition(beanClass);
         ScopeMetadata scopeMetadata = scopeMetadataResolver.resolveScopeMetadata(abd);
         abd.setScope(scopeMetadata.getScopeName());

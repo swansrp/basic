@@ -1,12 +1,18 @@
 package com.srct.service.utils;
 
+import com.srct.service.utils.log.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class HttpUtil {
 
     private final static String COMMA = ",";
@@ -67,5 +73,39 @@ public class HttpUtil {
         }
 
         return tempIp;
+    }
+
+    /**
+     *     * @Title: contentDisposition
+     * <p>
+     *     * @Description:解决不同浏览器上文件下载的中文名乱码问题
+     * <p>
+     *     * @paramfilename导出/下载的文件的文件名
+     * <p>
+     *     * @param request
+     * <p>
+     *     * @param response
+     * <p>
+     *     
+     */
+
+    public static void contentDisposition(String filename, HttpServletRequest request, HttpServletResponse response) {
+        try {
+            final String userAgent = request.getHeader("USER-AGENT");
+            log.info(userAgent);
+            if (StringUtils.contains(userAgent, "Trident") || StringUtils.contains(userAgent, "Edge") || StringUtils
+                    .contains(userAgent, "Chrome")) {
+                filename = URLEncoder.encode(filename, "UTF-8");
+            } else if (StringUtils.contains(userAgent, "Mozilla")) {
+                filename = new String(filename.getBytes("UTF-8"), "ISO8859-1");
+            } else {
+                filename = URLEncoder.encode(filename, "UTF-8");
+            }
+            Log.i(filename);
+            response.setHeader("Access-Control-Expose-Headers", "Content-disposition");
+            response.setHeader("Content-disposition", "attachment;filename=\"" + filename + "\"");
+        } catch (UnsupportedEncodingException e) {
+            log.error("UnsupportedEncodingException.");
+        }
     }
 }

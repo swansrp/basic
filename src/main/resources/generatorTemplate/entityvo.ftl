@@ -22,7 +22,7 @@ import java.util.Date;
 @Builder(toBuilder = true)
 public class ${modelName}EntityVO extends QueryReqVO {
     <#list baseDataList as data>
- 
+
     @ApiModelProperty(value = "${data.columnComment}")
     private ${data.columnType} ${data.columnName};
     </#list>

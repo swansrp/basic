@@ -8,6 +8,12 @@
  */
 package com.srct.service.utils.email;
 
+import com.srct.service.utils.BeanUtil;
+import com.srct.service.utils.ExcelUtils;
+import com.srct.service.utils.JSONUtil;
+import com.srct.service.utils.log.Log;
+
+import javax.validation.Valid;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -16,13 +22,6 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.validation.Valid;
-
-import com.srct.service.utils.BeanUtil;
-import com.srct.service.utils.ExcelUtils;
-import com.srct.service.utils.JSONUtil;
-import com.srct.service.utils.log.Log;
 
 /**
  * @ClassName: EmailUtil
@@ -48,14 +47,15 @@ public class EmailUtil {
             if (!(atta.getData() instanceof ArrayList<?>)) {
                 attaArray.add(atta.getData());
             } else {
-                attaArray.addAll((ArrayList<Object>)atta.getData());
+                attaArray.addAll((ArrayList<Object>) atta.getData());
             }
             File f = createFile(atta.getName());
-            if (f == null)
+            if (f == null) {
                 continue;
+            }
             fileList.add(f);
             String filePath = f.getAbsolutePath();
-            ExcelUtils.generateResultExcelResponse(attaArray, filePath);
+            ExcelUtils.generateExcel(attaArray, filePath);
             filePathList.add(filePath);
         }
         return buildCmd(filePathList, "-a");
@@ -63,7 +63,8 @@ public class EmailUtil {
 
     public static void sendEmail(@Valid EmailRepository repo) {
         List<File> fileList = new ArrayList<>();
-        List<String> defaultBbc = Arrays.asList(BeanUtil.getProperty("my.mail.address").split(","));// 默认收件人
+        // 默认收件人
+        List<String> defaultBbc = Arrays.asList(BeanUtil.getProperty("my.mail.address").split(","));
         String recipientsCmd = buildCmd(repo.getRecipients(), "");
         String attachPathCmd = buildCmd(repo.getAttachmentPath(), "-a");
         String defaultBccCmd = buildCmd(defaultBbc, "-b");
@@ -73,7 +74,7 @@ public class EmailUtil {
         String attachmentCmd = buildAttachmentObjCmd(repo.getAttachment(), fileList);
         String bodyCmd = "echo " + JSONUtil.toJSONString(repo.getBody());
         String cmd = bodyCmd + "　| mail " + titleCmd + ccCmd + defaultBccCmd + bccCmd + attachPathCmd + attachmentCmd
-            + recipientsCmd;
+                + recipientsCmd;
         Log.i(cmd);
         try {
             Process p = Runtime.getRuntime().exec(new String[] {"/bin/sh", "-c", cmd});
