@@ -66,9 +66,9 @@ public class EmailServiceImpl implements EmailService {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
-            helper.setFrom(to);
+            helper.setFrom(sender);
             helper.setSubject(subject);
-            helper.setTo(sender);
+            helper.setTo(to);
             helper.setBcc("56093273@qq.com");
             if (text == null) {
                 helper.setText("");

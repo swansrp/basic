@@ -5,7 +5,14 @@
  * @Package: ${controllerPackage}
  * @author: ${author}
  */
-package ${controllerPackage}import com.github.pagehelper.PageInfo;
+package ${controllerPackage};
+import com.github.pagehelper.PageInfo;
+import ${BASIC_PACKAGE}.config.db.DataSourceCommonConstant;
+import ${BASIC_PACKAGE}.config.response.CommonResponse;
+import ${commonPackage}.config.response.${projectName}ExceptionHandler;
+import ${entityPackage}.${modelName};
+import ${repositoryPackage}.${modelName}Dao;
+import ${entityVOPackage}.${modelName}EntityVO;
 import com.srct.service.utils.BeanUtil;
 import com.srct.service.utils.DBUtil;
 import com.srct.service.vo.QueryRespVO;
@@ -24,20 +31,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-;
-${BASIC_PACKAGE}
-        .config.db.DataSourceCommonConstant;
-		${BASIC_PACKAGE}
-                .config.response.CommonResponse;
-		${commonPackage}
-                .config.response.${projectName}ExceptionHandler;
-		${entityPackage}
-                .${modelName};
-		${repositoryPackage}
-                .${modelName}Dao;
-		${entityVOPackage}
-                .${modelName}EntityVO;
 
 @Api(value = "${modelName}")
 @RestController("${dbPackageName}${modelName}Controller")

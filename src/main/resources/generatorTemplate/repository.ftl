@@ -17,8 +17,17 @@
  * @author: ${author}
  * @date: ${date}
  */
-package ${repositoryPackage}import com.github.pagehelper.PageHelper;
+package ${repositoryPackage};
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import ${BASIC_PACKAGE}.config.db.DataSourceCommonConstant;
+import ${BASIC_PACKAGE}.config.redis.CacheExpire;
+import ${BASIC_PACKAGE}.exception.ServiceException;
+import ${entityPackage}.${modelName};
+import ${entityPackage}.${modelName}Example;
+import ${xmlPackage}.${modelName}Mapper;
+import ${BASIC_PACKAGE}.utils.ReflectionUtil;
+import ${BASIC_PACKAGE}.utils.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,47 +35,30 @@ import org.springframework.stereotype.Repository;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+<#if ((FeatureCreateAt??) || (FeatureUpdateAt??))>
 import java.util.Date;
+</#if>
 import java.util.HashMap;
 import java.util.List;
 
-;
-${BASIC_PACKAGE}
-        .config.db.DataSourceCommonConstant;
-		${BASIC_PACKAGE}
-                .config.redis.CacheExpire;
-		${BASIC_PACKAGE}
-                .exception.ServiceException;
-		${entityPackage}
-                .${modelName};
-		${entityPackage}
-                .${modelName}Example;
-		${xmlPackage}
-                .${modelName}Mapper;
-		${BASIC_PACKAGE}
-                .utils.ReflectionUtil;
-		${BASIC_PACKAGE}
-                .utils.StringUtil;
-<#if((FeatureCreateAt??)||(FeatureUpdateAt??))>
-</#if>
 
 @Repository("${dbPackageName}${modelName}Dao")
 public class ${modelName}Dao {
 
     @Autowired
-	${modelName}Mapper ${modelNameFL}Mapper;
+	private ${modelName}Mapper ${modelNameFL}Mapper;
 
     @CacheEvict(value = "${modelName}", allEntries = true)
     public ${modelName} update${modelName}(${modelName} ${modelNameFL}) {
         int res = 0;
         if (${modelNameFL}.getId() == null){
 <#if FeatureCreateAt??>
-	${modelNameFL}.setCreateAt(new Date());
+	        ${modelNameFL}.setCreateAt(new Date());
 </#if>
             res = ${modelNameFL}Mapper.insertSelective(${modelNameFL});
         } else{
 <#if FeatureUpdateAt??>
-	${modelNameFL}.setUpdateAt(new Date());
+	        ${modelNameFL}.setUpdateAt(new Date());
 </#if>
             res = ${modelNameFL}Mapper.updateByPrimaryKeySelective(${modelNameFL});
         } if (res == 0) {
@@ -80,12 +72,12 @@ public class ${modelName}Dao {
         int res = 0;
         if (${modelNameFL}.getId() == null){
 <#if FeatureCreateAt??>
-	${modelNameFL}.setCreateAt(new Date());
+	        ${modelNameFL}.setCreateAt(new Date());
 </#if>
             res = ${modelNameFL}Mapper.insert(${modelNameFL});
         } else{
 <#if FeatureUpdateAt??>
-	${modelNameFL}.setUpdateAt(new Date());
+	        ${modelNameFL}.setUpdateAt(new Date());
 </#if>
             res = ${modelNameFL}Mapper.updateByPrimaryKey(${modelNameFL});
         } if (res == 0) {
@@ -108,7 +100,7 @@ public class ${modelName}Dao {
     public Integer del${modelName}(${modelName} ${modelNameFL}) {
 		${modelName}Example example = get${modelName}Example(${modelNameFL});
 <#if FeatureValid??>
-	${modelNameFL}.setValid(DataSourceCommonConstant.DATABASE_COMMON_INVALID);
+	    ${modelNameFL}.setValid(DataSourceCommonConstant.DATABASE_COMMON_INVALID);
 	    return ${modelNameFL}Mapper.updateByExampleSelective(${modelNameFL}, example);
 <#else>
 	    return ${modelNameFL}Mapper.deleteByExample(example);
@@ -121,9 +113,9 @@ public class ${modelName}Dao {
 	    Integer res = 0;
 	    List<${modelName}> ${modelNameFL}List = get${modelName}ByExample(example);
 	    for (${modelName} ${modelNameFL} :${modelNameFL}List){
-	${modelNameFL}.setValid(DataSourceCommonConstant.DATABASE_COMMON_INVALID);
-    res += ${modelNameFL}Mapper.updateByPrimaryKey(${modelNameFL});
-}
+	        ${modelNameFL}.setValid(DataSourceCommonConstant.DATABASE_COMMON_INVALID);
+            res += ${modelNameFL}Mapper.updateByPrimaryKey(${modelNameFL});
+        }
 	    return res;
 <#else>
 	    return ${modelNameFL}Mapper.deleteByExample(example);
