@@ -27,6 +27,10 @@ import java.util.List;
 @Service
 public class EmailServiceImpl implements EmailService {
 
+    static {
+        System.setProperty("mail.mime.splitlongparameters", "false");
+    }
+
     @Autowired
     private JavaMailSender mailSender;
 
