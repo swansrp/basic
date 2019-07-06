@@ -9,7 +9,12 @@ package com.srct.service.controller;
 
 import com.srct.service.config.response.CommonExceptionHandler;
 import com.srct.service.config.response.CommonResponse;
+import com.srct.service.po.wechat.platform.WechatMsgTemplateKey;
+import com.srct.service.po.wechat.platform.WechatMsgTemplatePO;
+import com.srct.service.po.wechat.platform.WechatMsgTemplateWord;
+import com.srct.service.service.EmailService;
 import com.srct.service.service.RestService;
+import com.srct.service.service.WechatService;
 import com.srct.service.utils.log.Log;
 import com.srct.service.utils.security.EncryptUtil;
 import io.swagger.annotations.Api;
@@ -53,6 +58,12 @@ public class TestController {
 
     @Value("${spring.mail.username}")
     private String sender;
+
+    @Autowired
+    private EmailService emailService;
+
+    @Autowired
+    private WechatService wechatService;
 
 
     @ApiOperation(value = "GET param测试", notes = "guid hzrvxzbpg7")
@@ -124,8 +135,32 @@ public class TestController {
         } catch (MessagingException e) {
             e.printStackTrace();
         }
-        mailSender.send(message);
+        emailService.sendEmail(message);
+        // mailSender.send(message);
 
+        return CommonExceptionHandler.generateResponse("");
+    }
+
+    @RequestMapping(value = "/msg", method = RequestMethod.GET)
+    public ResponseEntity<CommonResponse<String>.Resp> msgTemplate(
+            @RequestParam(value = "token", required = false) String token) {
+
+        String msgId = "KN1le8ZFjA9g4FLW8pG_vEt6v3RsidN5h9ShPXVvetY";
+        String openId = "ouR2Z1J2WJ2bH4mDoNra1gu92Vq4";
+        WechatMsgTemplatePO po = new WechatMsgTemplatePO();
+        po.setTouser(openId);
+        po.setTemplate_id(msgId);
+        WechatMsgTemplateKey data = new WechatMsgTemplateKey();
+        data.setFirst(WechatMsgTemplateWord.builder().value("123").build());
+        data.setKeyword1(WechatMsgTemplateWord.builder().value("abc").build());
+        data.setKeyword2(WechatMsgTemplateWord.builder().value("789").build());
+        data.setKeyword3(WechatMsgTemplateWord.builder().value("xyz").build());
+        data.setKeyword4(WechatMsgTemplateWord.builder().value("444").build());
+        data.setKeyword5(WechatMsgTemplateWord.builder().value("555").build());
+        data.setRemark(WechatMsgTemplateWord.builder().value("哈哈哈").build());
+        po.setData(data);
+        Log.ii(po);
+        wechatService.pushMsgTemplate(po);
         return CommonExceptionHandler.generateResponse("");
     }
 }
