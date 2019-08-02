@@ -8,23 +8,17 @@
  */
 package com.srct.service.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.util.Date;
 
 /**
  * @author sharuopeng
  */
 @Data
-public class QueryReqVO {
+public class QueryReqVO extends ReqBaseVO {
+    @ApiModelProperty("当前页")
     private Integer currentPage;
+    @ApiModelProperty("每页大小")
     private Integer pageSize;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date queryStartAt;
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date queryEndAt;
+
 }
