@@ -6,24 +6,12 @@
 	<appender name="STDOUT"
 		class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
-			<pattern>%d{HH:mm:ss} %-5level %-50logger{15} %m%n</pattern>
+			<pattern>%d{HH:mm:ss} %-5level %-50logger{15} \(%file:%line\) %m%n</pattern>
 			<!-- 控制台也要使用UTF-8，不要使用GBK，否则会中文乱码 -->
 			<charset>UTF-8</charset>
 		</encoder>
 		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<level>INFO</level>
-		</filter>
-	</appender>
-
-	<appender name="STDOUTIDE"
-		class="ch.qos.logback.core.ConsoleAppender">
-		<encoder>
-			<pattern>%d{HH:mm:ss} %-5level %-50logger{15} %m%n</pattern>
-			<!-- 控制台也要使用UTF-8，不要使用GBK，否则会中文乱码 -->
-			<charset>UTF-8</charset>
-		</encoder>
-		<filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-			<level>INFO</level>
+			<level>DEBUG</level>
 		</filter>
 	</appender>
 
@@ -87,8 +75,8 @@
 	</appender>
 
 	<!-- 控制台输出日志级别 -->
-	<logger name="com.srct.service" level="info" additivity="false">
-		<appender-ref ref="STDOUTIDE" />
+	<logger name="com.srct.service" level="DEBUG" additivity="false">
+		<appender-ref ref="STDOUT" />
 	</logger>
 
 	<root level="info">
@@ -104,4 +92,4 @@
 	<logger name="com.srct.service" level="TRACE" additivity="false">
 		<appender-ref ref="syslog" />
 	</logger>
-</configuration>    
+</configuration>

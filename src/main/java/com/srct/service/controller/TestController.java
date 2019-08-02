@@ -35,7 +35,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
@@ -43,8 +42,9 @@ import javax.mail.internet.MimeMessage;
 /**
  * @author sharp
  */
+
 @Api(value = "TestController")
-@RestController("TestController")
+//@RestController("TestController")
 @RequestMapping(value = "/test")
 @CrossOrigin(origins = "*")
 //@Profile(value = {"dev", "test"})

@@ -4,7 +4,7 @@
   "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 <generatorConfiguration>
 	<!--数据库驱动 -->
-	<!-- 如果IDE(eclipse或者idea) 项目里导入了jar包，那么就不需要配置了jar包的绝对路径了 <classPathEntry 
+	<!-- 如果IDE(eclipse或者idea) 项目里导入了jar包，那么就不需要配置了jar包的绝对路径了 <classPathEntry
 		location="e:/project/mybatis/lib/mysql-connector-java-5.0.8-bin.jar"/> -->
 	<context id="Configuration2Tables" targetRuntime="MyBatis3">
 		<commentGenerator>
@@ -21,7 +21,7 @@
 		</javaTypeResolver>
 		<!--生成Model类存放位置 -->
 		<javaModelGenerator
-			targetPackage="com.srct.service.dao.po"
+			targetPackage="com.srct.service.dao.entity"
 			targetProject="SpringBootCommonLib/src/main/java">
 			<property name="enableSubPackages" value="true" />
 			<property name="trimStrings" value="true" />
@@ -53,8 +53,8 @@
 			<property name="my.isgen.usekeys" value="true" />
 			<generatedKey column="id" sqlStatement="JDBC" />
 		</table>
-		<!-- <table tableName="product_" domainObjectName="Product" enableCountByExample="false" 
-			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false" 
+		<!-- <table tableName="product_" domainObjectName="Product" enableCountByExample="false"
+			enableUpdateByExample="false" enableDeleteByExample="false" enableSelectByExample="false"
 			selectByExampleQueryId="false"></table> -->
 	</context>
 	<!-- https://www.cnblogs.com/maanshancss/p/6027999.html -->

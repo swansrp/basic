@@ -1,11 +1,11 @@
 package com.srct.service.config.redis;
 
+import com.srct.service.exception.ServiceException;
 import com.srct.service.utils.ReflectionUtil;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
 import java.util.List;
@@ -28,21 +28,8 @@ public class CacheKeyByParam implements KeyGenerator {
                         Object tempObject = null;
                         try {
                             tempObject = ReflectionUtil.getFieldValue(object, name);
-                        } catch (IllegalAccessException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (NoSuchMethodException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (SecurityException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (IllegalArgumentException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } catch (InvocationTargetException e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+                        } catch (IllegalAccessException | SecurityException | IllegalArgumentException e) {
+                            throw new ServiceException("获取单体数值失败", e);
                         }
                         if (tempObject != null) {
                             if (field.get(i).getType().equals(Date.class)) {

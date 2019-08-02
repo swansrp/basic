@@ -1,11 +1,7 @@
 package com.srct.service.utils.log;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.lang.reflect.Method;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.srct.service.utils.HttpUtil;
+import com.srct.service.utils.JSONUtil;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.After;
@@ -23,8 +19,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import com.srct.service.utils.HttpUtil;
-import com.srct.service.utils.JSONUtil;
+import javax.servlet.http.HttpServletRequest;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.lang.reflect.Method;
 
 @Aspect
 @Component
@@ -55,10 +53,10 @@ public class ApiPointLogAspect {
     @Around("apiLog()")
     public Object around(ProceedingJoinPoint pjp) throws Throwable {
         Object res = null;
-        ServletRequestAttributes attr = (ServletRequestAttributes)RequestContextHolder.currentRequestAttributes();
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpServletRequest req = attr.getRequest();
         String url = req.getMethod() + " " + req.getRequestURI();
-        String ipAddress = req.getHeader("x-forwarded-for");
+        String ipAddress = HttpUtil.getRemoteIp(req);
         String header = JSONUtil.toJSONString(HttpUtil.getHeadersInfoMap(req));
         String methodName = pjp.getSignature().getName();
         String paramNames = getParams(pjp);
@@ -82,7 +80,7 @@ public class ApiPointLogAspect {
     public void after() {
         ThreadLogInfo info = threadLocal.get();
         mLogger.trace(String.format(LogFormat_TIME, info.getEndTime() - info.getStartTime(), info.getIpAddress(),
-            info.getUrl(), info.getMethodName()));
+                info.getUrl(), info.getMethodName()));
         // threadLocal.remove();
     }
 
@@ -100,10 +98,11 @@ public class ApiPointLogAspect {
     }
 
     @AfterReturning("apiLog()")
-    public void afterReturning() {}
+    public void afterReturning() {
+    }
 
     private String getParams(JoinPoint point) {
-        Method method = ((MethodSignature)point.getSignature()).getMethod();
+        Method method = ((MethodSignature) point.getSignature()).getMethod();
         LocalVariableTableParameterNameDiscoverer u = new LocalVariableTableParameterNameDiscoverer();
         String[] names = u.getParameterNames(method);
         Class<?>[] types = method.getParameterTypes();

@@ -7,9 +7,11 @@
  */
 package com.srct.service.service.impl;
 
+import com.srct.service.constant.ErrCodeSys;
 import com.srct.service.service.RedisService;
 import com.srct.service.service.RedisTokenOperateService;
 import com.srct.service.utils.security.RandomUtil;
+import com.srct.service.validate.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +25,7 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
 
     private static final String REDIS_REFRESHTOKEN_SUFFIX = "refreshToken";
 
-    private static final String REDIS_TOKEN = "token:";
+    private static final String REDIS_TOKEN = "Token:Token:";
 
     private static final String REDIS_ROLE_SUFFIX = "role";
 
@@ -79,6 +81,7 @@ public class RedisTokenOperateServiceImpl implements RedisTokenOperateService {
     @Override
     public Object getToken(String token, String key) {
         Map<String, Object> tokenMap = redisService.get(REDIS_TOKEN + token, Map.class);
+        Validator.assertNotEmpty(tokenMap, ErrCodeSys.SYS_SESSION_TIME_OUT);
         return tokenMap.get(key);
     }
 

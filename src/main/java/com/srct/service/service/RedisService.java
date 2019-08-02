@@ -16,7 +16,7 @@ public interface RedisService {
 
     int getInt(String key);
 
-    public <T> T get(String key, Class<T> clz);
+    <T> T get(String key, Class<T> clz);
 
     Long incr(String key);
 
@@ -25,6 +25,8 @@ public interface RedisService {
     Set<byte[]> getKeys(String pattern);
 
     boolean delete(String key);
+
+    boolean hasKey(String key);
 
     void delete(List<String> keys);
 

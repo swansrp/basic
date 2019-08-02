@@ -15,5 +15,7 @@ import javax.servlet.http.HttpServletResponse;
  * Package: com.srct.service.service
  */
 public interface AuthTokenService {
+    void setTokenHolder();
+
     void validate(HttpServletRequest request, HttpServletResponse response, Auth.AuthType authType);
 }

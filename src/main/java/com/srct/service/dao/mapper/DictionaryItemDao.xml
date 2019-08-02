@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.srct.service.dao.mapper.DictionaryItemDao">
+  <resultMap id="BaseResultMap" type="com.srct.service.dao.entity.DictionaryItem">
+    <!--@mbg.generated generated on Fri Jul 26 18:24:29 CST 2019.-->
+    <id column="dictionary_id" jdbcType="VARCHAR" property="dictionaryId" />
+    <id column="item_id" jdbcType="VARCHAR" property="itemId" />
+    <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+    <result column="item_order" jdbcType="INTEGER" property="itemOrder" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated generated on Fri Jul 26 18:24:29 CST 2019.-->
+    dictionary_id, item_id, item_name, item_order, remark
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated generated on Fri Jul 26 18:24:29 CST 2019.-->
+    update co_dictionary_item
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="item_name = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when dictionary_id = #{item.dictionaryId,jdbcType=VARCHAR} then #{item.itemName,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="item_order = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when dictionary_id = #{item.dictionaryId,jdbcType=VARCHAR} then #{item.itemOrder,jdbcType=INTEGER}
+        </foreach>
+      </trim>
+      <trim prefix="remark = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when dictionary_id = #{item.dictionaryId,jdbcType=VARCHAR} then #{item.remark,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+    </trim>
+    where dictionary_id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.dictionaryId,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated generated on Fri Jul 26 18:24:29 CST 2019.-->
+    insert into co_dictionary_item
+    (dictionary_id, item_id, item_name, item_order, remark)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.dictionaryId,jdbcType=VARCHAR}, #{item.itemId,jdbcType=VARCHAR}, #{item.itemName,jdbcType=VARCHAR},
+        #{item.itemOrder,jdbcType=INTEGER}, #{item.remark,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="com.srct.service.dao.entity.DictionaryItem">
+    <!--@mbg.generated generated on Fri Jul 26 18:24:29 CST 2019.-->
+    insert into co_dictionary_item
+    (dictionary_id, item_id, item_name, item_order, remark)
+    values
+    (#{dictionaryId,jdbcType=VARCHAR}, #{itemId,jdbcType=VARCHAR}, #{itemName,jdbcType=VARCHAR},
+      #{itemOrder,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR})
+    on duplicate key update
+    dictionary_id = #{dictionaryId,jdbcType=VARCHAR},
+    item_id = #{itemId,jdbcType=VARCHAR},
+    item_name = #{itemName,jdbcType=VARCHAR},
+    item_order = #{itemOrder,jdbcType=INTEGER},
+    remark = #{remark,jdbcType=VARCHAR}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="com.srct.service.dao.entity.DictionaryItem">
+    <!--@mbg.generated generated on Fri Jul 26 18:24:29 CST 2019.-->
+    insert into co_dictionary_item
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="dictionaryId != null">
+        dictionary_id,
+      </if>
+      <if test="itemId != null">
+        item_id,
+      </if>
+      <if test="itemName != null">
+        item_name,
+      </if>
+      <if test="itemOrder != null">
+        item_order,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="dictionaryId != null">
+        #{dictionaryId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null">
+        #{itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemName != null">
+        #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemOrder != null">
+        #{itemOrder,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    on duplicate key update
+    <trim suffixOverrides=",">
+      <if test="dictionaryId != null">
+        dictionary_id = #{dictionaryId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null">
+        item_id = #{itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="itemName != null">
+        item_name = #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemOrder != null">
+        item_order = #{itemOrder,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

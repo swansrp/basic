@@ -19,8 +19,13 @@ public @interface Auth {
     AuthType role() default AuthType.GUEST;
 
     enum AuthType {
+        // 无鉴权需求
+        NONE,
+        // 未登录token鉴权
         UNLOGIN,
+        // 访客token+userId鉴权
         GUEST,
+        // 角色权限树鉴权
         USER
     }
 

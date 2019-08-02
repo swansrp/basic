@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.srct.service.dao.mapper.DictionaryDao">
+  <resultMap id="BaseResultMap" type="com.srct.service.dao.entity.Dictionary">
+    <!--@mbg.generated generated on Fri Jul 26 18:24:14 CST 2019.-->
+    <id column="dictionary_id" jdbcType="VARCHAR" property="dictionaryId" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated generated on Fri Jul 26 18:24:14 CST 2019.-->
+    dictionary_id, description
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated generated on Fri Jul 26 18:24:14 CST 2019.-->
+    update co_dictionary
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="description = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when dictionary_id = #{item.dictionaryId,jdbcType=VARCHAR} then #{item.description,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+    </trim>
+    where dictionary_id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.dictionaryId,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated generated on Fri Jul 26 18:24:14 CST 2019.-->
+    insert into co_dictionary
+    (dictionary_id, description)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.dictionaryId,jdbcType=VARCHAR}, #{item.description,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="com.srct.service.dao.entity.Dictionary">
+    <!--@mbg.generated generated on Fri Jul 26 18:24:14 CST 2019.-->
+    insert into co_dictionary
+    (dictionary_id, description)
+    values
+    (#{dictionaryId,jdbcType=VARCHAR}, #{description,jdbcType=VARCHAR})
+    on duplicate key update
+    dictionary_id = #{dictionaryId,jdbcType=VARCHAR},
+    description = #{description,jdbcType=VARCHAR}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="com.srct.service.dao.entity.Dictionary">
+    <!--@mbg.generated generated on Fri Jul 26 18:24:14 CST 2019.-->
+    insert into co_dictionary
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="dictionaryId != null">
+        dictionary_id,
+      </if>
+      <if test="description != null">
+        description,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="dictionaryId != null">
+        #{dictionaryId,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    on duplicate key update
+    <trim suffixOverrides=",">
+      <if test="dictionaryId != null">
+        dictionary_id = #{dictionaryId,jdbcType=VARCHAR},
+      </if>
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

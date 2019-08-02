@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.srct.service.dao.mapper.ServicePermitDao">
+  <resultMap id="BaseResultMap" type="com.srct.service.dao.entity.ServicePermit">
+    <!--@mbg.generated generated on Sun Jul 28 12:06:30 CST 2019.-->
+    <id column="api_id" jdbcType="VARCHAR" property="apiId" />
+    <id column="permit_id" jdbcType="INTEGER" property="permitId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="last_update_time" jdbcType="TIMESTAMP" property="lastUpdateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated generated on Sun Jul 28 12:06:30 CST 2019.-->
+    api_id, permit_id, create_time, last_update_time
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated generated on Sun Jul 28 12:06:30 CST 2019.-->
+    update co_service_permit
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="create_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when api_id = #{item.apiId,jdbcType=VARCHAR} then #{item.createTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="last_update_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when api_id = #{item.apiId,jdbcType=VARCHAR} then #{item.lastUpdateTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+    </trim>
+    where api_id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.apiId,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated generated on Sun Jul 28 12:06:30 CST 2019.-->
+    insert into co_service_permit
+    (api_id, permit_id, create_time, last_update_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.apiId,jdbcType=VARCHAR}, #{item.permitId,jdbcType=INTEGER}, #{item.createTime,jdbcType=TIMESTAMP}, 
+        #{item.lastUpdateTime,jdbcType=TIMESTAMP})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="com.srct.service.dao.entity.ServicePermit">
+    <!--@mbg.generated generated on Sun Jul 28 12:06:30 CST 2019.-->
+    insert into co_service_permit
+    (api_id, permit_id, create_time, last_update_time)
+    values
+    (#{apiId,jdbcType=VARCHAR}, #{permitId,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{lastUpdateTime,jdbcType=TIMESTAMP})
+    on duplicate key update 
+    api_id = #{apiId,jdbcType=VARCHAR}, 
+    permit_id = #{permitId,jdbcType=INTEGER}, 
+    create_time = #{createTime,jdbcType=TIMESTAMP}, 
+    last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="com.srct.service.dao.entity.ServicePermit">
+    <!--@mbg.generated generated on Sun Jul 28 12:06:30 CST 2019.-->
+    insert into co_service_permit
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="apiId != null">
+        api_id,
+      </if>
+      <if test="permitId != null">
+        permit_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastUpdateTime != null">
+        last_update_time,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="apiId != null">
+        #{apiId,jdbcType=VARCHAR},
+      </if>
+      <if test="permitId != null">
+        #{permitId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateTime != null">
+        #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+    on duplicate key update 
+    <trim suffixOverrides=",">
+      <if test="apiId != null">
+        api_id = #{apiId,jdbcType=VARCHAR},
+      </if>
+      <if test="permitId != null">
+        permit_id = #{permitId,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateTime != null">
+        last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

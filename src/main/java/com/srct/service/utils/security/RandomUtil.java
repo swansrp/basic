@@ -1,10 +1,10 @@
-/**  
- * Project Name:SpringBootCommon  
- * File Name:RandomString.java  
- * Package Name:com.srct.service.utils.security  
- * Date:Apr 28, 2018 3:57:56 PM  
- * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
- *  
+/**
+ * Project Name:SpringBootCommon
+ * File Name:RandomString.java
+ * Package Name:com.srct.service.utils.security
+ * Date:Apr 28, 2018 3:57:56 PM
+ * Copyright (c) 2018, ruopeng.sha All Rights Reserved.
+ *
 */
 package com.srct.service.utils.security;
 
@@ -22,7 +22,7 @@ import com.srct.service.utils.log.Log;
  * Function: TODO ADD FUNCTION. <br/>
  * Reason: TODO ADD REASON. <br/>
  * Date: Apr 28, 2018 3:57:56 PM <br/>
- * 
+ *
  * @author ruopeng.sha
  * @version
  * @since JDK 1.8
@@ -38,13 +38,8 @@ public class RandomUtil {
     /**
      * Generate a random string.
      *
-     * @param random
-     *            the random number generator.
-     * @param characters
-     *            the characters for generating string.
-     * @param length
-     *            the length of the generated string.
-     * @return
+     * @param length the length of the generated string.
+     * @return string
      */
     public static String getString(int length) {
         Random random = new SecureRandom();

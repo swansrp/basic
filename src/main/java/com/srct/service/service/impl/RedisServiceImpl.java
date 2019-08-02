@@ -3,6 +3,7 @@ package com.srct.service.service.impl;
 import com.srct.service.service.RedisService;
 import com.srct.service.utils.JSONUtil;
 import com.srct.service.utils.log.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class RedisServiceImpl implements RedisService {
 
@@ -38,18 +40,25 @@ public class RedisServiceImpl implements RedisService {
     /**
      * @param key
      */
+    @Override
     public boolean delete(final String key) {
         if (StringUtils.isEmpty(key)) {
             return false;
         }
         boolean result = redisTemplate.delete(key);
-        // Log.d("delete key[{}]， result[{}]", key, result);
+        // log.debug("delete key[{}]， result[{}]", key, result);
         return result;
+    }
+
+    @Override
+    public boolean hasKey(String key) {
+        return redisTemplate.hasKey(key);
     }
 
     /**
      * @param keys
      */
+    @Override
     public void delete(final List<String> keys) {
         if (null == keys || keys.isEmpty()) {
             return;
@@ -63,18 +72,18 @@ public class RedisServiceImpl implements RedisService {
      */
     public void setExpireTime(final String key, final Date expireDate) {
         if (StringUtils.isEmpty(key)) {
-            Log.e(" setExpireTime key is null");
+            log.error(" setExpireTime key is null");
             return;
         }
-        Log.d(" setExpireTime key[{}], date[{}]", key, expireDate);
+        log.debug(" setExpireTime key[{}], date[{}]", key, expireDate);
         redisTemplate.expireAt(key, expireDate);
     }
 
     public void publish(final String topic, final Object message) {
         if (StringUtils.isEmpty(topic) || StringUtils.isEmpty(message)) {
-            Log.e(" publish topic : " + topic + " message : " + JSONUtil.toJSONString(message));
+            log.error(" publish topic : " + topic + " message : " + JSONUtil.toJSONString(message));
         }
-        Log.d(" publish topic[{}], message[{}]", topic, message);
+        log.debug(" publish topic[{}], message[{}]", topic, message);
         redisTemplate.convertAndSend(topic, message);
     }
 
@@ -84,10 +93,10 @@ public class RedisServiceImpl implements RedisService {
      */
     public Long publish(final String topic, final String message) {
         if (StringUtils.isEmpty(topic) || StringUtils.isEmpty(message)) {
-            Log.e(" publish topic : " + topic + " message : " + message);
+            log.error(" publish topic : " + topic + " message : " + message);
             return null;
         }
-        Log.d(" publish topic[{}], message[{}]", topic, message);
+        log.debug(" publish topic[{}], message[{}]", topic, message);
         Long result = redisTemplate
                 .execute((RedisCallback<Long>) connection -> connection.publish(topic.getBytes(), message.getBytes()));
         return result;
@@ -95,10 +104,10 @@ public class RedisServiceImpl implements RedisService {
 
     public void subscribe(final MessageListener listener, final String topic) {
         if (StringUtils.isEmpty(topic)) {
-            Log.e(" subscribe topic is null");
+            log.error(" subscribe topic is null");
             return;
         }
-        Log.d(" subscribe topic[{}]", topic);
+        log.debug(" subscribe topic[{}]", topic);
         redisTemplate.execute((RedisCallback<String>) connection -> {
             connection.subscribe(listener, topic.getBytes());
             return null;
@@ -122,7 +131,7 @@ public class RedisServiceImpl implements RedisService {
     public void set(String key, Object value) {
         // TODO Auto-generated method stub
         if (value == null || StringUtils.isEmpty(key)) {
-            Log.e(" set key[{}], value[{}] is null", key, value);
+            log.error(" set key[{}], value[{}] is null", key, value);
             return;
         }
         objectRedisTemplate.opsForValue().set(key, value);
@@ -133,7 +142,7 @@ public class RedisServiceImpl implements RedisService {
     public void set(String key, int seconds, Object value) {
         // TODO Auto-generated method stub
         if (value == null || StringUtils.isEmpty(key)) {
-            Log.e(" set key[{}], value[{}] is null", key, value);
+            log.error(" set key[{}], value[{}] is null", key, value);
             return;
         }
         objectRedisTemplate.opsForValue().set(key, value, seconds, TimeUnit.SECONDS);
@@ -143,24 +152,24 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public boolean setex(final String key, final int seconds, final String value) {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
-            Log.e(" setex key[{}]value[{}] is null", key, value);
+            log.error(" setex key[{}]value[{}] is null", key, value);
             return false;
         }
         boolean result = redisTemplate.execute((RedisCallback<Boolean>) connection -> {
             connection.setEx(key.getBytes(), seconds, value.getBytes());
             return true;
         });
-        Log.d(" setex key[{}], value[{}], result[{}]", key, value, result);
+        log.debug(" setex key[{}], value[{}], result[{}]", key, value, result);
         return result;
     }
 
     @Override
     public boolean setnx(final String key, final String value) {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
-            Log.e(" setnx key[" + key + "] or value [" + value + "]is null");
+            log.error(" setnx key[" + key + "] or value [" + value + "]is null");
             return false;
         }
-        Log.d(" setnx key[" + key + "] or value [" + value + "]");
+        log.debug(" setnx key[" + key + "] or value [" + value + "]");
         boolean result = redisTemplate.execute((RedisCallback<Boolean>) connection -> {
             boolean ret = connection.setNX(key.getBytes(), value.getBytes());
             return ret;
@@ -171,10 +180,10 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public boolean setnx(final String key, final int seconds, final String value) {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
-            Log.e(" setnx key[{}] or value [{}] , seconds[{}]", key, value, seconds);
+            log.error(" setnx key[{}] or value [{}] , seconds[{}]", key, value, seconds);
             return false;
         }
-        Log.d(" setnx key[{}], value[{}], seconds[{}]", key, value, seconds);
+        log.debug(" setnx key[{}], value[{}], seconds[{}]", key, value, seconds);
         boolean result = redisTemplate.execute((RedisCallback<Boolean>) connection -> {
             boolean ret = connection.setNX(key.getBytes(), value.getBytes());
             if (ret) {
@@ -189,26 +198,27 @@ public class RedisServiceImpl implements RedisService {
      * @param key
      * @return
      */
+    @Override
     public byte[] getByte(final String key) {
         if (StringUtils.isEmpty(key)) {
-            Log.e(" get key is null error");
+            log.error(" get key is null error");
             return null;
         }
         byte[] result = redisTemplate.execute((RedisCallback<byte[]>) connection -> {
             byte[] value = connection.get(key.getBytes());
             if (null == value || value.length <= 0) {
-                Log.e(this.getClass(), " get key[{}] value is null error", key);
+                log.error(" get key[{}] value is null error", key);
                 return null;
             }
             return value;
         });
-        Log.d(" get key[{}], result[{}]", key, result);
+        log.debug(" get key[{}], result[{}]", key, result);
         return result;
     }
 
     public <T> T get(String key) {
         if (StringUtils.isEmpty(key)) {
-            Log.e(" get key is null error");
+            log.error(" get key is null error");
             return null;
         }
         Object obj = null;
@@ -217,7 +227,7 @@ public class RedisServiceImpl implements RedisService {
             T result = (T) obj;
             return result;
         } catch (Exception e) {
-            Log.e(" get key[{}], parse value[{}] exception : {}", key, JSONUtil.toJSONString(obj), e.toString());
+            log.error(" get key[{}], parse value[{}] exception : {}", key, JSONUtil.toJSONString(obj), e.toString());
             return null;
         }
     }
@@ -234,14 +244,14 @@ public class RedisServiceImpl implements RedisService {
     public int getInt(String key) {
         String value = get(key);
         if (StringUtils.isEmpty(value)) {
-            Log.e(" getInt key[{}], value[{}] is null error", key, value);
+            log.error(" getInt key[{}], value[{}] is null error", key, value);
             return 0;
         }
-        Log.d(" getInt key[" + key + "] value[" + value + "]");
+        log.debug(" getInt key[" + key + "] value[" + value + "]");
         try {
             return Integer.valueOf(value);
         } catch (Exception e) {
-            Log.e(" getInt key[" + key + "] value[" + value + "] Exception : " + e.toString());
+            log.error(" getInt key[" + key + "] value[" + value + "] Exception : " + e.toString());
             return 0;
         }
     }
@@ -249,22 +259,22 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public Long incr(final String key) {
         if (StringUtils.isEmpty(key)) {
-            Log.e(" incr key[" + key + "] is null error");
+            log.error(" incr key[" + key + "] is null error");
             return null;
         }
         Long result = redisTemplate.execute((RedisCallback<Long>) connection -> connection.incr(key.getBytes()));
-        Log.d(" incr key[" + key + "] result [" + result + "]");
+        log.debug(" incr key[" + key + "] result [" + result + "]");
         return result;
     }
 
     @Override
     public Long decr(final String key) {
         if (StringUtils.isEmpty(key)) {
-            Log.e(" decr key[" + key + "] is null error");
+            log.error(" decr key[" + key + "] is null error");
             return null;
         }
         Long result = redisTemplate.execute((RedisCallback<Long>) connection -> connection.decr(key.getBytes()));
-        Log.d(" incr key[" + key + "] result [" + result + "]");
+        log.debug(" incr key[" + key + "] result [" + result + "]");
         return result;
     }
 
@@ -274,10 +284,10 @@ public class RedisServiceImpl implements RedisService {
      */
     public Set<byte[]> getKeys(final String pattern) {
         if (StringUtils.isEmpty(pattern)) {
-            Log.e(" getKeys pattern is null error");
+            log.error(" getKeys pattern is null error");
             return null;
         }
-        Log.d(" getKeys pattern[" + pattern + "]");
+        log.debug(" getKeys pattern[" + pattern + "]");
         return redisTemplate.execute(new RedisCallback<Set<byte[]>>() {
 
             @Override
@@ -290,21 +300,21 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public List<String> sMembers(final String key) {
         if (StringUtils.isEmpty(key)) {
-            Log.e(" sMembers key is empty error");
+            log.error(" sMembers key is empty error");
             return null;
         }
-        Log.d(" sMembers key[" + key + "]");
+        log.debug(" sMembers key[" + key + "]");
         Set<byte[]> members =
                 redisTemplate.execute((RedisCallback<Set<byte[]>>) connection -> connection.sMembers(key.getBytes()));
         if (null == members || members.isEmpty()) {
-            Log.e(" sMembers key[" + key + "] members is empty error");
+            log.error(" sMembers key[" + key + "] members is empty error");
             return null;
         }
         List<String> list = new ArrayList<String>();
         String member = null;
         for (byte[] tmp : members) {
             member = new String(tmp);
-            Log.d(" sMembers member[" + member + "]");
+            log.debug(" sMembers member[" + member + "]");
             list.add(member);
         }
         return list;
@@ -313,19 +323,19 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public Long sAdd(final String key, final String value) {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
-            Log.e(" sAdd key[" + key + "]  value[" + value + "] is null error");
+            log.error(" sAdd key[" + key + "]  value[" + value + "] is null error");
             return null;
         }
         Long result = redisTemplate
                 .execute((RedisCallback<Long>) connection -> connection.sAdd(key.getBytes(), value.getBytes()));
-        Log.d(" sAdd key[" + key + "]  value[" + value + "] result[" + result + "]");
+        log.debug(" sAdd key[" + key + "]  value[" + value + "] result[" + result + "]");
         return result;
     }
 
     @Override
     public Long lpush(String key, String... value) {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
-            Log.e(" lpush key[" + key + "]  value[" + value + "] is null error");
+            log.error(" lpush key[" + key + "]  value[" + value + "] is null error");
             return null;
         }
         byte[][] a = new byte[value.length][];
@@ -335,44 +345,44 @@ public class RedisServiceImpl implements RedisService {
             index++;
         }
         Long result = redisTemplate.execute((RedisCallback<Long>) connection -> connection.lPush(key.getBytes(), a));
-        Log.d(" lpush key[" + key + "]  value[" + value + "] result[" + result + "]");
+        log.debug(" lpush key[" + key + "]  value[" + value + "] result[" + result + "]");
         return result;
     }
 
     @Override
     public Long sRem(final String key, final String value) {
         if (StringUtils.isEmpty(value) || StringUtils.isEmpty(key)) {
-            Log.e(" sRem key[" + key + "]  value[" + value + "] is null error");
+            log.error(" sRem key[" + key + "]  value[" + value + "] is null error");
             return null;
         }
         Long result = redisTemplate
                 .execute((RedisCallback<Long>) connection -> connection.sRem(key.getBytes(), value.getBytes()));
-        Log.d(" sRem key[" + key + "]  value[" + value + "] result[" + result + "]");
+        log.debug(" sRem key[" + key + "]  value[" + value + "] result[" + result + "]");
         return result;
     }
 
     @Override
     public String sRandmember(final String key) {
         if (StringUtils.isEmpty(key)) {
-            Log.e(" sRandmember key[" + key + "] is null error");
+            log.error(" sRandmember key[" + key + "] is null error");
             return null;
         }
         String result = redisTemplate.execute((RedisCallback<String>) connection -> {
             byte[] mem = connection.sRandMember(key.getBytes());
             if (null == mem || mem.length <= 0) {
-                Log.e(this.getClass(), " sRandmember mem is empty error");
+                log.error("sRandmember mem is empty error");
                 return null;
             }
             return new String(mem);
         });
-        Log.d(" sRandmember key[" + key + "] result[" + result + "]");
+        log.debug(" sRandmember key[" + key + "] result[" + result + "]");
         return result;
     }
 
     @Override
     public boolean hset(final String key, final String field, final String value) {
         if (StringUtils.isEmpty(key) || StringUtils.isEmpty(value) || StringUtils.isEmpty(field)) {
-            Log.e(" hset key[" + key + "] field[" + field + "] value[" + value + "]  is null error");
+            log.error(" hset key[" + key + "] field[" + field + "] value[" + value + "]  is null error");
             return false;
         }
         boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
@@ -382,14 +392,14 @@ public class RedisServiceImpl implements RedisService {
                 return connection.hSet(key.getBytes(), field.getBytes(), value.getBytes());
             }
         });
-        Log.d(" hset key[" + key + "] field[" + field + "] value[" + value + "] result[" + result + "]");
+        log.debug(" hset key[" + key + "] field[" + field + "] value[" + value + "] result[" + result + "]");
         return result;
     }
 
     @Override
     public Long hdel(final String key, final String field) {
         if (StringUtils.isEmpty(key) || StringUtils.isEmpty(field)) {
-            Log.e(" hdel key[" + key + "] field[" + field + "]  is null error");
+            log.error(" hdel key[" + key + "] field[" + field + "]  is null error");
             return null;
         }
         Long result = redisTemplate.execute(new RedisCallback<Long>() {
@@ -399,14 +409,14 @@ public class RedisServiceImpl implements RedisService {
                 return connection.hDel(key.getBytes(), field.getBytes());
             }
         });
-        Log.d(" hdel key[" + key + "] field[" + field + "] result[" + result + "]");
+        log.debug(" hdel key[" + key + "] field[" + field + "] result[" + result + "]");
         return result;
     }
 
     @Override
     public String hget(final String key, final String field) {
         if (StringUtils.isEmpty(key) || StringUtils.isEmpty(field)) {
-            Log.e(" hget key[" + key + "] field[" + field + "]  is null error");
+            log.error(" hget key[" + key + "] field[" + field + "]  is null error");
             return null;
         }
         String result = redisTemplate.execute(new RedisCallback<String>() {
@@ -415,13 +425,13 @@ public class RedisServiceImpl implements RedisService {
             public String doInRedis(RedisConnection connection) throws DataAccessException {
                 byte buf[] = connection.hGet(key.getBytes(), field.getBytes());
                 if (null == buf || buf.length <= 0) {
-                    Log.e(this.getClass(), " hGet buf is null error key[" + key + "] field[" + field + "]");
+                    log.error(" hGet buf is null error key[" + key + "] field[" + field + "]");
                     return null;
                 }
                 return new String(buf);
             }
         });
-        Log.d(" hget key[" + key + "] field[" + field + "] result[" + result + "]");
+        log.debug(" hget key[" + key + "] field[" + field + "] result[" + result + "]");
         return result;
     }
 
@@ -429,14 +439,14 @@ public class RedisServiceImpl implements RedisService {
     public int hgetInt(String key, String field) {
         String value = hget(key, field);
         if (StringUtils.isEmpty(value)) {
-            Log.e(" hget key[" + key + "] field[" + field + "] value[" + value + "] is null error");
+            log.error(" hget key[" + key + "] field[" + field + "] value[" + value + "] is null error");
             return 0;
         }
-        Log.d(" hget key[" + key + "] field[" + field + "] value[" + value + "]");
+        log.debug(" hget key[" + key + "] field[" + field + "] value[" + value + "]");
         try {
             return Integer.valueOf(value);
         } catch (Exception e) {
-            Log.e(" hGetInt Exception : " + e.toString());
+            log.error(" hGetInt Exception : " + e.toString());
             return 0;
         }
     }
@@ -467,7 +477,7 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public boolean expire(final String key, final long timeout) {
         if (StringUtils.isEmpty(key)) {
-            Log.e(" expire key[" + key + "] is null error");
+            log.error(" expire key[" + key + "] is null error");
             return false;
         }
         boolean result = redisTemplate.execute(new RedisCallback<Boolean>() {
@@ -477,7 +487,7 @@ public class RedisServiceImpl implements RedisService {
                 return connection.expire(key.getBytes(), timeout);
             }
         });
-        Log.e(" expire key[" + key + "] result[" + result + "]");
+        log.error(" expire key[" + key + "] result[" + result + "]");
         return result;
     }
     // /**

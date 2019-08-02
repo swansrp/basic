@@ -1,5 +1,7 @@
 package com.srct.service.service;
 
+import com.srct.service.cache.constant.CaptchaType;
+
 import java.awt.image.BufferedImage;
 
 /**
@@ -12,6 +14,10 @@ import java.awt.image.BufferedImage;
  * Package: com.srct.service.service
  */
 public interface CaptchaService {
+
+    BufferedImage generateCaptcha(String token, CaptchaType type);
+
+    void validateCaptcha(String token, String code, CaptchaType type);
 
     BufferedImage generateCaptcha(String token);
 

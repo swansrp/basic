@@ -1,12 +1,5 @@
 package com.srct.service.config.redis;
 
-import java.time.Duration;
-import java.util.Collection;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.cache.annotation.Cacheable;
@@ -22,7 +15,12 @@ import org.springframework.data.redis.serializer.RedisSerializationContext;
 import org.springframework.lang.Nullable;
 import org.springframework.util.ReflectionUtils;
 
-import com.srct.service.utils.log.Log;
+import java.time.Duration;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class MyRedisCacheManager extends RedisCacheManager implements ApplicationContextAware, InitializingBean {
 
@@ -61,12 +59,11 @@ public class MyRedisCacheManager extends RedisCacheManager implements Applicatio
      * Configuration hook for creating {@link RedisCache} with given name and
      * {@code cacheConfig}.
      *
-     * @param name
-     *            must not be {@literal null}.
-     * @param cacheConfig
-     *            can be {@literal null}.
+     * @param name        must not be {@literal null}.
+     * @param cacheConfig can be {@literal null}.
      * @return never {@literal null}.
      */
+    @Override
     protected RedisCache createRedisCache(String name, @Nullable RedisCacheConfiguration cacheConfig) {
         return new MyRedisCache(name, cacheWriter, cacheConfig != null ? cacheConfig : defaultCacheConfig);
     }
@@ -74,9 +71,7 @@ public class MyRedisCacheManager extends RedisCacheManager implements Applicatio
     @Override
     protected Collection<RedisCache> loadCaches() {
         List<RedisCache> caches = new LinkedList<>();
-        Log.e("loadCaches");
         for (Map.Entry<String, RedisCacheConfiguration> entry : initialCacheConfiguration.entrySet()) {
-            Log.e(entry.getKey());
             caches.add(createRedisCache(entry.getKey(), entry.getValue()));
         }
         return caches;
@@ -99,16 +94,17 @@ public class MyRedisCacheManager extends RedisCacheManager implements Applicatio
 
     private void add(String[] cacheNames, CacheExpire cacheExpire) {
         GenericJackson2JsonRedisSerializer serializer = new GenericJackson2JsonRedisSerializer();
-        RedisSerializationContext.SerializationPair<Object> pair = RedisSerializationContext.SerializationPair
-                .fromSerializer(serializer);
+        RedisSerializationContext.SerializationPair<Object> pair =
+                RedisSerializationContext.SerializationPair.fromSerializer(serializer);
         for (String cacheName : cacheNames) {
             if (cacheName == null || "".equals(cacheName.trim())) {
                 continue;
             }
             long expire = cacheExpire.expire();
             if (expire >= 0) {
-                RedisCacheConfiguration config = RedisCacheConfiguration.defaultCacheConfig()
-                        .entryTtl(Duration.ofSeconds(expire)).serializeValuesWith(pair);
+                RedisCacheConfiguration config =
+                        RedisCacheConfiguration.defaultCacheConfig().entryTtl(Duration.ofSeconds(expire))
+                                .serializeValuesWith(pair);
                 initialCacheConfiguration.put(cacheName, config);
             }
         }

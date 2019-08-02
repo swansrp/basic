@@ -1,7 +1,7 @@
 package com.srct.service.dao.mapper;
 
-import com.srct.service.dao.po.AccountInfo;
-import com.srct.service.dao.po.AccountInfoExample;
+import com.srct.service.dao.entity.AccountInfo;
+import com.srct.service.dao.entity.AccountInfoExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 

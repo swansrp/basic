@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.srct.service.dao.mapper.ParameterDao">
+  <resultMap id="BaseResultMap" type="com.srct.service.dao.entity.Parameter">
+    <!--@mbg.generated generated on Fri Jul 26 18:23:56 CST 2019.-->
+    <id column="parameter_id" jdbcType="VARCHAR" property="parameterId" />
+    <result column="value" jdbcType="VARCHAR" property="value" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="module" jdbcType="VARCHAR" property="module" />
+    <result column="manage_type" jdbcType="VARCHAR" property="manageType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated generated on Fri Jul 26 18:23:56 CST 2019.-->
+    parameter_id, `value`, remark, `module`, manage_type
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated generated on Fri Jul 26 18:23:56 CST 2019.-->
+    update co_parameter
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="`value` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when parameter_id = #{item.parameterId,jdbcType=VARCHAR} then #{item.value,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="remark = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when parameter_id = #{item.parameterId,jdbcType=VARCHAR} then #{item.remark,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="`module` = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when parameter_id = #{item.parameterId,jdbcType=VARCHAR} then #{item.module,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="manage_type = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when parameter_id = #{item.parameterId,jdbcType=VARCHAR} then #{item.manageType,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+    </trim>
+    where parameter_id in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.parameterId,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated generated on Fri Jul 26 18:23:56 CST 2019.-->
+    insert into co_parameter
+    (parameter_id, `value`, remark, `module`, manage_type)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.parameterId,jdbcType=VARCHAR}, #{item.value,jdbcType=VARCHAR}, #{item.remark,jdbcType=VARCHAR},
+        #{item.module,jdbcType=VARCHAR}, #{item.manageType,jdbcType=VARCHAR})
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="com.srct.service.dao.entity.Parameter">
+    <!--@mbg.generated generated on Fri Jul 26 18:23:56 CST 2019.-->
+    insert into co_parameter
+    (parameter_id, `value`, remark, `module`, manage_type)
+    values
+    (#{parameterId,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR},
+      #{module,jdbcType=VARCHAR}, #{manageType,jdbcType=VARCHAR})
+    on duplicate key update
+    parameter_id = #{parameterId,jdbcType=VARCHAR},
+    `value` = #{value,jdbcType=VARCHAR},
+    remark = #{remark,jdbcType=VARCHAR},
+    `module` = #{module,jdbcType=VARCHAR},
+    manage_type = #{manageType,jdbcType=VARCHAR}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="com.srct.service.dao.entity.Parameter">
+    <!--@mbg.generated generated on Fri Jul 26 18:23:56 CST 2019.-->
+    insert into co_parameter
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="parameterId != null">
+        parameter_id,
+      </if>
+      <if test="value != null">
+        `value`,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="module != null">
+        `module`,
+      </if>
+      <if test="manageType != null">
+        manage_type,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="parameterId != null">
+        #{parameterId,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null">
+        #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="module != null">
+        #{module,jdbcType=VARCHAR},
+      </if>
+      <if test="manageType != null">
+        #{manageType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+    on duplicate key update
+    <trim suffixOverrides=",">
+      <if test="parameterId != null">
+        parameter_id = #{parameterId,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null">
+        `value` = #{value,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="module != null">
+        `module` = #{module,jdbcType=VARCHAR},
+      </if>
+      <if test="manageType != null">
+        manage_type = #{manageType,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+</mapper>

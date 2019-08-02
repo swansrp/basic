@@ -8,6 +8,7 @@
 package com.srct.service.utils;
 
 import com.srct.service.utils.log.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -48,10 +49,9 @@ import java.util.Map;
 /**
  * 工具类-spring bean
  */
+@Slf4j
 @Configuration
 public class BeanUtil implements ApplicationContextAware, ApplicationListener<ApplicationEvent> {
-
-    private static final Logger logger = LoggerFactory.getLogger(BeanUtil.class);
 
     private static ScopeMetadataResolver scopeMetadataResolver = new AnnotationScopeMetadataResolver();
 
@@ -71,7 +71,7 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
      */
     public static Object getBean(String name) {
         if (ctx == null) {
-            Log.i("Call BeanUtils too early");
+            log.info("Call BeanUtils too early");
             return null;
         }
         return ctx.getBean(name);
@@ -85,7 +85,7 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
      */
     public static Object getBean(Class<?> clazz) {
         if (ctx == null) {
-            Log.i("Call BeanUtils too early");
+            log.info("Call BeanUtils too early");
             return null;
         }
         return ctx.getBean(clazz);
@@ -149,12 +149,12 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
 
     @Override
     public void onApplicationEvent(ApplicationEvent event) {
-        Log.i("onApplicationEvent {}", event);
+        log.info("onApplicationEvent {}", event);
     }
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        Log.i("setApplicationContext");
+        log.info("setApplicationContext");
         ctx = (WebApplicationContext) applicationContext;
     }
     /*

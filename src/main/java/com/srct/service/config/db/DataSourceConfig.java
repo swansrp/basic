@@ -1,11 +1,8 @@
 package com.srct.service.config.db;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.sql.DataSource;
-
+import com.alibaba.druid.pool.DruidDataSource;
+import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.SqlSessionFactoryBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -15,10 +12,12 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.alibaba.druid.pool.DruidDataSource;
-import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceBuilder;
-import com.srct.service.utils.log.Log;
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
+@Slf4j
 @Configuration
 public class DataSourceConfig {
 
@@ -42,9 +41,7 @@ public class DataSourceConfig {
 
     @Bean(name = "configMasterDS")
     @Primary // Master Database
-    @ConfigurationProperties(prefix = "config.datasource") // specific the
-                                                           // prefix in
-                                                           // application.properteis
+    @ConfigurationProperties(prefix = "config.datasource")
     public DataSource configDataSource() {
         return DruidDataSourceBuilder.create().build();
     }
@@ -81,7 +78,7 @@ public class DataSourceConfig {
         // put all datasource into SqlSessionFactoryBean, then will autoconfig
         // SqlSessionFactory
         sqlSessionFactoryBean.setDataSource(dynamicDataSource());
-        Log.i("sqlSessionFactoryBean");
+        log.info("sqlSessionFactoryBean");
         return sqlSessionFactoryBean;
     }
 
@@ -101,7 +98,7 @@ public class DataSourceConfig {
         dsMap.put(DataSourceEnumCommon.TESTDB, configDataSource());
         for (Entry<String, DataSource> dbNameEntry : dataSourceMap.entrySet()) {
             String dbName = dbNameEntry.getKey();
-            Log.i("add datasource: {}", dbName);
+            log.info("add datasource: {}", dbName);
             DataSource datasource = dataSourceMap.get(dbName);
             dsMap.put(dbName, datasource);
         }
@@ -114,7 +111,7 @@ public class DataSourceConfig {
         String[] dbNameArray = dbNameList.split(",");
         Map<Object, Object> dsMap = new HashMap<>();
         for (String dbName : dbNameArray) {
-            Log.i("add datasource: {}", dbName);
+            log.info("add datasource: {}", dbName);
             dsMap.put(DataSourceEnumCommon.TESTDB, configDataSource());
             DruidDataSource datasource = new DruidDataSource();
             // jdbc:mysql://${my.db.config.url}:${my.db.config.port}/Configuration?${my.db.config.property}

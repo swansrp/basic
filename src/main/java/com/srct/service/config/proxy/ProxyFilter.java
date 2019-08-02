@@ -4,7 +4,7 @@
  * Package Name:com.srct.service.config.proxy
  * Date:May 2, 2018 2:47:20 PM
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.
- * 
+ *
  */
 package com.srct.service.config.proxy;
 
@@ -21,6 +21,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 
 import com.srct.service.utils.log.Log;
@@ -30,19 +31,20 @@ import com.srct.service.utils.log.Log;
  * Function: TODO ADD FUNCTION. <br/>
  * Reason: TODO ADD REASON. <br/>
  * Date: May 2, 2018 2:47:20 PM <br/>
- * 
+ *
  * @author ruopeng.sha
  * @version
  * @since JDK 1.8
  * @see
  */
+@Slf4j
 @Configuration
 @WebFilter(filterName = "proxyFilter", urlPatterns = "/*")
 public class ProxyFilter implements Filter {
 
     @Override
     public void init(FilterConfig arg0) throws ServletException {
-        Log.i("...ProxyFilter init...");
+        log.info("...ProxyFilter init...");
     }
 
     @Override

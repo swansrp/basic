@@ -16,6 +16,7 @@ import java.util.Map;
 public class HttpUtil {
 
     private final static String COMMA = ",";
+    private final static String COOKIE = "Cookie";
 
     /**
      * Extract request header
@@ -28,12 +29,30 @@ public class HttpUtil {
     }
 
     public static Map<String, String> getHeadersInfoMap(HttpServletRequest req) {
-        Map<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<>(16);
         Enumeration<String> headerNames = req.getHeaderNames();
         while (headerNames.hasMoreElements()) {
             String key = headerNames.nextElement();
+            // 排除Cookie字段
+            if (key.equalsIgnoreCase(COOKIE)) {
+                continue;
+            }
             String value = req.getHeader(key);
             map.put(key, value);
+        }
+        return map;
+    }
+
+    public static Map<String, Object> getParamMap(HttpServletRequest request) {
+        Map<String, String[]> requestMap = request.getParameterMap();
+        Map<String, Object> map = new HashMap<>(requestMap.size());
+        for (Map.Entry<String, String[]> entry : requestMap.entrySet()) {
+            String[] valueArr = entry.getValue();
+            String value = "";
+            if (valueArr != null && valueArr.length > 0 && valueArr[0] != null) {
+                value = valueArr[0].trim();
+            }
+            map.put(entry.getKey(), value);
         }
         return map;
     }

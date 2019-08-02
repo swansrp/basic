@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.srct.service.dao.mapper.ErrorCodeDao">
+  <resultMap id="BaseResultMap" type="com.srct.service.dao.entity.ErrorCode">
+    <!--@mbg.generated generated on Fri Jul 26 23:02:34 CST 2019.-->
+    <id column="err_code" jdbcType="VARCHAR" property="errCode" />
+    <result column="message_outer" jdbcType="VARCHAR" property="messageOuter" />
+    <result column="message_inner" jdbcType="VARCHAR" property="messageInner" />
+    <result column="author" jdbcType="VARCHAR" property="author" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="last_update_time" jdbcType="TIMESTAMP" property="lastUpdateTime" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    <!--@mbg.generated generated on Fri Jul 26 23:02:34 CST 2019.-->
+    err_code, message_outer, message_inner, author, create_time, last_update_time
+  </sql>
+  <update id="updateBatch" parameterType="java.util.List">
+    <!--@mbg.generated generated on Fri Jul 26 23:02:34 CST 2019.-->
+    update co_error_code
+    <trim prefix="set" suffixOverrides=",">
+      <trim prefix="message_outer = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when err_code = #{item.errCode,jdbcType=VARCHAR} then #{item.messageOuter,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="message_inner = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when err_code = #{item.errCode,jdbcType=VARCHAR} then #{item.messageInner,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="author = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when err_code = #{item.errCode,jdbcType=VARCHAR} then #{item.author,jdbcType=VARCHAR}
+        </foreach>
+      </trim>
+      <trim prefix="create_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when err_code = #{item.errCode,jdbcType=VARCHAR} then #{item.createTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+      <trim prefix="last_update_time = case" suffix="end,">
+        <foreach collection="list" index="index" item="item">
+          when err_code = #{item.errCode,jdbcType=VARCHAR} then #{item.lastUpdateTime,jdbcType=TIMESTAMP}
+        </foreach>
+      </trim>
+    </trim>
+    where err_code in
+    <foreach close=")" collection="list" item="item" open="(" separator=", ">
+      #{item.errCode,jdbcType=VARCHAR}
+    </foreach>
+  </update>
+  <insert id="batchInsert" parameterType="map">
+    <!--@mbg.generated generated on Fri Jul 26 23:02:34 CST 2019.-->
+    insert into co_error_code
+    (err_code, message_outer, message_inner, author, create_time, last_update_time)
+    values
+    <foreach collection="list" item="item" separator=",">
+      (#{item.errCode,jdbcType=VARCHAR}, #{item.messageOuter,jdbcType=VARCHAR}, #{item.messageInner,jdbcType=VARCHAR},
+        #{item.author,jdbcType=VARCHAR}, #{item.createTime,jdbcType=TIMESTAMP}, #{item.lastUpdateTime,jdbcType=TIMESTAMP}
+        )
+    </foreach>
+  </insert>
+  <insert id="insertOrUpdate" parameterType="com.srct.service.dao.entity.ErrorCode">
+    <!--@mbg.generated generated on Fri Jul 26 23:02:34 CST 2019.-->
+    insert into co_error_code
+    (err_code, message_outer, message_inner, author, create_time, last_update_time)
+    values
+    (#{errCode,jdbcType=VARCHAR}, #{messageOuter,jdbcType=VARCHAR}, #{messageInner,jdbcType=VARCHAR},
+      #{author,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, #{lastUpdateTime,jdbcType=TIMESTAMP}
+      )
+    on duplicate key update
+    err_code = #{errCode,jdbcType=VARCHAR},
+    message_outer = #{messageOuter,jdbcType=VARCHAR},
+    message_inner = #{messageInner,jdbcType=VARCHAR},
+    author = #{author,jdbcType=VARCHAR},
+    create_time = #{createTime,jdbcType=TIMESTAMP},
+    last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP}
+  </insert>
+  <insert id="insertOrUpdateSelective" parameterType="com.srct.service.dao.entity.ErrorCode">
+    <!--@mbg.generated generated on Fri Jul 26 23:02:34 CST 2019.-->
+    insert into co_error_code
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="errCode != null">
+        err_code,
+      </if>
+      <if test="messageOuter != null">
+        message_outer,
+      </if>
+      <if test="messageInner != null">
+        message_inner,
+      </if>
+      <if test="author != null">
+        author,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="lastUpdateTime != null">
+        last_update_time,
+      </if>
+    </trim>
+    values
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="errCode != null">
+        #{errCode,jdbcType=VARCHAR},
+      </if>
+      <if test="messageOuter != null">
+        #{messageOuter,jdbcType=VARCHAR},
+      </if>
+      <if test="messageInner != null">
+        #{messageInner,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null">
+        #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateTime != null">
+        #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+    on duplicate key update
+    <trim suffixOverrides=",">
+      <if test="errCode != null">
+        err_code = #{errCode,jdbcType=VARCHAR},
+      </if>
+      <if test="messageOuter != null">
+        message_outer = #{messageOuter,jdbcType=VARCHAR},
+      </if>
+      <if test="messageInner != null">
+        message_inner = #{messageInner,jdbcType=VARCHAR},
+      </if>
+      <if test="author != null">
+        author = #{author,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastUpdateTime != null">
+        last_update_time = #{lastUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+</mapper>

@@ -9,6 +9,8 @@
 package com.srct.service.config.security;
 
 import com.srct.service.config.annotation.Auth;
+import com.srct.service.config.holder.ClientTypeHolder;
+import com.srct.service.config.holder.TokenHolder;
 import com.srct.service.service.AuthTokenService;
 import com.srct.service.service.RedisService;
 import com.srct.service.service.RedisTokenOperateService;
@@ -42,7 +44,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
         Class clazz = handlerMethod.getBeanType();
-        Auth.AuthType authType = Auth.AuthType.UNLOGIN;
+        Auth.AuthType authType = Auth.AuthType.NONE;
 
         if (method.isAnnotationPresent(Auth.class)) {
             Auth auth = method.getAnnotation(Auth.class);
@@ -51,6 +53,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
             Auth auth = (Auth) clazz.getDeclaredAnnotation(Auth.class);
             authType = auth.role();
         }
+
         authTokenService.validate(request, response, authType);
         return true;
     }
@@ -58,17 +61,19 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
     @Override
     public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
             ModelAndView modelAndView) throws Exception {
+        TokenHolder.remove();
+        ClientTypeHolder.remove();
         super.postHandle(request, response, handler, modelAndView);
     }
         /*
-        String token = request.getHeader("accessToken");
-        if (token.equals("test")) {
+        String holder = request.getHeader("accessToken");
+        if (holder.equals("test")) {
             return true;
         }
-        if (StringUtils.isEmpty(token)) {
+        if (StringUtils.isEmpty(holder)) {
             throw new UserNotLoginException();
         }
-        String uid = redisTokenOperateService.getUid(token);
+        String uid = redisTokenOperateService.getUid(holder);
         if (StringUtils.isEmpty(uid)) {
             throw new AccessTokenExpiredException();
         }
@@ -76,7 +81,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
         if (StringUtils.isEmpty(serverToken)) {
             throw new AccessTokenExpiredException();
         }
-        if (!token.equals(serverToken)) {
+        if (!holder.equals(serverToken)) {
             throw new UserNotLoginException();
         }
         String roleStr = redisTokenOperateService.getUserRole(Integer.valueOf(uid));

@@ -46,7 +46,7 @@ public class Log {
         return "(" + getCallerClassName() + ".java:" + getCallerLine() + ") " + "%s";
     }
 
-    private static String getExceptionMessage(Exception e) {
+    public static String getExceptionMessage(Exception e) {
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         e.printStackTrace(pw);

@@ -3,6 +3,7 @@ package com.srct.service.config.db;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 public class DataSourceContextHolder {
 
     private DataSourceContextHolder() {
@@ -10,21 +11,18 @@ public class DataSourceContextHolder {
 
     public static final Logger log = LoggerFactory.getLogger(DataSourceContextHolder.class);
 
-    private static final ThreadLocal<String> contextHolder = new ThreadLocal<>();
+    private static final ThreadLocal<String> DB_HOLDER = new ThreadLocal<>();
 
-    // Set DataSource Name
     public static void setDB(String dbType) {
-        log.info("Swith to DataBase: {}", dbType);
-        contextHolder.set(dbType);
+        log.info("Switch to DataBase: {}", dbType);
+        DB_HOLDER.set(dbType);
     }
 
-    // Get DataSource Name
     public static String getDB() {
-        return (contextHolder.get());
+        return (DB_HOLDER.get());
     }
 
-    // Clear DataSource
     public static void clearDB() {
-        contextHolder.remove();
+        DB_HOLDER.remove();
     }
 }

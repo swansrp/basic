@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.srct.service.utils.log.Log;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -58,45 +59,34 @@ public class JSONUtil {
         return result;
     }
 
-    public static String makeJSONMap(Object object) {
-        String result = null;
-        ObjectMapper objectMapper = new ObjectMapper();
-        // set config of JSON
-        // can use single quote
-        objectMapper.configure(JsonParser.Feature.ALLOW_SINGLE_QUOTES, true);
-        // allow unquoted field names
-        objectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES, true);
-        objectMapper.configure(JsonParser.Feature.ALLOW_MISSING_VALUES, true);
-        // set date format
-        objectMapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
-        try {
-            result = objectMapper.writeValueAsString(object);
-        } catch (JsonProcessingException e) {
-
-        }
-        return result;
-    }
-
     /**
      * 获取泛型的Collection Type
+     * <p>
+     * YourBean bean = (YourBean)readJson(jsonString, YourBean.class)
+     * List<YourBean> list = (List<YourBean>)readJson(jsonString, List.class,yourBean.class);
+     * Map<H,D> map = (Map<H,D>)readJson(jsonString, HashMap.class,String.class,YourBean.class);
      *
      * @param jsonStr         json字符串
      * @param collectionClass 泛型的Collection
      * @param elementClasses  元素类型
+     * @return 返回类型
      */
-    // YourBean bean = (YourBean)readJson(jsonString, YourBean.class)
-    // List<YourBean> list = (List<YourBean>)readJson(jsonString, List.class,
-    // yourBean.class);
-    // Map<H,D> map = (Map<H,D>)readJson(jsonString, HashMap.class,
-    // String.class,
-    // YourBean.class);
-    public static <T> T readJson(String jsonStr, Class<?> collectionClass, Class<?>... elementClasses)
-            throws Exception {
+    public static <T> T readJson(String jsonStr, Class<?> collectionClass, Class<?>... elementClasses) {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         mapper.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         JavaType javaType = mapper.getTypeFactory().constructParametricType(collectionClass, elementClasses);
-        return mapper.readValue(jsonStr, javaType);
+        try {
+            return mapper.readValue(jsonStr, javaType);
+        } catch (Exception e) {
+            Log.e(e);
+            return null;
+        }
+    }
+
+    public static <T> T readJson(Object obj, Class<?> collectionClass, Class<?>... elementClasses) {
+        String jsonStr = toJSONString(obj);
+        return readJson(jsonStr, collectionClass, elementClasses);
     }
 
     public static boolean isJSONValid(String jsonInString) {
