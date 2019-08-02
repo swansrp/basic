@@ -48,11 +48,11 @@ public class ReflectionUtil {
         return StringUtil.join(fieldValueArr);
     }
 
-    public static List<?> getFieldList(List<?> list, String fieldName) {
+    public static <T> List<T> getFieldList(List<?> list, String fieldName, Class<T> clazz) {
         if (list == null || list.size() == 0) {
             return null;
         }
-        List<?> res = new ArrayList<>();
+        List<T> res = new ArrayList<>();
         list.forEach(item -> {
             try {
                 res.add(getFieldValue(item, fieldName));

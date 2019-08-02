@@ -10,28 +10,24 @@ package com.srct.service.config.security;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-/**
- * @ClassName: AuthorizationConfigureAdapter
- * @Description: TODO
- */
+import javax.annotation.Resource;
+
 @Configuration
 public class AuthorizationConfigureAdapter implements WebMvcConfigurer {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthorizationConfigureAdapter.class);
 
-    @Autowired
-    AuthInterceptor authInterceptor;
+    @Resource
+    private AuthInterceptor authInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // registry.addInterceptor(authInterceptor).addPathPatterns("/**");
         registry.addInterceptor(authInterceptor).addPathPatterns("/**");
     }
 
