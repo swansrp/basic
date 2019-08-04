@@ -83,6 +83,21 @@ public class ReflectionUtil {
         return (T) object;
     }
 
+    public static Field getField(@NotNull Object obj, String fieldName) {
+        Class<?> aClass = obj.getClass();
+        return getField(aClass, fieldName);
+    }
+
+    public static Field getField(Class<?> aClass, String fieldName) {
+        List<Field> fieldList = getFields(aClass);
+        for (Field field : fieldList) {
+            if (fieldName.equals(field.getName())) {
+                return field;
+            }
+        }
+        return null;
+    }
+
     public static List<Field> getFields(@NotNull Object obj) {
         Class<?> aClass = obj.getClass();
         return getFields(aClass);
@@ -183,7 +198,7 @@ public class ReflectionUtil {
 
     private static Field searchField(Class<?> c, String targetField, boolean traceable, boolean includeParent) {
         do {
-            Field[] fields = null;
+            Field[] fields;
             if (includeParent) {
                 fields = c.getFields();
             } else {
@@ -200,23 +215,17 @@ public class ReflectionUtil {
         return null;
     }
 
-    public static boolean setFieldValue(@NotNull Object target, @NotNull String fieldName, @NotNull Object value)
-            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
-            SecurityException {
+    public static boolean setFieldValue(@NotNull Object target, @NotNull String fieldName, @NotNull Object value) {
         return setFieldValue(target, fieldName, value, false);
     }
 
     public static boolean setFieldValue(@NotNull Object target, @NotNull String fieldName, @NotNull Object value,
-            boolean traceable)
-            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
-            SecurityException {
+            boolean traceable) {
         return setFieldValue(target, fieldName, value, traceable, false);
     }
 
     public static boolean setFieldValue(@NotNull Object target, @NotNull String fieldName, @NotNull Object value,
-            boolean traceable, boolean includeParent)
-            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
-            SecurityException {
+            boolean traceable, boolean includeParent) {
         Field field = searchField(target.getClass(), fieldName, traceable, includeParent);
         if (field != null) {
             return setValue(field, target, value);
@@ -224,17 +233,15 @@ public class ReflectionUtil {
         return false;
     }
 
-    public static boolean setValue(Field field, Object target, Object value)
-            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException,
-            SecurityException {
-        if (!field.isAccessible()) {
-            Method setFieldMethod;
+    public static boolean setValue(Field field, Object target, Object value) {
+        Method setFieldMethod;
+        try {
             setFieldMethod = target.getClass()
                     .getMethod("set" + StringUtil.firstUpperCamelCase(field.getName()), field.getType());
             setFieldMethod.invoke(target, value);
-            return true;
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new ServiceException("设置对象单个属性值发生异常", e);
         }
-        field.set(target, value);
         return true;
     }
 }

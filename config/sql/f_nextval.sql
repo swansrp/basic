@@ -10,7 +10,7 @@ CREATE
   SQL SECURITY DEFINER
   COMMENT '获取流水号'
 BEGIN
-  declare exsited int default 0;
+  declare existed int default 0;
   declare cur int default 0;
   declare next int default 0;
   declare _min int default 0;
@@ -20,9 +20,9 @@ BEGIN
   declare _suffix varchar(20) default '';
   declare result varchar(50) default '';
 
-  select count(1) into exsited from sequence seq where seq.seq_name = SEQ_NAME;
+  select count(1) into existed from sequence seq where seq.seq_name = SEQ_NAME;
   CASE
-    when exsited = 0
+    when existed = 0
       then set result = '';
     ELSE
       select value, prefix, suffix, min_value, max_value, step into cur,_prefix,_suffix,_min,_max,_step
