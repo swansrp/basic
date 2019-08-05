@@ -15,7 +15,6 @@ import com.srct.service.config.response.CommonExceptionHandler;
 import com.srct.service.config.response.CommonResponse;
 import com.srct.service.service.CaptchaService;
 import com.srct.service.service.MsgVerificationService;
-import com.srct.service.service.RedisTokenOperateService;
 import com.srct.service.service.cache.FrameCacheService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -42,9 +41,6 @@ public class MsgVerificationController {
 
     @Resource
     private CaptchaService captchaService;
-
-    @Resource
-    private RedisTokenOperateService tokenService;
 
     @ApiOperation(value = "获取图形验证", notes = "利用token获取图形验证码")
     @RequestMapping(value = "/msgCode", method = RequestMethod.GET)

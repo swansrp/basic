@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public abstract class BaseCacheService {
 
@@ -78,6 +79,11 @@ public abstract class BaseCacheService {
     }
 
     // --------------------------------
+
+    public Set<String> getDictList() {
+        Map<String, Map<String, DictionaryItem>> map = getProvider(DictCacheProvider.class).get();
+        return map.keySet();
+    }
 
     public Map<String, DictionaryItem> getDictItemMap(String dictIdStr) {
         String key = dictIdStr;
