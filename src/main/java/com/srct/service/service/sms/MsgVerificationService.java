@@ -7,7 +7,7 @@
  * @description Project Name: Grote
  * @Package: com.srct.service.service
  */
-package com.srct.service.service;
+package com.srct.service.service.sms;
 
 import com.srct.service.cache.constant.MsgVerificationType;
 

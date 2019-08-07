@@ -14,10 +14,12 @@ import com.srct.service.constant.ErrCodeSys;
 import com.srct.service.utils.ReflectionUtil;
 import com.srct.service.validate.Validator;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -78,13 +80,19 @@ public abstract class BaseRepository<T extends tk.mybatis.mapper.common.Mapper<K
         return getDao().selectByExampleAndRowBounds(example, rowBounds);
     }
 
-    public List<K> selectByFiledList(String fieldName, List<Object> fieldValueList) {
-        Example example = buildFiledListExample(fieldName, fieldValueList);
+    public List<K> selectByPropertyList(String propertyName, List propertyList) {
+        if (CollectionUtils.isEmpty(propertyList)) {
+            return new ArrayList<>();
+        }
+        Example example = buildFieldListExample(propertyName, propertyList);
         return getDao().selectByExample(example);
     }
 
-    public List<K> selectByFiledListAndRowBounds(String fieldName, List<Object> fieldValueList, RowBounds rowBounds) {
-        Example example = buildFiledListExample(fieldName, fieldValueList);
+    public List<K> selectByPropertyListAndRowBounds(String propertyName, List propertyList, RowBounds rowBounds) {
+        if (CollectionUtils.isEmpty(propertyList)) {
+            return new ArrayList<>();
+        }
+        Example example = buildFieldListExample(propertyName, propertyList);
         return getDao().selectByExampleAndRowBounds(example, rowBounds);
     }
 
@@ -109,15 +117,35 @@ public abstract class BaseRepository<T extends tk.mybatis.mapper.common.Mapper<K
         return getDao().selectCountByExample(example);
     }
 
-    public <L> List<L> selectFiledListByExample(Example example, String fieldName, Class<L> clazz) {
+    public <L> List<L> selectFieldListByExample(Example example, String fieldName, Class<L> clazz) {
         List<K> resList = getDao().selectByExample(example);
         return ReflectionUtil.getFieldList(resList, fieldName, clazz);
     }
 
-    public <L> List<L> selectFiledListByExampleAndRowBounds(Example example, String fieldName, Class<L> clazz,
+    public <L> List<L> selectFieldListByExampleAndRowBounds(Example example, String fieldName, Class<L> clazz,
             RowBounds rowBounds) {
         List<K> resList = getDao().selectByExampleAndRowBounds(example, rowBounds);
         return ReflectionUtil.getFieldList(resList, fieldName, clazz);
+    }
+
+    public <L> List<L> selectFieldListByPropertyList(String propertyName, List propertyList, String selectFieldName,
+            Class<L> clazz) {
+        if (CollectionUtils.isEmpty(propertyList)) {
+            return new ArrayList<>();
+        }
+        Example example = buildFieldListExample(propertyName, propertyList);
+        List<K> resList = getDao().selectByExample(example);
+        return ReflectionUtil.getFieldList(resList, selectFieldName, clazz);
+    }
+
+    public <L> List<L> selectFieldListByPropertyListAndRowBounds(String propertyName, List propertyList,
+            String selectFieldName, Class<L> clazz, RowBounds rowBounds) {
+        if (CollectionUtils.isEmpty(propertyList)) {
+            return new ArrayList<>();
+        }
+        Example example = buildFieldListExample(propertyName, propertyList);
+        List<K> resList = getDao().selectByExampleAndRowBounds(example, rowBounds);
+        return ReflectionUtil.getFieldList(resList, selectFieldName, clazz);
     }
 
     public K selectOne(K entity) {
@@ -174,11 +202,11 @@ public abstract class BaseRepository<T extends tk.mybatis.mapper.common.Mapper<K
         return example;
     }
 
-    private Example buildFiledListExample(String fieldName, List<Object> fieldValueList) {
+    private Example buildFieldListExample(String propertyName, List propertyList) {
         Class<K> clazz = (Class<K>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[1];
         Example example = new Example(clazz);
         Example.Criteria criteria = example.createCriteria();
-        criteria.andIn(fieldName, fieldValueList);
+        criteria.andIn(propertyName, propertyList);
         return example;
     }
 

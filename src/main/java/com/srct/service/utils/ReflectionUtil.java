@@ -8,6 +8,7 @@
 package com.srct.service.utils;
 
 import com.srct.service.exception.ServiceException;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 
 import javax.validation.constraints.NotNull;
@@ -36,6 +37,20 @@ public class ReflectionUtil {
     private ReflectionUtil() {
     }
 
+    public static <K, T> List<T> copyList(@NotNull List<K> source, Class<T> clazz) {
+        List<T> resList = new ArrayList<>();
+        source.forEach(item -> {
+            try {
+                T obj = clazz.newInstance();
+                BeanUtil.copyProperties(item, obj);
+                resList.add(obj);
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new ServiceException("创建对象失败");
+            }
+        });
+        return resList;
+    }
+
     private static <T> String getFieldKey(String[] outFieldArr, T t) {
         String[] fieldValueArr = new String[outFieldArr.length];
         for (int i = 0; i < outFieldArr.length; i++) {
@@ -49,8 +64,8 @@ public class ReflectionUtil {
     }
 
     public static <T> List<T> getFieldList(List<?> list, String fieldName, Class<T> clazz) {
-        if (list == null || list.size() == 0) {
-            return null;
+        if (CollectionUtils.isEmpty(list)) {
+            return new ArrayList<>();
         }
         List<T> res = new ArrayList<>();
         list.forEach(item -> {

@@ -44,7 +44,7 @@ public class CaptchaController {
     @RequestMapping(value = "/captcha.jpg", method = RequestMethod.GET)
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "query", dataType = "String", name = "token", value = "token", required = true),
-            @ApiImplicitParam(paramType = "query", dataType = "String", name = "msgCodeType", value = "1登录2登录短信验证码3找回密码短信验证码")})
+            @ApiImplicitParam(paramType = "query", dataType = "String", name = "captchaType", value = "1登录2登录短信验证码3找回密码短信验证码")})
     public void getCaptcha(HttpServletResponse response, @RequestParam(value = "token") String token,
             @RequestParam(value = "captchaType", required = false) String captchaType) throws IOException {
 
