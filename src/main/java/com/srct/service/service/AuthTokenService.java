@@ -17,4 +17,6 @@ import javax.servlet.http.HttpServletResponse;
 public interface AuthTokenService {
 
     void validate(HttpServletRequest request, HttpServletResponse response, Auth.AuthType authType);
+
+    void enableCrossDomain(HttpServletResponse response);
 }

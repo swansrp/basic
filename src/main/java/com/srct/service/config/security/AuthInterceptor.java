@@ -38,6 +38,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        authTokenService.enableCrossDomain(response);
         if (!(handler instanceof HandlerMethod)) {
             return true;
         }
