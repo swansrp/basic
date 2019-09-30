@@ -25,13 +25,15 @@ public class RedissonConfig {
     private String port;
     @Value("${spring.redis.host}")
     private String host;
+    @Value("${spring.redis.password}")
+    private String password;
 
 
     @Bean(destroyMethod = "shutdown")
     public RedissonClient redisson() {
         String redisUrl = String.format(HOST_URL_FORMAT, host, port);
         Config config = new Config();
-        config.useSingleServer().setAddress(redisUrl);
+        config.useSingleServer().setAddress(redisUrl).setPassword(password);
         RedissonClient redisson = Redisson.create(config);
         return redisson;
     }
