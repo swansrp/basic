@@ -1,6 +1,7 @@
 package com.srct.service.config.redisson;
 
 import java.lang.annotation.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Title: redisLock
@@ -30,6 +31,12 @@ public @interface RedisLock {
      * 但是没有比较强的业务要求下，不建议设置为0
      */
     long releaseTime() default 20 * 1000L;
+
+    /**
+     * 自动释放锁时间单位,
+     * 默认为毫秒
+     */
+    TimeUnit releaseTimeUint() default TimeUnit.MILLISECONDS;
 
     /**
      * 锁获取超时时间：<br/>

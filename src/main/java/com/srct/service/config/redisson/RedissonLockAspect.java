@@ -1,13 +1,15 @@
 package com.srct.service.config.redisson;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Title: RedissonLockAspect
@@ -40,7 +42,7 @@ public class RedissonLockAspect {
         try {
             log.info("尝试获取锁 {}", syncKey);
             // 得到锁，没有人加过相同的锁
-            if (lock.tryLock(lockInfo.waitTime(), lockInfo.releaseTime(), TimeUnit.MILLISECONDS)) {
+            if (lock.tryLock(lockInfo.waitTime(), lockInfo.releaseTime(), lockInfo.releaseTimeUint())) {
                 log.info("成功获取锁 {}", syncKey);
                 obj = pjp.proceed();
             } else {
@@ -78,7 +80,7 @@ public class RedissonLockAspect {
     private String getSyncKey(ProceedingJoinPoint pjp, String synKey) {
         StringBuffer synKeyBuffer = new StringBuffer(REDIS_LOCK_KEY);
         synKeyBuffer.append(pjp.getSignature().getDeclaringTypeName()).append(".").append(pjp.getSignature().getName());
-        if (!StringUtil.isEmpty(synKey)) {
+        if (StringUtils.isNoneEmpty(synKey)) {
             synKeyBuffer.append(".").append(synKey);
         }
         return synKeyBuffer.toString();
