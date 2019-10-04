@@ -26,7 +26,9 @@ public @interface Auth {
         // 访客token+userId鉴权
         GUEST,
         // 角色权限树鉴权
-        USER
+        USER,
+        // IOT设备
+        IOT
     }
 
 }

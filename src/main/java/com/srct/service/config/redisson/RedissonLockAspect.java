@@ -30,7 +30,7 @@ public class RedissonLockAspect {
     @Resource
     private RedissonClient redissonClient;
 
-    @Pointcut("@annotation(com.bhfae.redis.aspect.RedisLock)")
+    @Pointcut("@annotation(com.srct.service.config.redisson.RedisLock)")
     public void redisLock() {
     }
 
@@ -59,17 +59,6 @@ public class RedissonLockAspect {
         }
     }
 
-
-    @After("redisLock()")
-    public void after() {
-
-    }
-
-    @AfterThrowing(pointcut = "redisLock()", throwing = "e")
-    public void afterThrow(JoinPoint point, Throwable e) {
-
-    }
-
     /**
      * 获取包括方法参数上的key
      *
@@ -84,6 +73,16 @@ public class RedissonLockAspect {
             synKeyBuffer.append(".").append(synKey);
         }
         return synKeyBuffer.toString();
+    }
+
+    @After("redisLock()")
+    public void after() {
+
+    }
+
+    @AfterThrowing(pointcut = "redisLock()", throwing = "e")
+    public void afterThrow(JoinPoint point, Throwable e) {
+
     }
 
 }

@@ -24,7 +24,7 @@ public class AuthorizationConfigureAdapter implements WebMvcConfigurer {
     private static final Logger logger = LoggerFactory.getLogger(AuthorizationConfigureAdapter.class);
 
     @Resource
-    private AuthInterceptor authInterceptor;
+    private AuthBaseInterceptor authInterceptor;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

@@ -67,18 +67,18 @@ public class Validator {
         }
     }
 
+    public static void assertYes(String str, ErrCode code, String... parameters) {
+        assertTrue(YES.equals(str), code, parameters);
+    }
+
     public static void assertTrue(Boolean param, ErrCode code, String... parameters) {
         if (true != param) {
             throw new ServiceException(code, parameters);
         }
     }
 
-    public static void assertYes(String str, ErrCode code, String... parameters) {
-        assertTrue(YES.equals(str), code, parameters);
-    }
-
     public static void assertNo(String str, ErrCode code, String... parameters) {
-        assertFalse(!YES.equals(str), code, parameters);
+        assertFalse(YES.equals(str), code, parameters);
     }
 
     public static void assertFalse(Boolean param, ErrCode code, String... parameters) {
