@@ -9,45 +9,35 @@
  */
 package com.srct.service.cache.base;
 
-import com.srct.service.cache.provider.DictCacheProvider;
-import com.srct.service.cache.provider.ErrorCodeCacheProvider;
-import com.srct.service.cache.provider.ParamCacheProvider;
-import com.srct.service.cache.provider.ServiceApiCacheProvider;
-import com.srct.service.cache.provider.ServicePermitCacheProvider;
+import com.srct.service.cache.provider.*;
 import com.srct.service.constant.CommonConst;
 import com.srct.service.constant.Dict;
 import com.srct.service.constant.Param;
-import com.srct.service.dao.entity.DictionaryItem;
-import com.srct.service.dao.entity.ErrorCode;
-import com.srct.service.dao.entity.Parameter;
-import com.srct.service.dao.entity.ServiceApi;
-import com.srct.service.dao.entity.ServicePermit;
+import com.srct.service.dao.entity.*;
 import com.srct.service.format.CommonFormat;
 import com.srct.service.format.ConfigFormat;
 import com.srct.service.utils.SortUtil;
 import com.srct.service.utils.StringUtil;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public abstract class BaseCacheService {
 
-    protected abstract void init();
-
-    protected abstract <T> T getProvider(Class<T> clazz);
+    public void updateParamValue(String parameterIdStr, String value) {
+        getProvider(ParamCacheProvider.class).update(parameterIdStr, value);
+    }
 
     // --------------------------------
 
-    private String getParamValue(String parameterIdStr) {
-        Parameter obj = getProvider(ParamCacheProvider.class).get().get(parameterIdStr);
-        if (obj == null) {
-            return null;
-        } else {
-            return obj.getValue();
-        }
+    protected abstract <T> T getProvider(Class<T> clazz);
+
+    public boolean getParamSwitch(Param parameterId) {
+        return CommonConst.YES.equals(getParamValueAvail(parameterId));
+    }
+
+    public String getParamValueAvail(Param parameterId) {
+        CommonFormat.checkNotNull(parameterId, "参数名");
+        return getParamValueAvail(parameterId.toString());
     }
 
     public String getParamValueAvail(String parameterIdStr) {
@@ -57,13 +47,13 @@ public abstract class BaseCacheService {
         return value;
     }
 
-    public String getParamValueAvail(Param parameterId) {
-        CommonFormat.checkNotNull(parameterId, "参数名");
-        return getParamValueAvail(parameterId.toString());
-    }
-
-    public boolean getParamSwitch(Param parameterId) {
-        return CommonConst.YES.equals(getParamValueAvail(parameterId));
+    private String getParamValue(String parameterIdStr) {
+        Parameter obj = getProvider(ParamCacheProvider.class).get().get(parameterIdStr);
+        if (obj == null) {
+            return null;
+        } else {
+            return obj.getValue();
+        }
     }
 
     public long getParamLong(Param parameterId) {
@@ -78,11 +68,21 @@ public abstract class BaseCacheService {
         return Double.valueOf(getParamValueAvail(parameterId));
     }
 
-    // --------------------------------
-
     public Set<String> getDictList() {
         Map<String, Map<String, DictionaryItem>> map = getProvider(DictCacheProvider.class).get();
         return map.keySet();
+    }
+
+    // --------------------------------
+
+    public String getDictItemName(Dict dictId, String itemId) {
+        DictionaryItem config = getDictItemMap(dictId).get(itemId);
+        ConfigFormat.checkNotNull(config, "字典条目", dictId + " " + itemId);
+        return config.getItemName();
+    }
+
+    private Map<String, DictionaryItem> getDictItemMap(Dict dictId) {
+        return getDictItemMap(dictId.toString());
     }
 
     public Map<String, DictionaryItem> getDictItemMap(String dictIdStr) {
@@ -90,16 +90,6 @@ public abstract class BaseCacheService {
         Map<String, DictionaryItem> map = getProvider(DictCacheProvider.class).get().get(key);
         ConfigFormat.checkNotEmpty(map, "字典项", key);
         return map;
-    }
-
-    private Map<String, DictionaryItem> getDictItemMap(Dict dictId) {
-        return getDictItemMap(dictId.toString());
-    }
-
-    public String getDictItemName(Dict dictId, String itemId) {
-        DictionaryItem config = getDictItemMap(dictId).get(itemId);
-        ConfigFormat.checkNotNull(config, "字典条目", dictId + " " + itemId);
-        return config.getItemName();
     }
 
     public String getDictItemId(Dict dictId, String itemName) {
@@ -112,7 +102,6 @@ public abstract class BaseCacheService {
         return null;
     }
 
-
     public List<DictionaryItem> getDictItemList(Dict dictId) {
         return getDictItemList(dictId.toString());
     }
@@ -122,8 +111,6 @@ public abstract class BaseCacheService {
         SortUtil.sortList(list, "itemOrder", SortUtil.ASC);
         return list;
     }
-
-    // --------------------------------
 
     public ErrorCode getErrorCode(String errorCode) {
         String key = StringUtil.join(errorCode);
@@ -140,6 +127,8 @@ public abstract class BaseCacheService {
         return config;
     }
 
+    // --------------------------------
+
     public List<String> getPermitIdList(String apiId) {
         String key = apiId;
         Map<String, ServicePermit> map = getProvider(ServicePermitCacheProvider.class).get().get(key);
@@ -147,5 +136,7 @@ public abstract class BaseCacheService {
         List<String> list = new ArrayList<>(map.keySet());
         return list;
     }
+
+    protected abstract void init();
 
 }

@@ -9,13 +9,14 @@
  */
 package com.srct.service.cache.provider;
 
-import com.srct.service.cache.constant.FrameCacheTypeConst;
-import com.srct.service.dao.mapper.ParameterDao;
-import com.srct.service.dao.entity.Parameter;
 import com.srct.service.cache.CacheProvider;
+import com.srct.service.cache.constant.FrameCacheTypeConst;
+import com.srct.service.dao.entity.Parameter;
+import com.srct.service.dao.mapper.ParameterDao;
 import com.srct.service.utils.ReflectionUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -31,6 +32,15 @@ public class ParamCacheProvider implements CacheProvider {
 
     @Resource
     private ParameterDao dao;
+
+    @Transactional(rollbackFor = Exception.class)
+    public void update(String parameterIdStr, String value) {
+        Parameter param = new Parameter();
+        param.setParameterId(parameterIdStr);
+        param.setValue(value);
+        dao.insertOrUpdateSelective(param);
+        cacheMap.put(parameterIdStr, param);
+    }
 
     @Override
     public String getType() {
@@ -60,5 +70,6 @@ public class ParamCacheProvider implements CacheProvider {
         init();
         return cacheMap;
     }
+
 
 }

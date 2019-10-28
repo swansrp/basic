@@ -251,8 +251,6 @@
             <artifactId>bcprov-jdk15on</artifactId>
             <version>1.63</version>
         </dependency>
-
-
     </dependencies>
 
     <build>

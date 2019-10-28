@@ -13,5 +13,5 @@ public enum ParamFrame implements Param {
     // 缓存加载模式
     CACHE_INIT_MODE,
     // 1输入0000都验证成功,其他失败 0正常逻辑
-    TEST_MODE_GRAPH_VALIDATE_SWITCH,
+    TEST_MODE_GRAPH_VALIDATE_SWITCH
 }
