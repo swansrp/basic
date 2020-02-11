@@ -14,6 +14,8 @@ import com.srct.service.service.CaptchaService;
 import com.srct.service.service.cache.FrameCacheService;
 import com.srct.service.utils.log.Log;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +42,9 @@ public class CaptchaController {
 
     @ApiOperation(value = "获取图形验证", notes = "利用token获取图形验证码")
     @RequestMapping(value = "/captcha.jpg", method = RequestMethod.GET)
+    @ApiImplicitParams({
+            @ApiImplicitParam(paramType = "query", dataType = "String", name = "token", value = "token", required = true),
+            @ApiImplicitParam(paramType = "query", dataType = "String", name = "captchaType", value = "1登录2登录短信验证码3找回密码短信验证码")})
     public void getCaptcha(HttpServletResponse response, @RequestParam(value = "token") String token,
             @RequestParam(value = "captchaType", required = false) String captchaType) throws IOException {
 

@@ -30,7 +30,7 @@ public class SchedulerConfig {
     @Bean(name = "SchedulerFactory")
     public SchedulerFactoryBean schedulerFactoryBean() throws IOException {
         SchedulerFactoryBean factory = new SchedulerFactoryBean();
-        factory.setQuartzProperties(quartzProperties());
+        // factory.setQuartzProperties(quartzProperties());
         factory.setJobFactory(jobFactory);
         return factory;
     }

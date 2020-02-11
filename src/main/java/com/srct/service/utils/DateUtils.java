@@ -161,6 +161,12 @@ public class DateUtils {
         calendar.add(Calendar.SECOND, seconds);
         return calendar.getTime();
     }
+    public static Date addMilliSeconds(Date date, int millisecond) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.MILLISECOND, millisecond);
+        return calendar.getTime();
+    }
 
     public static int secondDiff(Date laterTime, Date earlyTime) {
         long millSecondDiff = laterTime.getTime() - earlyTime.getTime();

@@ -15,8 +15,16 @@ public enum MsgVerificationType implements Dict {
 
     // 短信验证码类型
     MSG_VERIFICATION_TYPE,
-    // 1-注册登录短信验证码
+    // 1-登录确认验证码
     LOGIN_MSG_CODE,
-    // 2-找回密码短信验证码
-    FIND_PASSWORD_MSG_CODE
+    // 2-修改密码验证码
+    FIND_PASSWORD_MSG_CODE,
+    // 3-身份验证验证码
+    AUTHENTICATION_MSG_CODE,
+    // 4-登录异常验证码
+    LOGIN_ILLEGAL_MSG_CODE,
+    // 5-用户注册验证码
+    REGISTER_MSG_CODE,
+    // 6-信息变更验证码
+    INFORMATION_CHANGE_MSG_CODE
 }

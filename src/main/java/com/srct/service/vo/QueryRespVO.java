@@ -11,6 +11,7 @@ package com.srct.service.vo;
 import com.github.pagehelper.PageInfo;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +26,11 @@ public class QueryRespVO<T> extends QueryReqVO {
     private Integer totalPages;
     private Long totalSize;
 
+    public QueryRespVO(PageInfo pageInfo) {
+        this();
+        buildPageInfo(pageInfo);
+    }
+
     public QueryRespVO() {
         info = new ArrayList<>();
     }
@@ -34,5 +40,8 @@ public class QueryRespVO<T> extends QueryReqVO {
         this.setTotalSize(pageInfo.getTotal());
         this.setCurrentPage(pageInfo.getPageNum());
         this.setPageSize(pageInfo.getPageSize());
+        if (CollectionUtils.isNotEmpty(pageInfo.getList())) {
+            info.addAll(pageInfo.getList());
+        }
     }
 }

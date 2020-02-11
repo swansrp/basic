@@ -10,11 +10,13 @@ package com.srct.service.vo;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 /**
  * @author sharuopeng
  */
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class QueryReqVO extends ReqBaseVO {
     @ApiModelProperty("当前页")
     private Integer currentPage;

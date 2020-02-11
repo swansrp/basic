@@ -4,18 +4,16 @@
  * Package Name:com.srct.service.utils.security
  * Date:Apr 28, 2018 3:57:56 PM
  * Copyright (c) 2018, ruopeng.sha All Rights Reserved.
- *
-*/
+ */
 package com.srct.service.utils.security;
 
-import java.io.UnsupportedEncodingException;
+import com.srct.service.utils.log.Log;
+
 import java.security.SecureRandom;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 import java.util.UUID;
-
-import com.srct.service.utils.log.Log;
 
 /**
  * ClassName:RandomString <br/>
@@ -30,10 +28,10 @@ import com.srct.service.utils.log.Log;
  */
 public class RandomUtil {
 
+    private static final String SOURCES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
+
     private RandomUtil() {
     }
-
-    private static final String SOURCES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz1234567890";
 
     /**
      * Generate a random string.
@@ -56,11 +54,6 @@ public class RandomUtil {
         return sdf + suffix;
     }
 
-    public static Integer getNumber(Integer start, Integer end) {
-        Random random = new SecureRandom();
-        return random.nextInt(end - start) + start;
-    }
-
     public static String getUUIDNumber(int length) {
         int hashCodeV = UUID.randomUUID().toString().hashCode();
         int value = Math.abs(hashCodeV);
@@ -72,14 +65,13 @@ public class RandomUtil {
         }
     }
 
+    public static Integer getNumber(Integer start, Integer end) {
+        Random random = new SecureRandom();
+        return random.nextInt(end - start) + start;
+    }
+
     public static String getUUID() {
-        String uuid22 = null;
-        try {
-            uuid22 = Base64Util.encode(compress(UUID.randomUUID()));
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        String uuid22 = Base64Util.encode(compress(UUID.randomUUID()));
         if (uuid22 == null) {
             Log.d("uuid22 generate fail");
             return null;

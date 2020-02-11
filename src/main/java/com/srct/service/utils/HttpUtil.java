@@ -43,6 +43,11 @@ public class HttpUtil {
         return map;
     }
 
+    public static <T> T getParamMap(HttpServletRequest request, Class<T> clazz) {
+        Map<String, Object> map = getParamMap(request);
+        return JSONUtil.readJson(map, clazz);
+    }
+
     public static Map<String, Object> getParamMap(HttpServletRequest request) {
         Map<String, String[]> requestMap = request.getParameterMap();
         Map<String, Object> map = new HashMap<>(requestMap.size());

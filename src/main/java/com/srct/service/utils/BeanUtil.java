@@ -7,10 +7,7 @@
  */
 package com.srct.service.utils;
 
-import com.srct.service.utils.log.Log;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.AnnotatedGenericBeanDefinition;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
@@ -22,12 +19,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.annotation.AnnotationBeanNameGenerator;
-import org.springframework.context.annotation.AnnotationConfigUtils;
-import org.springframework.context.annotation.AnnotationScopeMetadataResolver;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ScopeMetadata;
-import org.springframework.context.annotation.ScopeMetadataResolver;
+import org.springframework.context.annotation.*;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.HashMap;
@@ -118,6 +110,16 @@ public class BeanUtil implements ApplicationContextAware, ApplicationListener<Ap
     /// 获取当前环境
     public static String getActiveProfile() {
         return ctx.getEnvironment().getActiveProfiles()[0];
+    }
+
+    public static <T> T copyProperties(Object source, Class<T> targetClazz) {
+        try {
+            T target = targetClazz.newInstance();
+            copyProperties(source, target);
+            return target;
+        } catch (InstantiationException | IllegalAccessException e) {
+            return null;
+        }
     }
 
     /**

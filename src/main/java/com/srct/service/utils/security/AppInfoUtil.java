@@ -1,24 +1,22 @@
-/**  
- * Project Name:SpringBootCommon  
- * File Name:AppInfoUtil.java  
- * Package Name:com.srct.service.utils.security  
- * Date:Apr 28, 2018 3:47:03 PM  
- * Copyright (c) 2018, ruopeng.sha All Rights Reserved.  
- *  
-*/
+/**
+ * Project Name:SpringBootCommon
+ * File Name:AppInfoUtil.java
+ * Package Name:com.srct.service.utils.security
+ * Date:Apr 28, 2018 3:47:03 PM
+ * Copyright (c) 2018, ruopeng.sha All Rights Reserved.
+ */
 package com.srct.service.utils.security;
 
-import java.io.UnsupportedEncodingException;
-import java.util.UUID;
-
 import com.srct.service.utils.log.Log;
+
+import java.util.UUID;
 
 /**
  * ClassName:AppInfoUtil <br/>
  * Function: TODO ADD FUNCTION. <br/>
  * Reason: TODO ADD REASON. <br/>
  * Date: Apr 28, 2018 3:47:03 PM <br/>
- * 
+ *
  * @author ruopeng.sha
  * @version
  * @since JDK 1.8
@@ -29,76 +27,18 @@ public class AppInfoUtil {
     private AppInfoUtil() {
     }
 
-    public static class AppInfo {
+    public static String getId() {
+        return MD5Util.MD5(getUUID());
+    }
 
-        private String AppId;
-
-        private String AppSecret;
-
-        private String PartnerId;
-
-        /**
-         * appId.
-         * 
-         * @return the appId
-         * @since JDK 1.8
-         */
-        public String getAppId() {
-            return AppId;
+    public static String getUUID() {
+        String uuid22 = Base64Util.encode(compress(UUID.randomUUID()));
+        if (uuid22 == null) {
+            Log.d("uuid22 generate fail");
+            return null;
         }
-
-        /**
-         * appId.
-         * 
-         * @param appId
-         *            the appId to set
-         * @since JDK 1.8
-         */
-        public void setAppId(String appId) {
-            AppId = appId;
-        }
-
-        /**
-         * appSecret.
-         * 
-         * @return the appSecret
-         * @since JDK 1.8
-         */
-        public String getAppSecret() {
-            return AppSecret;
-        }
-
-        /**
-         * appSecret.
-         * 
-         * @param appSecret
-         *            the appSecret to set
-         * @since JDK 1.8
-         */
-        public void setAppSecret(String appSecret) {
-            AppSecret = appSecret;
-        }
-
-        /**
-         * partnerId.
-         * 
-         * @return the partnerId
-         * @since JDK 1.8
-         */
-        public String getPartnerId() {
-            return PartnerId;
-        }
-
-        /**
-         * partnerId.
-         * 
-         * @param partnerId
-         *            the partnerId to set
-         * @since JDK 1.8
-         */
-        public void setPartnerId(String partnerId) {
-            PartnerId = partnerId;
-        }
+        String res = uuid22.substring(0, uuid22.length() - 2);
+        return res;
     }
 
     private static byte[] compress(UUID uuid) {
@@ -112,26 +52,6 @@ public class AppInfoUtil {
         return buffer;
     }
 
-    public static String getUUID() {
-        String uuid22 = null;
-        try {
-            uuid22 = Base64Util.encode(compress(UUID.randomUUID()));
-        } catch (UnsupportedEncodingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        if (uuid22 == null) {
-            Log.d("uuid22 generate fail");
-            return null;
-        }
-        String res = uuid22.substring(0, uuid22.length() - 2);
-        return res;
-    }
-
-    public static String getId() {
-        return MD5Util.MD5(getUUID());
-    }
-
     public static AppInfo getAppInfo(String appName) {
         AppInfo app = new AppInfo();
         String uuid = getUUID();
@@ -141,5 +61,77 @@ public class AppInfoUtil {
         app.setAppSecret(MD5Util.generate(rawAppSKey));
         app.setPartnerId(MD5Util.MD5(appName));
         return app;
+    }
+
+    public static class AppInfo {
+
+        private String AppId;
+
+        private String AppSecret;
+
+        private String PartnerId;
+
+        /**
+         * appId.
+         *
+         * @return the appId
+         * @since JDK 1.8
+         */
+        public String getAppId() {
+            return AppId;
+        }
+
+        /**
+         * appId.
+         *
+         * @param appId
+         *            the appId to set
+         * @since JDK 1.8
+         */
+        public void setAppId(String appId) {
+            AppId = appId;
+        }
+
+        /**
+         * appSecret.
+         *
+         * @return the appSecret
+         * @since JDK 1.8
+         */
+        public String getAppSecret() {
+            return AppSecret;
+        }
+
+        /**
+         * appSecret.
+         *
+         * @param appSecret
+         *            the appSecret to set
+         * @since JDK 1.8
+         */
+        public void setAppSecret(String appSecret) {
+            AppSecret = appSecret;
+        }
+
+        /**
+         * partnerId.
+         *
+         * @return the partnerId
+         * @since JDK 1.8
+         */
+        public String getPartnerId() {
+            return PartnerId;
+        }
+
+        /**
+         * partnerId.
+         *
+         * @param partnerId
+         *            the partnerId to set
+         * @since JDK 1.8
+         */
+        public void setPartnerId(String partnerId) {
+            PartnerId = partnerId;
+        }
     }
 }
