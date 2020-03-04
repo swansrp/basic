@@ -40,6 +40,10 @@ public class QueryRespVO<T> extends QueryReqVO {
         this.setTotalSize(pageInfo.getTotal());
         this.setCurrentPage(pageInfo.getPageNum());
         this.setPageSize(pageInfo.getPageSize());
+    }
+
+    public void buildPageInfoWithList(PageInfo pageInfo) {
+        buildPageInfo(pageInfo);
         if (CollectionUtils.isNotEmpty(pageInfo.getList())) {
             info.addAll(pageInfo.getList());
         }
